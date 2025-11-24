@@ -1,31 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
-const newsItems = [
-    {
-        id: 1,
-        title: 'Kim Long Motor ra mắt dòng xe bus giường nằm thế hệ mới',
-        image: 'https://kimlongmiennam.com.vn/wp-content/uploads/2024/05/xe-khach-giuong-nam-kim-long-99-24-phong-1.jpg',
-        summary: 'Dòng xe bus giường nằm cao cấp với thiết kế hiện đại, tiện nghi sang trọng, đáp ứng nhu cầu ngày càng cao của hành khách.',
-        date: '25/04/2025',
-    },
-    {
-        id: 2,
-        title: 'Lễ bàn giao lô xe tải nặng cho đối tác chiến lược',
-        image: 'https://kimlongmiennam.com.vn/wp-content/uploads/2024/05/xe-tai-nang-kim-long-1.jpg',
-        summary: 'Kim Long Motor vừa tổ chức lễ bàn giao 50 xe tải nặng cho công ty vận tải Logistics hàng đầu Việt Nam.',
-        date: '20/04/2025',
-    },
-    {
-        id: 3,
-        title: 'Chương trình khuyến mãi đặc biệt tháng 5',
-        image: 'https://kimlongmiennam.com.vn/wp-content/uploads/2024/05/khuyen-mai-kim-long-motor.jpg',
-        summary: 'Ưu đãi lớn khi mua xe tải và xe bus trong tháng 5 với gói quà tặng trị giá lên đến 50 triệu đồng.',
-        date: '15/04/2025',
-    },
-];
+import { getLatestNews } from '../data/news';
 
 const NewsViral = () => {
+    const latestNews = getLatestNews(3);
+
     return (
         <section id="news" className="py-16 bg-white dark:bg-gray-900 transition-colors duration-300">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -39,29 +18,49 @@ const NewsViral = () => {
                 </div>
 
                 <div className="grid gap-8 grid-cols-1 md:grid-cols-3">
-                    {newsItems.map((item) => (
-                        <div key={item.id} className="flex flex-col rounded-lg shadow-lg overflow-hidden bg-white dark:bg-gray-800 transition-colors duration-300 hover:shadow-xl">
-                            <div className="flex-shrink-0">
-                                <img className="h-48 w-full object-cover" src={item.image} alt={item.title} onError={(e) => { e.target.src = 'https://via.placeholder.com/400x300?text=News+Image' }} />
+                    {latestNews.map((item) => (
+                        <div key={item.id} className="flex flex-col rounded-lg shadow-lg overflow-hidden bg-white dark:bg-gray-800 transition-all duration-300 hover:shadow-xl transform hover:scale-105">
+                            <div className="flex-shrink-0 relative h-48">
+                                <img
+                                    className="h-full w-full object-cover"
+                                    src={item.image}
+                                    alt={item.title}
+                                    onError={(e) => {
+                                        e.target.src = 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=400';
+                                    }}
+                                />
+                                {item.featured && (
+                                    <div className="absolute top-2 left-2 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+                                        Nổi bật
+                                    </div>
+                                )}
                             </div>
                             <div className="flex-1 p-6 flex flex-col justify-between">
                                 <div className="flex-1">
-                                    <p className="text-sm font-medium text-red-600 dark:text-red-400">
-                                        Tin tức
+                                    <p className="text-sm font-medium text-red-600 dark:text-red-400 mb-2">
+                                        {item.category === 'tin-tuc' ? 'Tin tức' :
+                                            item.category === 'kien-thuc' ? 'Kiến thức' :
+                                                item.category === 'khuyen-mai' ? 'Khuyến mãi' : 'Sự kiện'}
                                     </p>
-                                    <Link to={`/news/${item.id}`} className="block mt-2">
-                                        <p className="text-xl font-semibold text-gray-900 dark:text-white hover:text-red-600 dark:hover:text-red-400 transition-colors">
+                                    <Link to={`/ news / ${item.id} `} className="block mt-2">
+                                        <p className="text-xl font-semibold text-gray-900 dark:text-white hover:text-red-600 dark:hover:text-red-400 transition-colors line-clamp-2">
                                             {item.title}
                                         </p>
-                                        <p className="mt-3 text-base text-gray-500 dark:text-gray-400">
-                                            {item.summary}
+                                        <p className="mt-3 text-base text-gray-500 dark:text-gray-400 line-clamp-3">
+                                            {item.excerpt}
                                         </p>
                                     </Link>
                                 </div>
-                                <div className="mt-6 flex items-center">
+                                <div className="mt-6 flex items-center justify-between">
                                     <div className="text-sm text-gray-500 dark:text-gray-400">
                                         <time dateTime={item.date}>{item.date}</time>
                                     </div>
+                                    <Link
+                                        to={`/ news / ${item.id} `}
+                                        className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium text-sm"
+                                    >
+                                        Đọc thêm →
+                                    </Link>
                                 </div>
                             </div>
                         </div>
