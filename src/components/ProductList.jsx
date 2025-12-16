@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { products } from '../data/products';
+import { products } from '../data/products-updated';
 
 const ProductList = () => {
     // Show first 8 products
@@ -17,10 +17,10 @@ const ProductList = () => {
                         Các dòng xe chất lượng cao đáp ứng mọi nhu cầu vận tải.
                     </p>
                 </div>
-                <div className="mt-12 grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="mt-12 grid gap-4 md:gap-8 grid-cols-2 lg:grid-cols-4">
                     {featuredProducts.map((product) => (
                         <div key={product.id} className="group relative bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                            <div className="relative w-full h-64 bg-gray-200 dark:bg-gray-700 group-hover:opacity-90 sm:h-56">
+                            <div className="relative w-full h-48 md:h-64 bg-gray-200 dark:bg-gray-700 group-hover:opacity-90">
                                 <img
                                     src={product.image}
                                     alt={product.name}
@@ -29,28 +29,28 @@ const ProductList = () => {
                                         e.target.src = 'https://via.placeholder.com/400x300?text=' + product.name;
                                     }}
                                 />
-                                <div className="absolute top-2 right-2 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+                                <div className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-bold">
                                     {product.category === 'giuong-nam' ? 'Giường nằm' :
                                         product.category === 'ghe-ngoi' ? 'Ghế ngồi' :
                                             product.category === '16-cho' ? '16 chỗ' : 'Limousine'}
                                 </div>
                             </div>
-                            <div className="p-6">
-                                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">
+                            <div className="p-3 md:p-6">
+                                <h3 className="text-sm md:text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">
                                     <Link to={`/product/${product.id}`}>
                                         <span className="absolute inset-0" />
                                         {product.name}
                                     </Link>
                                 </h3>
-                                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
+                                <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-2 md:mb-3 line-clamp-2 hidden md:block">
                                     {product.description}
                                 </p>
-                                <p className="text-base font-semibold text-red-600 dark:text-red-400 mb-4">
+                                <p className="text-sm md:text-base font-semibold text-red-600 dark:text-red-400 mb-2 md:mb-4">
                                     Giá: {product.price}
                                 </p>
                                 <Link
                                     to={`/product/${product.id}`}
-                                    className="block w-full bg-gray-900 dark:bg-red-700 text-white text-center py-2 px-4 rounded hover:bg-red-700 dark:hover:bg-red-800 transition-colors"
+                                    className="block w-full bg-gray-900 dark:bg-red-700 text-white text-center py-2 px-2 md:px-4 rounded hover:bg-red-700 dark:hover:bg-red-800 transition-colors text-xs md:text-base"
                                 >
                                     Xem chi tiết
                                 </Link>

@@ -59,7 +59,7 @@ const WhyChooseUs = () => {
                     })}
                 </div>
 
-                <div className="mt-12 bg-gradient-to-r from-red-700 to-red-900 rounded-lg p-8 text-center text-white">
+                <div className="mt-12 bg-gradient-to-r from-red-600 to-red-700 dark:from-red-700 dark:to-red-800 rounded-lg p-8 text-center text-white">
                     <h3 className="text-2xl font-bold mb-4">
                         Hơn 20 Năm Kinh Nghiệm Trong Ngành
                     </h3>

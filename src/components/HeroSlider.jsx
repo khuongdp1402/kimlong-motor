@@ -5,7 +5,20 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
-const heroSlides = [
+import { scrapedBanners } from '../data/scraped-data';
+
+// Filter valid banners and map to slide format
+const validBanners = scrapedBanners.filter(b => b.image && !b.image.startsWith('data:'));
+
+const heroSlides = validBanners.length > 0 ? validBanners.map(b => ({
+    id: b.id,
+    image: b.image,
+    title: b.title || 'KIM LONG MOTOR',
+    subtitle: b.subtitle || 'Giải pháp vận tải toàn diện',
+    cta: 'Xem chi tiết',
+    link: b.link || '#'
+})) : [
+    // Fallback if no banners scraped
     {
         id: 1,
         image: 'https://kimlongmiennam.com.vn/wp-content/uploads/2024/05/xe-khach-giuong-nam-kim-long-99-24-phong-1.jpg',
@@ -13,23 +26,7 @@ const heroSlides = [
         subtitle: 'Tiện nghi - Sang trọng - An toàn',
         cta: 'Xem chi tiết',
         link: '/xe-khach-giuong-nam',
-    },
-    {
-        id: 2,
-        image: 'https://kimlongmiennam.com.vn/wp-content/uploads/2024/05/xe-khach-ghe-ngoi-kim-long-47.jpg',
-        title: 'XE KHÁCH GHẾ NGỒI',
-        subtitle: 'Rộng rãi - Thoải mái - Tiết kiệm',
-        cta: 'Khám phá ngay',
-        link: '/xe-khach-ghe-ngoi',
-    },
-    {
-        id: 3,
-        image: 'https://kimlongmiennam.com.vn/wp-content/uploads/2024/05/xe-khach-limousine-kim-long.jpg',
-        title: 'XE KHÁCH LIMOUSINE',
-        subtitle: 'Đẳng cấp - Sang trọng - VIP',
-        cta: 'Tìm hiểu thêm',
-        link: '/xe-khach-limousine',
-    },
+    }
 ];
 
 const HeroSlider = () => {
@@ -53,12 +50,13 @@ const HeroSlider = () => {
                 {heroSlides.map((slide) => (
                     <SwiperSlide key={slide.id}>
                         <div className="relative h-[500px] md:h-[600px] lg:h-[700px]">
+                            <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900 dark:from-gray-900 dark:via-gray-800 dark:to-gray-950"></div>
                             <img
                                 src={slide.image}
                                 alt={slide.title}
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-cover opacity-40"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-gray-900/70 via-transparent to-transparent"></div>
                             <div className="absolute inset-0 flex items-center justify-center">
                                 <div className="text-center text-white px-4 max-w-4xl">
                                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 uppercase tracking-wide">
@@ -69,7 +67,7 @@ const HeroSlider = () => {
                                     </p>
                                     <a
                                         href={slide.link}
-                                        className="inline-block bg-red-700 hover:bg-red-800 text-white font-bold py-4 px-8 rounded-lg text-lg transition-all transform hover:scale-105 shadow-lg"
+                                        className="inline-block bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 text-white font-bold py-4 px-8 rounded-lg text-lg transition-all transform hover:scale-105 shadow-lg"
                                     >
                                         {slide.cta}
                                     </a>
@@ -88,6 +86,12 @@ const HeroSlider = () => {
           width: 50px;
           height: 50px;
           border-radius: 50%;
+          transition: all 0.3s ease;
+        }
+        
+        .hero-swiper :global(.swiper-button-next):hover,
+        .hero-swiper :global(.swiper-button-prev):hover {
+          background: rgba(0, 0, 0, 0.7);
         }
         
         .hero-swiper :global(.swiper-button-next):after,
@@ -100,6 +104,7 @@ const HeroSlider = () => {
           opacity: 0.7;
           width: 12px;
           height: 12px;
+          transition: all 0.3s ease;
         }
         
         .hero-swiper :global(.swiper-pagination-bullet-active) {

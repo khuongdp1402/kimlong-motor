@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { getLatestNews } from '../data/news';
+import { getLatestNews } from '../data/news-updated';
 
 const NewsViral = () => {
     const latestNews = getLatestNews(3);
@@ -9,8 +9,8 @@ const NewsViral = () => {
         <section id="news" className="py-16 bg-white dark:bg-gray-900 transition-colors duration-300">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-4xl uppercase">
-                        Tin tức & Sự kiện
+                    <h2 className="text-3xl font-extrabold tracking-tight text-red-600 dark:text-red-400 sm:text-4xl uppercase">
+                        KIẾN THỨC - CHIA SẺ
                     </h2>
                     <p className="mt-4 max-w-2xl text-xl text-gray-500 dark:text-gray-400 mx-auto">
                         Cập nhật những thông tin mới nhất từ Kim Long Motor.
@@ -42,7 +42,7 @@ const NewsViral = () => {
                                             item.category === 'kien-thuc' ? 'Kiến thức' :
                                                 item.category === 'khuyen-mai' ? 'Khuyến mãi' : 'Sự kiện'}
                                     </p>
-                                    <Link to={`/ news / ${item.id} `} className="block mt-2">
+                                    <Link to={`/news/${item.id}`} className="block mt-2">
                                         <p className="text-xl font-semibold text-gray-900 dark:text-white hover:text-red-600 dark:hover:text-red-400 transition-colors line-clamp-2">
                                             {item.title}
                                         </p>
@@ -56,7 +56,7 @@ const NewsViral = () => {
                                         <time dateTime={item.date}>{item.date}</time>
                                     </div>
                                     <Link
-                                        to={`/ news / ${item.id} `}
+                                        to={`/news/${item.id}`}
                                         className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium text-sm"
                                     >
                                         Đọc thêm →
@@ -68,7 +68,7 @@ const NewsViral = () => {
                 </div>
 
                 <div className="mt-10 text-center">
-                    <Link to="/news" className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-red-700 hover:bg-red-800 transition-colors">
+                    <Link to="/news" className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 transition-colors">
                         Xem tất cả tin tức
                     </Link>
                 </div>

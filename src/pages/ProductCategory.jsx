@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { products, productCategories, getProductsByCategory, getCategoryBySlug } from '../data/products';
+import { products, productCategories, getProductsByCategory, getCategoryBySlug } from '../data/products-updated';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 

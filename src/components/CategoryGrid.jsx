@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { productCategories } from '../data/products';
+import { productCategories } from '../data/products-updated';
 
 const CategoryGrid = () => {
     return (
@@ -15,7 +15,7 @@ const CategoryGrid = () => {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                     {productCategories.map((category) => (
                         <Link
                             key={category.id}

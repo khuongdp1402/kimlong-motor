@@ -24,22 +24,22 @@ const ContactForm = () => {
     };
 
     return (
-        <section className="py-16 bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
+        <section id="contact" className="py-16 bg-gray-800 dark:bg-gray-900 transition-colors duration-300">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                     {/* Form */}
                     <div>
-                        <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-4xl uppercase mb-4">
-                            Đăng Ký Nhận Báo Giá
+                        <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl uppercase mb-4">
+                            ĐĂNG KÝ NHẬN KHUYẾN MẠI
                         </h2>
-                        <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
-                            Để lại thông tin, chúng tôi sẽ liên hệ tư vấn và báo giá chi tiết nhất
+                        <p className="text-lg text-gray-300 dark:text-gray-400 mb-8">
+                            Dành tặng 25 khách hàng đầu tiên của tháng
                         </p>
 
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div>
-                                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Họ và tên *
+                                <label htmlFor="name" className="block text-sm font-medium text-white mb-2">
+                                    Tên của bạn
                                 </label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -52,14 +52,14 @@ const ContactForm = () => {
                                         required
                                         value={formData.name}
                                         onChange={handleChange}
-                                        className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                                        placeholder="Nhập họ tên của bạn"
+                                        className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+                                        placeholder="Tên của bạn.."
                                     />
                                 </div>
                             </div>
 
                             <div>
-                                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <label htmlFor="phone" className="block text-sm font-medium text-white mb-2">
                                     Số điện thoại *
                                 </label>
                                 <div className="relative">
@@ -73,15 +73,15 @@ const ContactForm = () => {
                                         required
                                         value={formData.phone}
                                         onChange={handleChange}
-                                        className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                                        placeholder="Nhập số điện thoại"
+                                        className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+                                        placeholder="Số điện thoại"
                                     />
                                 </div>
                             </div>
 
                             <div>
-                                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Email
+                                <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
+                                    Địa chỉ email
                                 </label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -93,15 +93,15 @@ const ContactForm = () => {
                                         name="email"
                                         value={formData.email}
                                         onChange={handleChange}
-                                        className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                                        placeholder="email@example.com"
+                                        className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+                                        placeholder="Địa chỉ email"
                                     />
                                 </div>
                             </div>
 
                             <div>
-                                <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Nội dung
+                                <label htmlFor="message" className="block text-sm font-medium text-white mb-2">
+                                    Nội dung đăng ký
                                 </label>
                                 <div className="relative">
                                     <div className="absolute top-3 left-3 pointer-events-none">
@@ -113,23 +113,23 @@ const ContactForm = () => {
                                         rows="4"
                                         value={formData.message}
                                         onChange={handleChange}
-                                        className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                                        placeholder="Nhập nội dung cần tư vấn..."
+                                        className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+                                        placeholder="Nội dung đăng ký..."
                                     ></textarea>
                                 </div>
                             </div>
 
                             <button
                                 type="submit"
-                                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+                                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
                             >
-                                Gửi Thông Tin
+                                Đăng ký
                             </button>
                         </form>
                     </div>
 
                     {/* Contact Info */}
-                    <div className="bg-gradient-to-br from-red-700 to-red-900 rounded-lg p-8 text-white">
+                    <div className="bg-gray-700/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-lg p-8 text-white">
                         <h3 className="text-2xl font-bold mb-6">Thông Tin Liên Hệ</h3>
 
                         <div className="space-y-6">
