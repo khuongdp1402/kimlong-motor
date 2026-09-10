@@ -1,96 +1,204 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
-import { Sun, Moon, Menu, X } from 'lucide-react';
+import { Sun, Moon, Menu, X, Phone, Youtube, Calculator, MessageCircle } from 'lucide-react';
+import { businessInfo } from '../data/hongthuong-data';
 
-const Navbar = () => {
+const Navbar = ({ onOpenQuoteModal }) => {
     const [isOpen, setIsOpen] = useState(false);
     const { theme, toggleTheme } = useTheme();
-    const navigate = useNavigate();
 
-    const scrollToSection = (sectionId) => {
-        // Close mobile menu
+    const scrollTo = (id) => {
         setIsOpen(false);
-
-        // Navigate to home if not already there
-        if (window.location.pathname !== '/') {
-            navigate('/');
-            // Wait for navigation to complete before scrolling
-            setTimeout(() => {
-                const element = document.getElementById(sectionId);
-                if (element) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }, 100);
-        } else {
-            const element = document.getElementById(sectionId);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+        const element = document.getElementById(id);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     };
 
     return (
-        <nav className="bg-gray-800 dark:bg-gray-900 shadow-md fixed w-full z-50 top-0 left-0 transition-colors duration-300">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between h-20">
-                    <div className="flex items-center">
-                        <div className="flex-shrink-0 flex items-center">
-                            <Link to="/" className="flex items-center space-x-2">
-                                <div className="flex items-center">
-                                    <span className="text-3xl font-bold text-red-600 dark:text-red-500">K</span>
-                                    <span className="text-3xl font-bold text-red-600 dark:text-red-500">L</span>
-                                </div>
-                                <span className="text-xl font-bold text-white tracking-tighter uppercase">
-                                    KIM LONG MOTOR
-                                </span>
-                            </Link>
-                        </div>
-                        <div className="hidden md:ml-10 md:flex md:space-x-6">
-                            <Link to="/" className="text-white hover:text-red-500 dark:hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium uppercase transition-colors">Trang chủ</Link>
-                            <button onClick={() => scrollToSection('giuong-nam')} className="text-white hover:text-red-500 dark:hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium uppercase transition-colors">Xe Khách Giường Nằm</button>
-                            <button onClick={() => scrollToSection('ghe-ngoi')} className="text-white hover:text-red-500 dark:hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium uppercase transition-colors">Xe Khách Ghế Ngồi</button>
-                            <button onClick={() => scrollToSection('16-cho')} className="text-white hover:text-red-500 dark:hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium uppercase transition-colors">Xe Khách 16 Chỗ</button>
-                            <button onClick={() => scrollToSection('limousine')} className="text-white hover:text-red-500 dark:hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium uppercase transition-colors">Xe Khách Limousine</button>
-                            <button onClick={() => scrollToSection('contact')} className="text-white hover:text-red-500 dark:hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium uppercase transition-colors">Liên hệ</button>
-                        </div>
+        <header className="fixed w-full z-50 top-0 left-0 shadow-md">
+            {/* Ultra-slim Top Strip */}
+            <div className="bg-gray-950 text-gray-300 text-[11px] py-1 px-4 border-b border-gray-800/80 hidden md:block">
+                <div className="max-w-7xl mx-auto flex justify-between items-center">
+                    <div className="flex items-center space-x-4">
+                        <span>📍 85 Đường Dẫn Cao Tốc HCM - Trung Lương, Tân Nhựt, HCM</span>
+                        <span className="text-gray-600">|</span>
+                        <span>Dịch vụ kỹ thuật: <a href={`tel:${businessInfo.hotlineServiceRaw}`} className="font-bold text-white hover:text-red-400">{businessInfo.hotlineService}</a></span>
                     </div>
-                    <div className="flex items-center">
-                        <button
-                            onClick={toggleTheme}
-                            className="p-2 rounded-full text-white hover:bg-gray-700 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-red-500 mr-2 md:mr-0 transition-colors"
-                        >
-                            {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-                        </button>
-                        <div className="-mr-2 flex md:hidden ml-2">
-                            <button
-                                onClick={() => setIsOpen(!isOpen)}
-                                type="button"
-                                className="inline-flex items-center justify-center p-2 rounded-md text-white hover:text-gray-300 hover:bg-gray-700 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-500"
-                                aria-controls="mobile-menu"
-                                aria-expanded="false"
-                            >
-                                <span className="sr-only">Open main menu</span>
-                                {!isOpen ? <Menu size={24} /> : <X size={24} />}
-                            </button>
-                        </div>
+                    <div className="flex items-center space-x-4">
+                        <a href={businessInfo.youtubeUrl} target="_blank" rel="noopener noreferrer" className="hover:text-red-400 flex items-center gap-1 transition-colors">
+                            <Youtube size={12} className="text-red-500" /> YouTube
+                        </a>
+                        <a href={businessInfo.tiktokUrl} target="_blank" rel="noopener noreferrer" className="hover:text-pink-400 flex items-center gap-1 transition-colors">
+                            <span>🎵</span> TikTok
+                        </a>
+                        <a href={`tel:${businessInfo.hotlineSalesRaw}`} className="font-bold text-red-400 hover:text-red-300 flex items-center gap-1">
+                            <Phone size={11} /> Hotline: {businessInfo.hotlineSales}
+                        </a>
                     </div>
                 </div>
             </div>
 
-            {isOpen && (
-                <div className="md:hidden bg-gray-800 dark:bg-gray-900 border-t border-gray-700 dark:border-gray-800" id="mobile-menu">
-                    <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                        <Link to="/" onClick={() => setIsOpen(false)} className="text-white hover:text-red-500 dark:hover:text-red-400 block px-3 py-2 rounded-md text-base font-medium uppercase transition-colors">Trang chủ</Link>
-                        <button onClick={() => scrollToSection('giuong-nam')} className="text-white hover:text-red-500 dark:hover:text-red-400 block px-3 py-2 rounded-md text-base font-medium uppercase w-full text-left transition-colors">Xe Khách Giường Nằm</button>
-                        <button onClick={() => scrollToSection('ghe-ngoi')} className="text-white hover:text-red-500 dark:hover:text-red-400 block px-3 py-2 rounded-md text-base font-medium uppercase w-full text-left transition-colors">Xe Khách Ghế Ngồi</button>
-                        <button onClick={() => scrollToSection('16-cho')} className="text-white hover:text-red-500 dark:hover:text-red-400 block px-3 py-2 rounded-md text-base font-medium uppercase w-full text-left transition-colors">Xe Khách 16 Chỗ</button>
-                        <button onClick={() => scrollToSection('limousine')} className="text-white hover:text-red-500 dark:hover:text-red-400 block px-3 py-2 rounded-md text-base font-medium uppercase w-full text-left transition-colors">Xe Khách Limousine</button>
-                        <button onClick={() => scrollToSection('contact')} className="text-white hover:text-red-500 dark:hover:text-red-400 block px-3 py-2 rounded-md text-base font-medium uppercase w-full text-left transition-colors">Liên hệ</button>
+            {/* Main Navbar - Compact Height h-14 / h-16 */}
+            <nav className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200/80 dark:border-gray-800 transition-colors duration-200">
+                <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+                    <div className="flex justify-between items-center h-14 sm:h-16">
+                        {/* Logo & Brand on a Single Clean Line */}
+                        <div className="flex-shrink-0 flex items-center">
+                            <button
+                                onClick={() => scrollTo('hero')}
+                                className="flex items-center space-x-2.5 text-left focus:outline-none group"
+                            >
+                                <img
+                                    src="/images/logo-official.png"
+                                    alt="Kim Long Motor"
+                                    className="h-8 sm:h-9 w-auto object-contain transition-transform group-hover:scale-105"
+                                    onError={(e) => {
+                                        e.target.src = '/images/logo-ngang-do.png';
+                                    }}
+                                />
+                                <div className="flex items-center space-x-2">
+                                    <span className="text-sm sm:text-base font-black tracking-tight text-red-600 dark:text-red-500 uppercase whitespace-nowrap">
+                                        KIM LONG HỒNG THƯƠNG
+                                    </span>
+                                    <span className="hidden xl:inline-block text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded border border-gray-200 dark:border-gray-700">
+                                        Chính Hãng
+                                    </span>
+                                </div>
+                            </button>
+                        </div>
+
+                        {/* Navigation Links */}
+                        <div className="hidden lg:flex items-center space-x-5 xl:space-x-6">
+                            <button
+                                onClick={() => scrollTo('hero')}
+                                className="text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 text-xs font-bold uppercase tracking-wider transition-colors"
+                            >
+                                Trang Chủ
+                            </button>
+                            <button
+                                onClick={() => scrollTo('danh-muc-xe')}
+                                className="text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 text-xs font-bold uppercase tracking-wider transition-colors"
+                            >
+                                Danh Mục Xe
+                            </button>
+                            <button
+                                onClick={() => scrollTo('bang-bao-gia')}
+                                className="text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 text-xs font-bold uppercase tracking-wider transition-colors"
+                            >
+                                Báo Giá Lăn Bánh
+                            </button>
+                            <button
+                                onClick={() => scrollTo('video-thuc-te')}
+                                className="text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 text-xs font-bold uppercase tracking-wider transition-colors"
+                            >
+                                Video Thực Tế
+                            </button>
+                            <button
+                                onClick={() => scrollTo('ve-hong-thuong')}
+                                className="text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 text-xs font-bold uppercase tracking-wider transition-colors"
+                            >
+                                Về Hồng Thương
+                            </button>
+                        </div>
+
+                        {/* Action Buttons & Theme Toggle */}
+                        <div className="flex items-center space-x-2 sm:space-x-3">
+                            <button
+                                onClick={onOpenQuoteModal}
+                                className="hidden sm:flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2 px-3.5 rounded-lg shadow-sm transition-all hover:scale-105 uppercase tracking-wider"
+                            >
+                                <Calculator size={14} />
+                                Báo Giá
+                            </button>
+
+                            <a
+                                href={`tel:${businessInfo.hotlineSalesRaw}`}
+                                className="bg-gray-900 hover:bg-black dark:bg-gray-800 dark:hover:bg-gray-700 text-white text-xs font-bold py-2 px-3 rounded-lg shadow-sm transition-colors flex items-center gap-1.5"
+                            >
+                                <Phone size={13} className="text-red-500 animate-pulse" />
+                                <span className="hidden sm:inline">{businessInfo.hotlineSales}</span>
+                                <span className="sm:hidden">Gọi</span>
+                            </a>
+
+                            <button
+                                onClick={toggleTheme}
+                                className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none transition-colors"
+                                title={theme === 'light' ? 'Chuyển sang chế độ tối' : 'Chuyển sang chế độ sáng'}
+                                aria-label="Đổi giao diện"
+                            >
+                                {theme === 'light' ? <Moon size={16} /> : <Sun size={16} className="text-yellow-400" />}
+                            </button>
+
+                            {/* Mobile menu toggle */}
+                            <div className="lg:hidden">
+                                <button
+                                    onClick={() => setIsOpen(!isOpen)}
+                                    type="button"
+                                    className="p-1.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
+                                >
+                                    {!isOpen ? <Menu size={22} /> : <X size={22} />}
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            )}
-        </nav>
+
+                {/* Mobile Menu Dropdown */}
+                {isOpen && (
+                    <div className="lg:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 shadow-xl px-4 py-3 space-y-2">
+                        <button
+                            onClick={() => scrollTo('hero')}
+                            className="w-full text-left py-1.5 text-xs font-bold text-gray-800 dark:text-gray-200 hover:text-red-600 uppercase"
+                        >
+                            Trang Chủ
+                        </button>
+                        <button
+                            onClick={() => scrollTo('danh-muc-xe')}
+                            className="w-full text-left py-1.5 text-xs font-bold text-gray-800 dark:text-gray-200 hover:text-red-600 uppercase"
+                        >
+                            Danh Mục Xe
+                        </button>
+                        <button
+                            onClick={() => scrollTo('bang-bao-gia')}
+                            className="w-full text-left py-1.5 text-xs font-bold text-gray-800 dark:text-gray-200 hover:text-red-600 uppercase"
+                        >
+                            Báo Giá Lăn Bánh
+                        </button>
+                        <button
+                            onClick={() => scrollTo('video-thuc-te')}
+                            className="w-full text-left py-1.5 text-xs font-bold text-gray-800 dark:text-gray-200 hover:text-red-600 uppercase"
+                        >
+                            Video Thực Tế
+                        </button>
+                        <button
+                            onClick={() => scrollTo('ve-hong-thuong')}
+                            className="w-full text-left py-1.5 text-xs font-bold text-gray-800 dark:text-gray-200 hover:text-red-600 uppercase"
+                        >
+                            Về Hồng Thương
+                        </button>
+
+                        <div className="pt-2 border-t border-gray-200 dark:border-gray-800 flex gap-2">
+                            <button
+                                onClick={() => {
+                                    setIsOpen(false);
+                                    onOpenQuoteModal();
+                                }}
+                                className="flex-1 bg-red-600 text-white font-bold py-2 rounded-lg text-center text-xs uppercase"
+                            >
+                                Nhận Báo Giá
+                            </button>
+                            <a
+                                href={`tel:${businessInfo.hotlineSalesRaw}`}
+                                className="flex-1 bg-gray-900 dark:bg-gray-800 text-white font-bold py-2 rounded-lg text-center text-xs flex items-center justify-center gap-1.5"
+                            >
+                                <Phone size={13} /> {businessInfo.hotlineSales}
+                            </a>
+                        </div>
+                    </div>
+                )}
+            </nav>
+        </header>
     );
 };
 

@@ -1,1 +1,105 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Custom Swiper Controls - Small, Rounded, Perfectly Centered Arrow Glyphs (<>) */
+.hero-swiper .swiper-button-next,
+.hero-swiper .swiper-button-prev {
+  color: #ffffff !important;
+  background: rgba(0, 0, 0, 0.45) !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 9999px !important;
+  backdrop-filter: blur(4px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35) !important;
+  top: 48% !important;
+  margin-top: -18px !important;
+}
+
+.hero-swiper .swiper-button-prev {
+  left: 14px !important;
+}
+
+.hero-swiper .swiper-button-next {
+  right: 14px !important;
+}
+
+/* Hover effect: Red background, chevron stays completely inside the circle */
+.hero-swiper .swiper-button-next:hover,
+.hero-swiper .swiper-button-prev:hover {
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
+  color: #ffffff !important;
+  transform: scale(1.08) !important;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.5) !important;
+}
+
+.hero-swiper .swiper-button-next:after,
+.hero-swiper .swiper-button-prev:after {
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: center !important;
+}
+
+/* Pagination bullets */
+.hero-swiper .swiper-pagination {
+  bottom: 8px !important;
+}
+
+.hero-swiper .swiper-pagination-bullet {
+  background: rgba(255, 255, 255, 0.7);
+  width: 7px;
+  height: 7px;
+  transition: all 0.3s ease;
+}
+
+.hero-swiper .swiper-pagination-bullet-active {
+  background: #dc2626 !important;
+  opacity: 1;
+  width: 18px;
+  border-radius: 9999px;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-none {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
