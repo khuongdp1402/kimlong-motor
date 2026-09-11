@@ -12,13 +12,13 @@ const RealVideoSection = () => {
                 <div className="text-center max-w-2xl mx-auto mb-10">
                     <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 text-[11px] font-bold uppercase tracking-wider mb-2.5">
                         <Video size={12} />
-                        Kênh Video Thực Tế - Hồng Thương
+                        Kênh Video Thực Tế - Kim Long
                     </div>
                     <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-gray-900 dark:text-white uppercase tracking-tight">
                         TRẢI NGHIỆM THỰC TẾ & BÀN GIAO XE
                     </h2>
                     <p className="mt-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                        Theo dõi kênh YouTube và TikTok của <strong>Hồng Thương (@thuongkimlong)</strong> để cập nhật video đánh giá chi tiết, thử xe thực tế, lễ bàn giao xe và ưu đãi mới nhất.
+                        Theo dõi kênh YouTube và TikTok của <strong>Kim Long (@thuongkimlong)</strong> để cập nhật video đánh giá chi tiết, thử xe thực tế, lễ bàn giao xe và ưu đãi mới nhất.
                     </p>
                 </div>
 
@@ -32,7 +32,7 @@ const RealVideoSection = () => {
                             </div>
                             <div>
                                 <span className="text-xs uppercase font-bold tracking-wider text-red-200">Kênh YouTube Chính Thức</span>
-                                <h3 className="text-xl font-bold">Thương Kim Long</h3>
+                                <h3 className="text-xl font-bold">Kim Long Motor</h3>
                                 <p className="text-xs text-red-100 mt-1">
                                     Đánh giá thực tế từng dòng xe • Trợ giá nhà máy • Báo giá chi tiết
                                 </p>
@@ -109,7 +109,7 @@ const RealVideoSection = () => {
                                 <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-gray-200 dark:border-gray-800 flex items-center justify-between text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
                                     <span className="flex items-center gap-1 font-medium text-red-600 dark:text-red-400 truncate">
                                         <Youtube size={12} className="flex-shrink-0" />
-                                        <span className="truncate">Thương Kim Long</span>
+                                        <span className="truncate">Kim Long Motor</span>
                                     </span>
                                     <span className="font-semibold text-gray-700 dark:text-gray-300 group-hover:underline hidden sm:inline">
                                         Xem ngay →

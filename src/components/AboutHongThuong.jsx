@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, Award, ShieldCheck, MapPin, CheckCircle2, UserCheck, Wrench, Clock, Youtube, ExternalLink } from 'lucide-react';
+import { Phone, ShieldCheck, MapPin, CheckCircle2, Users, Wrench } from 'lucide-react';
 import { businessInfo, trustPillars } from '../data/hongthuong-data';
 
 const AboutHongThuong = () => {
@@ -9,23 +9,19 @@ const AboutHongThuong = () => {
                 {/* Intro Card */}
                 <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 rounded-3xl p-6 sm:p-10 border border-gray-200 dark:border-gray-700 shadow-xl mb-12">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                        {/* Profile Info */}
+                        {/* Team Info */}
                         <div className="lg:col-span-8 space-y-3 sm:space-y-4">
                             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 text-[11px] font-bold uppercase tracking-wider">
-                                <UserCheck size={12} />
-                                Giới Thiệu Chuyên Viên
+                                <Users size={12} />
+                                Đội Ngũ Tư Vấn
                             </div>
 
                             <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-gray-900 dark:text-white uppercase tracking-tight">
-                                HỒNG THƯƠNG – KIM LONG MOTOR
+                                KIM LONG MOTOR – ĐỘI NGŨ CHUYÊN GIA
                             </h2>
 
                             <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
-                                Xin chào quý khách hàng và các bác tài! Tôi là <strong>Hồng Thương</strong>, đại diện kinh doanh và tư vấn bán hàng chính thức các dòng xe thương mại <strong>KIM LONG MOTOR</strong> tại khu vực TP. Hồ Chí Minh và các tỉnh Miền Nam.
-                            </p>
-
-                            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 leading-relaxed">
-                                Với phương châm làm việc <em>"Tận tâm – Minh bạch – Uy tín trọn đời"</em>, tôi cam kết mang tới mức giá xuất xưởng trực tiếp tốt nhất từ Nhà máy Kim Long Motor (Khu kinh tế Chân Mây – Lăng Cô, Huế), hỗ trợ mọi thủ tục trả góp ngân hàng 85% nhanh chóng, bàn giao xe tận nơi và đồng hành hỗ trợ kỹ thuật bảo dưỡng 24/7.
+                                Đội ngũ chuyên viên kinh doanh và kỹ thuật của <strong>KIM LONG MOTOR</strong> tại khu vực TP. Hồ Chí Minh và các tỉnh Miền Nam mang tới mức giá xuất xưởng trực tiếp tốt nhất từ Nhà máy (Khu kinh tế Chân Mây – Lăng Cô, Huế), hỗ trợ trọn gói thủ tục trả góp ngân hàng 85%, bàn giao xe tận nơi và đồng hành hỗ trợ kỹ thuật bảo dưỡng 24/7 theo phương châm <em>"Tận tâm – Minh bạch – Uy tín trọn đời"</em>.
                             </p>
 
                             {/* Contact Badges */}
@@ -61,14 +57,14 @@ const AboutHongThuong = () => {
                             </div>
                         </div>
 
-                        {/* Image / Card Right */}
+                        {/* Expert Team Card */}
                         <div className="lg:col-span-4 bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-md text-center space-y-4">
-                            <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-tr from-red-600 to-red-400 text-white flex items-center justify-center font-black text-3xl shadow-lg">
-                                HT
+                            <div className="w-24 h-24 mx-auto rounded-full bg-linear-to-tr from-red-600 to-red-400 text-white flex items-center justify-center shadow-lg">
+                                <Users size={40} />
                             </div>
                             <div>
                                 <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                                    Hồng Thương
+                                    Đội Ngũ Chuyên Gia
                                 </h3>
                                 <p className="text-xs text-red-600 dark:text-red-400 font-bold uppercase mt-0.5">
                                     Kim Long Motor Miền Nam
@@ -76,15 +72,15 @@ const AboutHongThuong = () => {
                             </div>
                             <div className="space-y-2 text-xs text-left text-gray-600 dark:text-gray-300 border-t border-gray-100 dark:border-gray-700 pt-3">
                                 <div className="flex items-center gap-2">
-                                    <CheckCircle2 size={15} className="text-green-600 flex-shrink-0" />
+                                    <CheckCircle2 size={15} className="text-green-600 shrink-0" />
                                     <span>Hơn 8 năm kinh nghiệm xe thương mại</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <CheckCircle2 size={15} className="text-green-600 flex-shrink-0" />
+                                    <CheckCircle2 size={15} className="text-green-600 shrink-0" />
                                     <span>Hỗ trợ lái thử xe tận nhà</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <CheckCircle2 size={15} className="text-green-600 flex-shrink-0" />
+                                    <CheckCircle2 size={15} className="text-green-600 shrink-0" />
                                     <span>Tư vấn trả góp bao đậu hồ sơ 85%</span>
                                 </div>
                             </div>
@@ -93,7 +89,7 @@ const AboutHongThuong = () => {
                                 className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow transition-colors"
                             >
                                 <Phone size={15} />
-                                Gọi Gặp Hồng Thương
+                                Gọi Tư Vấn Ngay
                             </a>
                         </div>
                     </div>

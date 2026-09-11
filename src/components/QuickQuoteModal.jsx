@@ -52,7 +52,7 @@ const QuickQuoteModal = ({ isOpen, onClose, defaultCar = null }) => {
                                 Tiếp Nhận Thông Tin Thành Công!
                             </h4>
                             <p className="text-sm text-gray-600 dark:text-gray-300 max-w-md mx-auto">
-                                Cảm ơn quý khách <strong>{customerName || 'bạn'}</strong>. Chuyên viên <strong>Hồng Thương (0379.398.798)</strong> sẽ liên hệ ngay để gửi bảng tính lăn bánh, hồ sơ vay góp và ưu đãi tốt nhất cho dòng xe <strong>{currentCar?.name}</strong>.
+                                Cảm ơn quý khách <strong>{customerName || 'bạn'}</strong>. Chuyên viên <strong>Kim Long (0379.398.798)</strong> sẽ liên hệ ngay để gửi bảng tính lăn bánh, hồ sơ vay góp và ưu đãi tốt nhất cho dòng xe <strong>{currentCar?.name}</strong>.
                             </p>
                             <div className="pt-3 flex flex-col sm:flex-row gap-3 justify-center">
                                 <a
@@ -178,7 +178,7 @@ const QuickQuoteModal = ({ isOpen, onClose, defaultCar = null }) => {
                                 className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 uppercase tracking-wide mt-2 text-sm"
                             >
                                 <Send size={18} />
-                                Gửi Yêu Cầu Cho Hồng Thương
+                                Gửi Yêu Cầu Báo Giá
                             </button>
 
                             <div className="text-center text-xs text-gray-500 dark:text-gray-400 pt-1">

@@ -78,7 +78,7 @@ const VehicleModal = ({ car, isOpen, onClose, onOpenQuote }) => {
                         <div className="lg:col-span-5 flex flex-col justify-between h-full space-y-4">
                             <div className="bg-red-50 dark:bg-red-950/40 p-4 rounded-xl border border-red-200 dark:border-red-900/50">
                                 <div className="text-xs text-gray-600 dark:text-gray-400 uppercase font-medium">
-                                    Chính sách giá từ Hồng Thương:
+                                    Chính sách giá Kim Long:
                                 </div>
                                 <div className="text-2xl sm:text-3xl font-extrabold text-red-600 dark:text-red-400 mt-1">
                                     {car.price}
@@ -167,7 +167,7 @@ const VehicleModal = ({ car, isOpen, onClose, onOpenQuote }) => {
                                     Yêu Cầu Báo Giá Lăn Bánh & Đăng Ký Lái Thử
                                 </h3>
                                 <p className="text-xs sm:text-sm text-red-100 mt-1">
-                                    Hồng Thương sẽ liên hệ gửi bảng tính chi tiết lăn bánh xe <span className="font-bold underline">{car.name}</span> trong 5 phút!
+                                    Kim Long sẽ liên hệ gửi bảng tính chi tiết lăn bánh xe <span className="font-bold underline">{car.name}</span> trong 5 phút!
                                 </p>
                             </div>
 
@@ -176,7 +176,7 @@ const VehicleModal = ({ car, isOpen, onClose, onOpenQuote }) => {
                                     <CheckCircle2 size={48} className="text-green-600 mx-auto mb-2" />
                                     <h4 className="text-lg font-bold text-gray-900">Gửi Yêu Cầu Thành Công!</h4>
                                     <p className="text-sm text-gray-600 mt-1">
-                                        Cảm ơn quý khách! Chuyên viên <strong>Hồng Thương (0379.398.798)</strong> sẽ liên hệ ngay để gửi báo giá ưu đãi tốt nhất.
+                                        Cảm ơn quý khách! Chuyên viên <strong>Kim Long (0379.398.798)</strong> sẽ liên hệ ngay để gửi báo giá ưu đãi tốt nhất.
                                     </p>
                                     <div className="mt-4 flex justify-center gap-3">
                                         <a

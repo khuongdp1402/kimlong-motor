@@ -1,12 +1,12 @@
-// Dữ liệu độc quyền và cá nhân hóa cho KIM LONG HỒNG THƯƠNG
+// Dữ liệu độc quyền và cá nhân hóa cho KIM LONG MOTOR
 // Hotline: 0379.398.798 - Dịch vụ: 0347.347.747
 // Địa chỉ: 85 Đường Dẫn Cao Tốc HCM - Trung Lương, Xã Tân Nhựt, TP. HCM
 
 export const businessInfo = {
-    brandName: "KIM LONG HỒNG THƯƠNG",
-    shortName: "Hồng Thương Kim Long",
+    brandName: "KIM LONG MOTOR",
+    shortName: "Kim Long Motor",
     companyTitle: "ĐẠI LÝ PHÂN PHỐI XE THƯƠNG MẠI KIM LONG MOTOR CHÍNH HÃNG",
-    consultantName: "Hồng Thương",
+    consultantName: "Kim Long Motor",
     consultantRole: "Phụ trách Kinh doanh & Báo giá trực tiếp Nhà máy",
     hotlineSales: "0379.398.798",
     hotlineSalesRaw: "0379398798",
@@ -414,12 +414,12 @@ export const carsData = [
     }
 ];
 
-// Danh sách Video thực tế từ kênh Youtube của Hồng Thương
+// Danh sách Video thực tế từ kênh Youtube của Kim Long Motor
 export const realVideos = [
     {
         id: "NYt3VQdhqMg",
         title: "Xe Điện 16 Chỗ KIMMAI9EV Chính Thức Nhận Cọc Với Mức Giá Ưu Đãi",
-        author: "Thương Kim Long",
+        author: "Kim Long Motor",
         youtubeUrl: "https://www.youtube.com/watch?v=NYt3VQdhqMg",
         thumbnailUrl: "https://i.ytimg.com/vi/NYt3VQdhqMg/hqdefault.jpg",
         tag: "Xe Điện 16 Chỗ",
@@ -428,7 +428,7 @@ export const realVideos = [
     {
         id: "ofepp6PDuC4",
         title: "Kim Mai 9 bản 16 ghế động cơ Yuchai đã có hàng cho anh em",
-        author: "Thương Kim Long",
+        author: "Kim Long Motor",
         youtubeUrl: "https://www.youtube.com/watch?v=ofepp6PDuC4",
         thumbnailUrl: "https://i.ytimg.com/vi/ofepp6PDuC4/hqdefault.jpg",
         tag: "Động Cơ Yuchai",
@@ -437,7 +437,7 @@ export const realVideos = [
     {
         id: "yCzS8gzMsRU",
         title: "Xe Bus Kim Long từ 22 đến 34 giường đang có ưu đãi khủng",
-        author: "Thương Kim Long",
+        author: "Kim Long Motor",
         youtubeUrl: "https://www.youtube.com/watch?v=yCzS8gzMsRU",
         thumbnailUrl: "https://i.ytimg.com/vi/yCzS8gzMsRU/hqdefault.jpg",
         tag: "Xe Giường Nằm",
@@ -446,7 +446,7 @@ export const realVideos = [
     {
         id: "iDiMaWMdIDk",
         title: "Xe 29 chỗ Kim Long được trợ giá tốt cho khách hàng đầu tư",
-        author: "Thương Kim Long",
+        author: "Kim Long Motor",
         youtubeUrl: "https://www.youtube.com/watch?v=iDiMaWMdIDk",
         thumbnailUrl: "https://i.ytimg.com/vi/iDiMaWMdIDk/hqdefault.jpg",
         tag: "Xe Ghế Universe",
@@ -454,7 +454,7 @@ export const realVideos = [
     }
 ];
 
-// Cam kết & lý do chọn Hồng Thương Kim Long
+// Cam kết & lý do chọn Kim Long Motor
 export const trustPillars = [
     {
         icon: "ShieldCheck",

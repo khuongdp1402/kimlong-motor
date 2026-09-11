@@ -52,7 +52,7 @@ const Home = () => {
 
       <main>
         {/* Hero Banner Slider */}
-        <HeroSlider onOpenQuoteModal={() => handleOpenQuote(null)} />
+        <HeroSlider />
 
         {/* Vehicle Catalog with Tabs (Giường Nằm, Xe Ghế, Van Điện, Xe Tải, Đầu Kéo Điện) */}
         <VehicleCatalogSection

@@ -1,45 +1,32 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
-import { Sun, Moon, Menu, X, Phone, Youtube, Calculator } from 'lucide-react';
+import { Sun, Moon, Menu, X, Phone, Calculator } from 'lucide-react';
 import { businessInfo } from '../data/hongthuong-data';
 
 const Navbar = ({ onOpenQuoteModal }) => {
     const [isOpen, setIsOpen] = useState(false);
     const { theme, toggleTheme } = useTheme();
+    const navigate = useNavigate();
 
     const scrollTo = (id) => {
         setIsOpen(false);
         const element = document.getElementById(id);
         if (element) {
             element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            navigate('/');
         }
+    };
+
+    const goTo = (path) => {
+        setIsOpen(false);
+        navigate(path);
     };
 
     return (
         <header className="fixed w-full z-50 top-0 left-0 shadow-md">
-            {/* Ultra-slim Top Strip */}
-            <div className="bg-gray-950 text-gray-300 text-[11px] py-1 px-4 border-b border-gray-800/80 hidden md:block">
-                <div className="max-w-7xl mx-auto flex justify-between items-center">
-                    <div className="flex items-center space-x-4">
-                        <span>📍 85 Đường Dẫn Cao Tốc HCM - Trung Lương, Tân Nhựt, HCM</span>
-                        <span className="text-gray-600">|</span>
-                        <span>Dịch vụ kỹ thuật: <a href={`tel:${businessInfo.hotlineServiceRaw}`} className="font-bold text-white hover:text-red-400">{businessInfo.hotlineService}</a></span>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <a href={businessInfo.youtubeUrl} target="_blank" rel="noopener noreferrer" className="hover:text-red-400 flex items-center gap-1 transition-colors">
-                            <Youtube size={12} className="text-red-500" /> YouTube
-                        </a>
-                        <a href={businessInfo.tiktokUrl} target="_blank" rel="noopener noreferrer" className="hover:text-pink-400 flex items-center gap-1 transition-colors">
-                            <span>🎵</span> TikTok
-                        </a>
-                        <a href={`tel:${businessInfo.hotlineSalesRaw}`} className="font-bold text-red-400 hover:text-red-300 flex items-center gap-1">
-                            <Phone size={11} /> Hotline: {businessInfo.hotlineSales}
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            {/* Main Navbar - Compact Height h-14 / h-16 */}
+            {/* Single-line Navbar - Compact Height h-14 / h-16 */}
             <nav className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200/80 dark:border-gray-800 transition-colors duration-200">
                 <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-14 sm:h-16">
@@ -59,10 +46,7 @@ const Navbar = ({ onOpenQuoteModal }) => {
                                 />
                                 <div className="flex items-center space-x-2">
                                     <span className="text-sm sm:text-base font-black tracking-tight text-red-600 dark:text-red-500 uppercase whitespace-nowrap">
-                                        KIM LONG HỒNG THƯƠNG
-                                    </span>
-                                    <span className="hidden xl:inline-block text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded border border-gray-200 dark:border-gray-700">
-                                        Chính Hãng
+                                        KIM LONG MOTOR
                                     </span>
                                 </div>
                             </button>
@@ -86,19 +70,19 @@ const Navbar = ({ onOpenQuoteModal }) => {
                                 onClick={() => scrollTo('bang-bao-gia')}
                                 className="text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
                             >
-                                Báo Giá Lăn Bánh
+                                Dịch Vụ
                             </button>
                             <button
-                                onClick={() => scrollTo('video-thuc-te')}
+                                onClick={() => goTo('/news')}
                                 className="text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
                             >
-                                Video Thực Tế
+                                Tin Tức
                             </button>
                             <button
                                 onClick={() => scrollTo('ve-hong-thuong')}
                                 className="text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
                             >
-                                Về Hồng Thương
+                                Về Chúng Tôi
                             </button>
                         </div>
 
@@ -163,19 +147,19 @@ const Navbar = ({ onOpenQuoteModal }) => {
                             onClick={() => scrollTo('bang-bao-gia')}
                             className="w-full text-left py-1.5 text-xs font-bold text-gray-800 dark:text-gray-200 hover:text-red-600 uppercase cursor-pointer"
                         >
-                            Báo Giá Lăn Bánh
+                            Dịch Vụ
                         </button>
                         <button
-                            onClick={() => scrollTo('video-thuc-te')}
+                            onClick={() => goTo('/news')}
                             className="w-full text-left py-1.5 text-xs font-bold text-gray-800 dark:text-gray-200 hover:text-red-600 uppercase cursor-pointer"
                         >
-                            Video Thực Tế
+                            Tin Tức
                         </button>
                         <button
                             onClick={() => scrollTo('ve-hong-thuong')}
                             className="w-full text-left py-1.5 text-xs font-bold text-gray-800 dark:text-gray-200 hover:text-red-600 uppercase cursor-pointer"
                         >
-                            Về Hồng Thương
+                            Về Chúng Tôi
                         </button>
 
                         <div className="pt-2 border-t border-gray-200 dark:border-gray-800 flex gap-2">

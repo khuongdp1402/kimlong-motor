@@ -1,18 +1,17 @@
 import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
-import { Phone, ChevronRight, Calculator, ShieldCheck, Zap, Award } from 'lucide-react';
+import { ChevronRight, Zap } from 'lucide-react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
-import { businessInfo } from '../data/hongthuong-data';
 
 const slides = [
     {
         id: 1,
         image: '/images/banners/slider-1.jpg',
         badge: 'Đại Lý Phân Phối Chính Hãng',
-        title: 'KIM LONG HỒNG THƯƠNG',
+        title: 'KIM LONG MOTOR',
         subtitle: 'Xe Khách Giường Nằm • Xe Ghế • Xe Van Điện • Xe Tải • Xe Đầu Kéo Điện',
         highlight: 'Giá gốc xuất xưởng • Hỗ trợ vay ngân hàng 85% • Giao xe toàn quốc',
         targetId: 'danh-muc-xe'
@@ -46,7 +45,7 @@ const slides = [
     }
 ];
 
-const HeroSlider = ({ onOpenQuoteModal }) => {
+const HeroSlider = () => {
     const scrollTo = (id) => {
         const el = document.getElementById(id);
         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -71,9 +70,8 @@ const HeroSlider = ({ onOpenQuoteModal }) => {
             >
                 {slides.map((slide) => (
                     <SwiperSlide key={slide.id}>
-                        {/* Slide Container: Flex to Bottom */}
-                        <div className="relative h-[480px] sm:h-[540px] lg:h-[600px] flex flex-col justify-end overflow-hidden">
-                            {/* Clear, Unobstructed Vehicle Photo */}
+                        {/* Clean, Unobstructed Vehicle Photo - Full Height, No Blocking Box */}
+                        <div className="relative h-[380px] sm:h-[500px] lg:h-[640px] overflow-hidden">
                             <img
                                 src={slide.image}
                                 alt={slide.title}
@@ -83,79 +81,32 @@ const HeroSlider = ({ onOpenQuoteModal }) => {
                                 }}
                             />
 
-                            {/* Borderless Gradient Fade from Bottom Up */}
-                            <div className="absolute inset-x-0 bottom-0 h-64 sm:h-72 bg-gradient-to-t from-black/90 via-black/55 to-transparent pointer-events-none"></div>
+                            {/* Subtle bottom gradient so caption text stays readable over the photo */}
+                            <div className="absolute inset-x-0 bottom-0 h-40 sm:h-48 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none" />
 
-                            {/* Bottom Info Content - Clean, Borderless, Well-Proportioned */}
-                            <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 pb-9 sm:pb-11 text-center text-white">
+                            {/* Minimal Caption Overlaid on Image - Doesn't Cover the Banner */}
+                            <div className="absolute inset-x-0 bottom-0 px-4 pb-5 sm:pb-8 text-center text-white">
                                 <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-red-600/90 text-white text-[11px] font-bold uppercase tracking-wider mb-2 shadow-sm">
                                     <Zap size={12} className="text-yellow-300" />
                                     {slide.badge}
                                 </div>
 
-                                <h1 className="text-lg sm:text-2xl lg:text-3xl font-extrabold uppercase tracking-tight text-white leading-tight drop-shadow-md">
+                                <h1 className="text-lg sm:text-2xl lg:text-3xl font-extrabold uppercase tracking-tight leading-tight drop-shadow-md">
                                     {slide.title}
                                 </h1>
 
-                                <p className="mt-1.5 text-xs sm:text-sm text-gray-200 font-medium max-w-2xl mx-auto drop-shadow">
-                                    {slide.subtitle}
-                                </p>
-
-                                <div className="mt-1.5 text-[11px] sm:text-xs text-yellow-300 font-semibold drop-shadow">
-                                    ✓ {slide.highlight}
-                                </div>
-
-                                {/* Action Buttons */}
-                                <div className="mt-4 flex flex-wrap justify-center gap-2.5">
-                                    <button
-                                        onClick={() => scrollTo(slide.targetId)}
-                                        className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-xs uppercase tracking-wider transition-all shadow-md flex items-center gap-1.5"
-                                    >
-                                        Xem Dòng Xe
-                                        <ChevronRight size={14} />
-                                    </button>
-                                    <button
-                                        onClick={onOpenQuoteModal}
-                                        className="bg-white hover:bg-gray-100 text-gray-900 font-bold py-2 px-4 rounded-lg text-xs uppercase tracking-wider transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
-                                    >
-                                        <Calculator size={14} className="text-red-600" />
-                                        Báo Giá Nhanh
-                                    </button>
-                                    <a
-                                        href={`tel:${businessInfo.hotlineSalesRaw}`}
-                                        className="bg-black/50 hover:bg-black/75 text-white font-bold py-2 px-3.5 rounded-lg text-xs border border-white/20 transition-all flex items-center gap-1.5 shadow-sm"
-                                    >
-                                        <Phone size={13} className="text-red-400" />
-                                        Hotline: {businessInfo.hotlineSales}
-                                    </a>
-                                </div>
+                                <button
+                                    onClick={() => scrollTo(slide.targetId)}
+                                    className="mt-3.5 inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-6 rounded-lg text-xs sm:text-sm uppercase tracking-wider transition-all shadow-md"
+                                >
+                                    Khám Phá Dòng Xe
+                                    <ChevronRight size={14} />
+                                </button>
                             </div>
                         </div>
                     </SwiperSlide>
                 ))}
             </Swiper>
-
-            {/* Quick Benefits Strip */}
-            <div className="bg-gray-950 text-white border-y border-gray-800 py-2.5 px-4">
-                <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
-                    <div className="flex items-center justify-center gap-1.5">
-                        <Award size={16} className="text-red-500 flex-shrink-0" />
-                        <span className="text-xs font-semibold">Giá Xuất Xưởng Nhà Máy</span>
-                    </div>
-                    <div className="flex items-center justify-center gap-1.5">
-                        <ShieldCheck size={16} className="text-red-500 flex-shrink-0" />
-                        <span className="text-xs font-semibold">Hỗ Trợ Vay Ngân Hàng 85%</span>
-                    </div>
-                    <div className="flex items-center justify-center gap-1.5">
-                        <Zap size={16} className="text-red-500 flex-shrink-0" />
-                        <span className="text-xs font-semibold">Sẵn Xe Giao Toàn Quốc</span>
-                    </div>
-                    <div className="flex items-center justify-center gap-1.5">
-                        <Phone size={16} className="text-red-500 flex-shrink-0" />
-                        <span className="text-xs font-semibold">Hotline: {businessInfo.hotlineSales}</span>
-                    </div>
-                </div>
-            </div>
         </section>
     );
 };
