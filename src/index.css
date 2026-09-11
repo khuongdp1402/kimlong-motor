@@ -1,4 +1,11 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* Tailwind v4 uses CSS-first config: media-query dark mode is the default,
+   but this app toggles dark mode via a `.dark` class on <html> (see
+   src/context/ThemeContext.jsx), so the `dark:` variant must be re-pointed
+   at that class instead of `prefers-color-scheme`. Without this, every
+   `dark:*` utility in the app is silently inert. */
 @custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {

@@ -141,8 +141,7 @@ const ContactForm = () => {
                                 </div>
                                 <div className="ml-4">
                                     <h4 className="text-lg font-semibold mb-1">Hotline</h4>
-                                    <p className="text-red-100">1900 xxxx</p>
-                                    <p className="text-red-100">0123 456 789</p>
+                                    <p className="text-red-100">0379.398.798</p>
                                 </div>
                             </div>
 
@@ -154,8 +153,7 @@ const ContactForm = () => {
                                 </div>
                                 <div className="ml-4">
                                     <h4 className="text-lg font-semibold mb-1">Email</h4>
-                                    <p className="text-red-100">info@kimlongmotor.com</p>
-                                    <p className="text-red-100">sales@kimlongmotor.com</p>
+                                    <p className="text-red-100">info@miennamgroup.com.vn</p>
                                 </div>
                             </div>
 
@@ -171,8 +169,8 @@ const ContactForm = () => {
                                 <div className="ml-4">
                                     <h4 className="text-lg font-semibold mb-1">Địa chỉ</h4>
                                     <p className="text-red-100">
-                                        Khu kinh tế Chân Mây - Lăng Cô<br />
-                                        Thừa Thiên Huế, Việt Nam
+                                        1368 Quốc lộ 1A, P. Thạnh Xuân<br />
+                                        Quận 12, TP. Hồ Chí Minh
                                     </p>
                                 </div>
                             </div>

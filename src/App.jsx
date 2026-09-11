@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import HeroSlider from './components/HeroSlider';
 import VehicleCatalogSection from './components/VehicleCatalogSection';
@@ -10,8 +11,23 @@ import FloatingButtons from './components/FloatingButtons';
 import VehicleModal from './components/VehicleModal';
 import QuickQuoteModal from './components/QuickQuoteModal';
 
-function App() {
-  // Modal state for Vehicle Details Popup ("CHỈ HIỆN POPUP CHỨ KO MỞ TRANG CHI TIẾT")
+import ProductDetail from './pages/ProductDetail';
+import ProductCategory from './pages/ProductCategory';
+import NewsListPage from './pages/NewsListPage';
+import NewsDetailPage from './pages/NewsDetailPage';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
+
+import AdminLogin from './pages/admin/AdminLogin';
+import AdminLayout from './pages/admin/AdminLayout';
+import AdminProducts from './pages/admin/AdminProducts';
+import AdminArticles from './pages/admin/AdminArticles';
+import AdminTestimonials from './pages/admin/AdminTestimonials';
+import AdminLeads from './pages/admin/AdminLeads';
+import { AdminAuthProvider } from './context/AdminAuthContext';
+
+const Home = () => {
+  // Modal state for Vehicle Details Popup
   const [selectedCarForDetail, setSelectedCarForDetail] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
@@ -75,6 +91,31 @@ function App() {
         defaultCar={selectedCarForQuote}
       />
     </div>
+  );
+};
+
+function App() {
+  return (
+    <AdminAuthProvider>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/category/:slug" element={<ProductCategory />} />
+        <Route path="/news" element={<NewsListPage />} />
+        <Route path="/news/:id" element={<NewsDetailPage />} />
+        <Route path="/gioi-thieu" element={<AboutPage />} />
+        <Route path="/lien-he" element={<ContactPage />} />
+
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminProducts />} />
+          <Route path="products" element={<AdminProducts />} />
+          <Route path="articles" element={<AdminArticles />} />
+          <Route path="testimonials" element={<AdminTestimonials />} />
+          <Route path="leads" element={<AdminLeads />} />
+        </Route>
+      </Routes>
+    </AdminAuthProvider>
   );
 }
 

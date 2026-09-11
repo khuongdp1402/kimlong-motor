@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTheme } from '../context/ThemeContext';
-import { Sun, Moon, Menu, X, Phone, Youtube, Calculator, MessageCircle } from 'lucide-react';
+import { Sun, Moon, Menu, X, Phone, Youtube, Calculator } from 'lucide-react';
 import { businessInfo } from '../data/hongthuong-data';
 
 const Navbar = ({ onOpenQuoteModal }) => {
@@ -47,7 +47,7 @@ const Navbar = ({ onOpenQuoteModal }) => {
                         <div className="flex-shrink-0 flex items-center">
                             <button
                                 onClick={() => scrollTo('hero')}
-                                className="flex items-center space-x-2.5 text-left focus:outline-none group"
+                                className="flex items-center space-x-2.5 text-left focus:outline-none group cursor-pointer"
                             >
                                 <img
                                     src="/images/logo-official.png"
@@ -72,31 +72,31 @@ const Navbar = ({ onOpenQuoteModal }) => {
                         <div className="hidden lg:flex items-center space-x-5 xl:space-x-6">
                             <button
                                 onClick={() => scrollTo('hero')}
-                                className="text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 text-xs font-bold uppercase tracking-wider transition-colors"
+                                className="text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
                             >
                                 Trang Chủ
                             </button>
                             <button
                                 onClick={() => scrollTo('danh-muc-xe')}
-                                className="text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 text-xs font-bold uppercase tracking-wider transition-colors"
+                                className="text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
                             >
                                 Danh Mục Xe
                             </button>
                             <button
                                 onClick={() => scrollTo('bang-bao-gia')}
-                                className="text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 text-xs font-bold uppercase tracking-wider transition-colors"
+                                className="text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
                             >
                                 Báo Giá Lăn Bánh
                             </button>
                             <button
                                 onClick={() => scrollTo('video-thuc-te')}
-                                className="text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 text-xs font-bold uppercase tracking-wider transition-colors"
+                                className="text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
                             >
                                 Video Thực Tế
                             </button>
                             <button
                                 onClick={() => scrollTo('ve-hong-thuong')}
-                                className="text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 text-xs font-bold uppercase tracking-wider transition-colors"
+                                className="text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
                             >
                                 Về Hồng Thương
                             </button>
@@ -106,7 +106,7 @@ const Navbar = ({ onOpenQuoteModal }) => {
                         <div className="flex items-center space-x-2 sm:space-x-3">
                             <button
                                 onClick={onOpenQuoteModal}
-                                className="hidden sm:flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2 px-3.5 rounded-lg shadow-sm transition-all hover:scale-105 uppercase tracking-wider"
+                                className="hidden sm:flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2 px-3.5 rounded-lg shadow-sm transition-all hover:scale-105 uppercase tracking-wider cursor-pointer"
                             >
                                 <Calculator size={14} />
                                 Báo Giá
@@ -123,7 +123,7 @@ const Navbar = ({ onOpenQuoteModal }) => {
 
                             <button
                                 onClick={toggleTheme}
-                                className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none transition-colors"
+                                className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none transition-colors cursor-pointer"
                                 title={theme === 'light' ? 'Chuyển sang chế độ tối' : 'Chuyển sang chế độ sáng'}
                                 aria-label="Đổi giao diện"
                             >
@@ -135,7 +135,7 @@ const Navbar = ({ onOpenQuoteModal }) => {
                                 <button
                                     onClick={() => setIsOpen(!isOpen)}
                                     type="button"
-                                    className="p-1.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
+                                    className="p-1.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none cursor-pointer"
                                 >
                                     {!isOpen ? <Menu size={22} /> : <X size={22} />}
                                 </button>
@@ -149,31 +149,31 @@ const Navbar = ({ onOpenQuoteModal }) => {
                     <div className="lg:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 shadow-xl px-4 py-3 space-y-2">
                         <button
                             onClick={() => scrollTo('hero')}
-                            className="w-full text-left py-1.5 text-xs font-bold text-gray-800 dark:text-gray-200 hover:text-red-600 uppercase"
+                            className="w-full text-left py-1.5 text-xs font-bold text-gray-800 dark:text-gray-200 hover:text-red-600 uppercase cursor-pointer"
                         >
                             Trang Chủ
                         </button>
                         <button
                             onClick={() => scrollTo('danh-muc-xe')}
-                            className="w-full text-left py-1.5 text-xs font-bold text-gray-800 dark:text-gray-200 hover:text-red-600 uppercase"
+                            className="w-full text-left py-1.5 text-xs font-bold text-gray-800 dark:text-gray-200 hover:text-red-600 uppercase cursor-pointer"
                         >
                             Danh Mục Xe
                         </button>
                         <button
                             onClick={() => scrollTo('bang-bao-gia')}
-                            className="w-full text-left py-1.5 text-xs font-bold text-gray-800 dark:text-gray-200 hover:text-red-600 uppercase"
+                            className="w-full text-left py-1.5 text-xs font-bold text-gray-800 dark:text-gray-200 hover:text-red-600 uppercase cursor-pointer"
                         >
                             Báo Giá Lăn Bánh
                         </button>
                         <button
                             onClick={() => scrollTo('video-thuc-te')}
-                            className="w-full text-left py-1.5 text-xs font-bold text-gray-800 dark:text-gray-200 hover:text-red-600 uppercase"
+                            className="w-full text-left py-1.5 text-xs font-bold text-gray-800 dark:text-gray-200 hover:text-red-600 uppercase cursor-pointer"
                         >
                             Video Thực Tế
                         </button>
                         <button
                             onClick={() => scrollTo('ve-hong-thuong')}
-                            className="w-full text-left py-1.5 text-xs font-bold text-gray-800 dark:text-gray-200 hover:text-red-600 uppercase"
+                            className="w-full text-left py-1.5 text-xs font-bold text-gray-800 dark:text-gray-200 hover:text-red-600 uppercase cursor-pointer"
                         >
                             Về Hồng Thương
                         </button>
@@ -184,7 +184,7 @@ const Navbar = ({ onOpenQuoteModal }) => {
                                     setIsOpen(false);
                                     onOpenQuoteModal();
                                 }}
-                                className="flex-1 bg-red-600 text-white font-bold py-2 rounded-lg text-center text-xs uppercase"
+                                className="flex-1 bg-red-600 text-white font-bold py-2 rounded-lg text-center text-xs uppercase cursor-pointer"
                             >
                                 Nhận Báo Giá
                             </button>

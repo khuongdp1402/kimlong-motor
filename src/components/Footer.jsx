@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, MapPin, Youtube, Wrench, ShieldCheck, Mail, ExternalLink } from 'lucide-react';
+import { Phone, MapPin, Youtube, Wrench, ShieldCheck, ExternalLink } from 'lucide-react';
 import { businessInfo, carCategories } from '../data/hongthuong-data';
 
 const Footer = () => {
@@ -53,7 +53,7 @@ const Footer = () => {
                                 <li key={cat.id}>
                                     <button
                                         onClick={() => scrollTo('danh-muc-xe')}
-                                        className="hover:text-red-400 transition-colors text-left"
+                                        className="hover:text-red-400 transition-colors text-left cursor-pointer"
                                     >
                                         • {cat.name}
                                     </button>
@@ -158,13 +158,13 @@ const Footer = () => {
                         © {new Date().getFullYear()} KIM LONG HỒNG THƯƠNG. Bản quyền đại lý phân phối chính thức Kim Long Motor.
                     </div>
                     <div className="flex gap-4">
-                        <button onClick={() => scrollTo('danh-muc-xe')} className="hover:text-gray-300">
+                        <button onClick={() => scrollTo('danh-muc-xe')} className="hover:text-gray-300 cursor-pointer">
                             Danh Mục Xe
                         </button>
-                        <button onClick={() => scrollTo('bang-bao-gia')} className="hover:text-gray-300">
+                        <button onClick={() => scrollTo('bang-bao-gia')} className="hover:text-gray-300 cursor-pointer">
                             Báo Giá Lăn Bánh
                         </button>
-                        <button onClick={() => scrollTo('ve-hong-thuong')} className="hover:text-gray-300">
+                        <button onClick={() => scrollTo('ve-hong-thuong')} className="hover:text-gray-300 cursor-pointer">
                             Về Hồng Thương
                         </button>
                     </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Phone, MessageCircle, ArrowUp, Youtube } from 'lucide-react';
+import { Phone, ArrowUp, Youtube } from 'lucide-react';
 import { businessInfo } from '../data/hongthuong-data';
 
 const FloatingButtons = () => {
@@ -26,7 +26,7 @@ const FloatingButtons = () => {
                     <Phone size={18} />
                 </div>
                 <div>
-                    <div className="text-[10px] uppercase font-bold text-red-100 tracking-wider">Hotline Hồng Thương</div>
+                    <div className="text-[10px] uppercase font-bold text-red-100 tracking-wider">Hotline Tư Vấn</div>
                     <a href={`tel:${businessInfo.hotlineSalesRaw}`} className="text-sm font-black tracking-wide">
                         {businessInfo.hotlineSales}
                     </a>
@@ -69,7 +69,7 @@ const FloatingButtons = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 animate-pulse group relative"
-                    aria-label="Chat Zalo Hồng Thương"
+                    aria-label="Chat Zalo"
                 >
                     <span className="font-bold text-xs tracking-tighter">ZALO</span>
                     <span className="absolute right-14 bg-gray-900 text-white text-xs font-semibold px-2.5 py-1 rounded shadow whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
@@ -85,7 +85,7 @@ const FloatingButtons = () => {
                 >
                     <Phone size={22} />
                     <span className="absolute right-16 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-md shadow whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                        Gọi Hồng Thương: {businessInfo.hotlineSales}
+                        Gọi tư vấn: {businessInfo.hotlineSales}
                     </span>
                 </a>
 

@@ -2,17 +2,34 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { getNewsById, newsArticles } from '../data/news-updated';
+import { useApiData } from '../hooks/useApiData';
+import { getArticles } from '../api/client';
+import { getNewsCategoryLabel } from '../data/newsCategories';
 import { ArrowLeft, Calendar, User, Tag } from 'lucide-react';
 
 const NewsDetailPage = () => {
     const { id } = useParams();
-    const article = getNewsById(id);
+    const { data: articles, loading } = useApiData(getArticles, []);
+    const article = (articles || []).find((a) => String(a.id) === String(id) || a.slug === id);
 
     // Get related articles (same category, exclude current)
-    const relatedArticles = newsArticles
+    const relatedArticles = (articles || [])
         .filter(n => n.category === article?.category && n.id !== article?.id)
         .slice(0, 3);
+
+    if (loading) {
+        return (
+            <>
+                <Navbar />
+                <div className="pt-24 pb-16 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300">
+                    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500 dark:text-gray-400">
+                        Đang tải...
+                    </div>
+                </div>
+                <Footer />
+            </>
+        );
+    }
 
     if (!article) {
         return (
@@ -39,21 +56,12 @@ const NewsDetailPage = () => {
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
+        if (Number.isNaN(date.getTime())) return dateString || '';
         return date.toLocaleDateString('vi-VN', {
             year: 'numeric',
             month: 'long',
             day: 'numeric'
         });
-    };
-
-    const getCategoryName = (category) => {
-        const categories = {
-            'tin-tuc': 'Tin tức',
-            'kien-thuc': 'Kiến thức',
-            'khuyen-mai': 'Khuyến mãi',
-            'su-kien': 'Sự kiện'
-        };
-        return categories[category] || category;
     };
 
     return (
@@ -73,21 +81,20 @@ const NewsDetailPage = () => {
                     {/* Article Header */}
                     <article className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-colors duration-300">
                         {/* Featured Image */}
-                        <div className="relative h-96 w-full">
-                            <img
-                                src={article.image}
-                                alt={article.title}
-                                className="w-full h-full object-cover"
-                                onError={(e) => {
-                                    e.target.src = 'https://via.placeholder.com/800x400?text=News+Image'
-                                }}
-                            />
-                            <div className="absolute top-4 right-4">
-                                <span className="bg-red-600 text-white text-sm font-bold px-4 py-2 rounded-full">
-                                    {getCategoryName(article.category)}
-                                </span>
+                        {article.image && (
+                            <div className="relative h-96 w-full">
+                                <img
+                                    src={article.image}
+                                    alt={article.title}
+                                    className="w-full h-full object-cover"
+                                />
+                                <div className="absolute top-4 right-4">
+                                    <span className="bg-red-600 text-white text-sm font-bold px-4 py-2 rounded-full">
+                                        {getNewsCategoryLabel(article.category)}
+                                    </span>
+                                </div>
                             </div>
-                        </div>
+                        )}
 
                         {/* Article Content */}
                         <div className="p-8 md:p-12">
@@ -108,16 +115,18 @@ const NewsDetailPage = () => {
                                 </div>
                                 <div className="flex items-center text-gray-600 dark:text-gray-400">
                                     <Tag size={18} className="mr-2" />
-                                    <span className="text-sm">{getCategoryName(article.category)}</span>
+                                    <span className="text-sm">{getNewsCategoryLabel(article.category)}</span>
                                 </div>
                             </div>
 
                             {/* Excerpt */}
-                            <div className="mb-8 p-6 bg-gray-50 dark:bg-gray-700 rounded-lg border-l-4 border-red-600">
-                                <p className="text-lg text-gray-700 dark:text-gray-300 italic leading-relaxed">
-                                    {article.excerpt}
-                                </p>
-                            </div>
+                            {article.excerpt && (
+                                <div className="mb-8 p-6 bg-gray-50 dark:bg-gray-700 rounded-lg border-l-4 border-red-600">
+                                    <p className="text-lg text-gray-700 dark:text-gray-300 italic leading-relaxed">
+                                        {article.excerpt}
+                                    </p>
+                                </div>
+                            )}
 
                             {/* Article Body */}
                             <div
@@ -130,6 +139,15 @@ const NewsDetailPage = () => {
                                     prose-li:text-gray-700 dark:prose-li:text-gray-300"
                                 dangerouslySetInnerHTML={{ __html: article.content }}
                             />
+
+                            {/* Additional gallery images, if any */}
+                            {article.gallery && article.gallery.length > 1 && (
+                                <div className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-4">
+                                    {article.gallery.slice(1).map((img, idx) => (
+                                        <img key={idx} src={img} alt={`${article.title} - ${idx + 2}`} className="w-full h-40 object-cover rounded-lg" />
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </article>
 
@@ -143,17 +161,18 @@ const NewsDetailPage = () => {
                                 {relatedArticles.map((related) => (
                                     <Link
                                         key={related.id}
-                                        to={`/news/${related.id}`}
+                                        to={`/news/${related.slug || related.id}`}
                                         className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-105"
                                     >
-                                        <img
-                                            src={related.image}
-                                            alt={related.title}
-                                            className="w-full h-40 object-cover"
-                                            onError={(e) => {
-                                                e.target.src = 'https://via.placeholder.com/400x200?text=News'
-                                            }}
-                                        />
+                                        {related.image ? (
+                                            <img
+                                                src={related.image}
+                                                alt={related.title}
+                                                className="w-full h-40 object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-40 bg-gray-200 dark:bg-gray-700" />
+                                        )}
                                         <div className="p-4">
                                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2 hover:text-red-600 dark:hover:text-red-400 transition-colors">
                                                 {related.title}

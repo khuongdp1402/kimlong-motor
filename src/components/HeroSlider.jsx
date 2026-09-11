@@ -83,7 +83,7 @@ const HeroSlider = ({ onOpenQuoteModal }) => {
                                 }}
                             />
 
-                            {/* Borderless Gradient Fade from Bottom Up (Mờ dần nhẹ, KHÔNG VIỀN) */}
+                            {/* Borderless Gradient Fade from Bottom Up */}
                             <div className="absolute inset-x-0 bottom-0 h-64 sm:h-72 bg-gradient-to-t from-black/90 via-black/55 to-transparent pointer-events-none"></div>
 
                             {/* Bottom Info Content - Clean, Borderless, Well-Proportioned */}
@@ -116,7 +116,7 @@ const HeroSlider = ({ onOpenQuoteModal }) => {
                                     </button>
                                     <button
                                         onClick={onOpenQuoteModal}
-                                        className="bg-white hover:bg-gray-100 text-gray-900 font-bold py-2 px-4 rounded-lg text-xs uppercase tracking-wider transition-all shadow-md flex items-center gap-1.5"
+                                        className="bg-white hover:bg-gray-100 text-gray-900 font-bold py-2 px-4 rounded-lg text-xs uppercase tracking-wider transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
                                     >
                                         <Calculator size={14} className="text-red-600" />
                                         Báo Giá Nhanh
