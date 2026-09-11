@@ -1,81 +1,80 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { Facebook, Phone, MessageCircle } from 'lucide-react';
+import { useApiData } from '../hooks/useApiData';
+import { getShowroom } from '../api/client';
+import { productCategories } from '../data/categories';
 
+const HOTLINE = '0379398798';
+const HOTLINE_DISPLAY = '0379.398.798';
+
+// Footer: red background, columns (company info / policy / product links /
+// contact box with hotline + socials) / copyright bar — matches the real
+// kimlongmiennam.com footer.
 const Footer = () => {
+    const { data: showrooms } = useApiData(getShowroom, []);
+    const hq = (showrooms || [])[0];
+
     return (
-        <footer className="bg-gray-800 dark:bg-gray-900 text-white transition-colors duration-300">
+        <footer className="bg-red-700 dark:bg-red-900 text-white transition-colors duration-300">
             <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     <div>
                         <div className="flex items-center space-x-2 mb-4">
-                            <div className="flex items-center">
-                                <span className="text-3xl font-bold text-red-600 dark:text-red-500">K</span>
-                                <span className="text-3xl font-bold text-red-600 dark:text-red-500">L</span>
-                            </div>
-                            <span className="text-xl font-bold tracking-tighter uppercase text-white">KIM LONG MIỀN NAM</span>
+                            <span className="text-2xl font-bold tracking-tighter uppercase text-white">KIM LONG MIỀN NAM</span>
                         </div>
-                        <p className="text-sm leading-relaxed text-gray-300 dark:text-gray-400">
-                            KIM LONG MIỀN NAM là đại lý ủy quyền chính thức, chuyên cung cấp các dòng xe khách, xe tải chất lượng cao. 
-                            Cam kết sản phẩm chính hãng, bảo hành toàn diện và dịch vụ hậu mãi chuyên nghiệp.
+                        <p className="text-sm leading-relaxed text-red-50">
+                            Đại lý ủy quyền phân phối chính hãng xe Kim Long (xe khách, xe van, xe bus, xe tải, xe điện)
+                            tại khu vực Miền Nam. Chính sách giá tốt, hỗ trợ trả góp 80%.
                         </p>
+                        {hq?.address && (
+                            <p className="text-sm text-red-50 mt-3">{hq.address}</p>
+                        )}
                     </div>
+
                     <div>
-                        <h3 className="text-lg font-semibold mb-4 uppercase text-white">LÝ DO CHỌN KIM LONG MIỀN NAM</h3>
-                        <ul className="space-y-2 text-sm text-gray-300 dark:text-gray-400">
-                            <li className="flex items-start">
-                                <span className="mr-2 text-red-600 dark:text-red-500">•</span>
-                                <span>Sản phẩm chính hãng, giá cả cạnh tranh</span>
-                            </li>
-                            <li className="flex items-start">
-                                <span className="mr-2 text-red-600 dark:text-red-500">•</span>
-                                <span>Hỗ trợ đăng ký, vay vốn ngân hàng</span>
-                            </li>
-                            <li className="flex items-start">
-                                <span className="mr-2 text-red-600 dark:text-red-500">•</span>
-                                <span>Dịch vụ bảo hành, bảo dưỡng chuyên nghiệp</span>
-                            </li>
-                            <li className="flex items-start">
-                                <span className="mr-2 text-red-600 dark:text-red-500">•</span>
-                                <span>Đội ngũ tư vấn nhiệt tình, tận tâm</span>
-                            </li>
+                        <h3 className="text-sm font-semibold mb-4 uppercase text-white tracking-wide">Chính Sách</h3>
+                        <ul className="space-y-2 text-sm text-red-50">
+                            <li><Link to="/gioi-thieu" className="hover:text-white transition-colors">Giới thiệu</Link></li>
+                            <li><Link to="/news" className="hover:text-white transition-colors">Tin tức</Link></li>
+                            <li><Link to="/lien-he" className="hover:text-white transition-colors">Liên hệ</Link></li>
                         </ul>
                     </div>
+
                     <div>
-                        <h3 className="text-lg font-semibold mb-4 uppercase text-white">Thông tin liên hệ</h3>
-                        <ul className="space-y-2 text-sm text-gray-300 dark:text-gray-400">
-                            <li>
-                                <strong className="text-white">Chi nhánh 1:</strong><br />
-                                Khu kinh tế Chân Mây - Lăng Cô, Thừa Thiên Huế
-                            </li>
-                            <li>
-                                <strong className="text-white">Chi nhánh 2:</strong><br />
-                                [Địa chỉ chi nhánh 2]
-                            </li>
-                            <li>
-                                <strong className="text-white">Hotline:</strong> 1900 xxxx
-                            </li>
-                            <li>
-                                <strong className="text-white">Email:</strong> info@kimlongmotor.com
-                            </li>
-                            <li>
-                                <strong className="text-white">Website:</strong> www.kimlongmotor.com
-                            </li>
+                        <h3 className="text-sm font-semibold mb-4 uppercase text-white tracking-wide">Sản Phẩm</h3>
+                        <ul className="space-y-2 text-sm text-red-50">
+                            {productCategories.map((cat) => (
+                                <li key={cat.slug}>
+                                    <Link to={`/category/${cat.slug}`} className="hover:text-white transition-colors">{cat.name}</Link>
+                                </li>
+                            ))}
                         </ul>
-                        <div className="flex space-x-4 mt-4">
-                            <a href="#" className="text-white hover:text-red-500 dark:hover:text-red-400 transition-colors">
-                                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                </svg>
+                    </div>
+
+                    <div>
+                        <h3 className="text-sm font-semibold mb-4 uppercase text-white tracking-wide">Bạn Cần Hỗ Trợ Vấn Đề Gì?</h3>
+                        <a href={`tel:${HOTLINE}`} className="flex items-center gap-2 text-lg font-bold text-white mb-1 hover:text-red-100 transition-colors">
+                            <Phone size={20} />
+                            {HOTLINE_DISPLAY}
+                        </a>
+                        <p className="text-sm text-white/80 mb-4">LH/Zalo: {HOTLINE_DISPLAY} - Thương Kim Long</p>
+                        <div className="flex space-x-3">
+                            <a href="https://www.facebook.com/dailykimlongmiennam" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors">
+                                <Facebook size={18} />
                             </a>
-                            <a href="tel:1900xxxx" className="text-white hover:text-red-500 dark:hover:text-red-400 transition-colors">
-                                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
-                                </svg>
+                            <a href="https://www.tiktok.com/@kimlongmiennam88" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors" aria-label="TikTok">
+                                <svg className="w-[18px] h-[18px]" fill="currentColor" viewBox="0 0 24 24"><path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+                            </a>
+                            <a href="https://zalo.me/0379398798" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center transition-colors" aria-label="Zalo">
+                                <MessageCircle size={18} />
                             </a>
                         </div>
                     </div>
                 </div>
-                <div className="mt-8 border-t border-gray-700 dark:border-gray-800 pt-8 text-center text-sm text-gray-400 dark:text-gray-500">
-                    Copyright 2025 © Kim Long Miền Nam. All rights reserved.
+
+                <div className="mt-8 border-t border-white/20 pt-6 text-center text-sm text-red-100">
+                    Copyright © {new Date().getFullYear()} Kim Long Miền Nam - Miền Nam Auto. All rights reserved.
                 </div>
             </div>
         </footer>

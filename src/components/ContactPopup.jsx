@@ -36,7 +36,7 @@ const ContactPopup = ({ isOpen, onClose, productName = '' }) => {
                 ></div>
 
                 {/* Modal panel */}
-                <div className="relative z-50 inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div className="relative z-50 inline-block align-bottom bg-white dark:bg-gray-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                     <div className="bg-red-600 px-6 py-4 flex items-center justify-between">
                         <h3 className="text-xl font-bold text-white uppercase tracking-wide">
                             LIÊN HỆ NGAY
@@ -49,25 +49,25 @@ const ContactPopup = ({ isOpen, onClose, productName = '' }) => {
                         </button>
                     </div>
 
-                    <div className="bg-white px-6 py-6">
+                    <div className="bg-white dark:bg-gray-800 px-6 py-6">
                         {productName && (
-                            <p className="text-sm text-gray-700 mb-2">
+                            <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
                                 Sản phẩm quan tâm:{' '}
-                                <span className="font-semibold text-gray-900">{productName}</span>
+                                <span className="font-semibold text-gray-900 dark:text-white">{productName}</span>
                             </p>
                         )}
-                        <p className="text-xs text-gray-500 mb-6">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-6">
                             Vui lòng để lại thông tin, Kim Long sẽ liên hệ tư vấn và báo giá chi tiết trong thời gian sớm nhất.
                         </p>
 
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
-                                <label htmlFor="popup-name" className="block text-sm font-medium text-gray-700 mb-2">
+                                <label htmlFor="popup-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Tên của bạn
                                 </label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <User className="h-5 w-5 text-gray-400" />
+                                        <User className="h-5 w-5 text-gray-400 dark:text-gray-500" />
                                     </div>
                                     <input
                                         type="text"
@@ -76,19 +76,19 @@ const ContactPopup = ({ isOpen, onClose, productName = '' }) => {
                                         required
                                         value={formData.name}
                                         onChange={handleChange}
-                                        className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                                        className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
                                         placeholder="Tên của bạn.."
                                     />
                                 </div>
                             </div>
 
                             <div>
-                                <label htmlFor="popup-phone" className="block text-sm font-medium text-gray-700 mb-2">
+                                <label htmlFor="popup-phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Số điện thoại *
                                 </label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <Phone className="h-5 w-5 text-gray-400" />
+                                        <Phone className="h-5 w-5 text-gray-400 dark:text-gray-500" />
                                     </div>
                                     <input
                                         type="tel"
@@ -104,12 +104,12 @@ const ContactPopup = ({ isOpen, onClose, productName = '' }) => {
                             </div>
 
                             <div>
-                                <label htmlFor="popup-email" className="block text-sm font-medium text-gray-700 mb-2">
+                                <label htmlFor="popup-email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Địa chỉ email
                                 </label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <Mail className="h-5 w-5 text-gray-400" />
+                                        <Mail className="h-5 w-5 text-gray-400 dark:text-gray-500" />
                                     </div>
                                     <input
                                         type="email"
@@ -124,12 +124,12 @@ const ContactPopup = ({ isOpen, onClose, productName = '' }) => {
                             </div>
 
                             <div>
-                                <label htmlFor="popup-message" className="block text-sm font-medium text-gray-700 mb-2">
+                                <label htmlFor="popup-message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Nội dung đăng ký
                                 </label>
                                 <div className="relative">
                                     <div className="absolute top-3 left-3 pointer-events-none">
-                                        <MessageSquare className="h-5 w-5 text-gray-400" />
+                                        <MessageSquare className="h-5 w-5 text-gray-400 dark:text-gray-500" />
                                     </div>
                                     <textarea
                                         id="popup-message"
@@ -147,7 +147,7 @@ const ContactPopup = ({ isOpen, onClose, productName = '' }) => {
                                 <button
                                     type="button"
                                     onClick={onClose}
-                                    className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors text-sm font-medium"
+                                    className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors text-sm font-medium"
                                 >
                                     Hủy
                                 </button>

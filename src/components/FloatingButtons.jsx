@@ -23,11 +23,11 @@ const FloatingButtons = () => {
             <div className="fixed right-4 bottom-4 z-40 flex flex-col items-end gap-3">
                 {/* Messenger */}
                 <div className="relative flex flex-col items-end">
-                    <div className="mb-2 px-3 py-1 rounded-full bg-white text-gray-800 shadow-md text-xs font-medium whitespace-nowrap border border-gray-200">
+                    <div className="mb-2 px-3 py-1 rounded-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 shadow-md text-xs font-medium whitespace-nowrap border border-gray-200 dark:border-gray-700">
                         Nhấn để chat ngay với chúng tôi!
                     </div>
                     <a
-                        href="https://m.me/kimlongmotor"
+                        href="https://m.me/dailykimlongmiennam"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-14 h-14 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all transform hover:scale-110 animate-bounce"
@@ -39,7 +39,7 @@ const FloatingButtons = () => {
 
                 {/* Zalo */}
                 <a
-                    href="https://zalo.me/0911545499"
+                    href="https://zalo.me/0379398798"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-14 h-14 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all transform hover:scale-110 animate-pulse"
@@ -52,7 +52,7 @@ const FloatingButtons = () => {
 
                 {/* Phone */}
                 <a
-                    href="tel:0911545499"
+                    href="tel:0379398798"
                     className="w-14 h-14 bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all transform hover:scale-110 animate-pulse"
                     aria-label="Gọi điện"
                 >

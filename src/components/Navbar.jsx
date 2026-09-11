@@ -1,33 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
-import { Sun, Moon, Menu, X } from 'lucide-react';
+import { Sun, Moon, Menu, X, ChevronDown } from 'lucide-react';
+import { productCategories } from '../data/categories';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const [isProductsOpen, setIsProductsOpen] = useState(false);
+    const [isMobileProductsOpen, setIsMobileProductsOpen] = useState(false);
+    const closeTimeout = useRef(null);
     const { theme, toggleTheme } = useTheme();
     const navigate = useNavigate();
 
-    const scrollToSection = (sectionId) => {
-        // Close mobile menu
-        setIsOpen(false);
-
-        // Navigate to home if not already there
-        if (window.location.pathname !== '/') {
-            navigate('/');
-            // Wait for navigation to complete before scrolling
-            setTimeout(() => {
-                const element = document.getElementById(sectionId);
-                if (element) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }, 100);
-        } else {
-            const element = document.getElementById(sectionId);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+    const openProductsMenu = () => {
+        if (closeTimeout.current) {
+            clearTimeout(closeTimeout.current);
+            closeTimeout.current = null;
         }
+        setIsProductsOpen(true);
+    };
+
+    const closeProductsMenuDelayed = () => {
+        closeTimeout.current = setTimeout(() => setIsProductsOpen(false), 150);
     };
 
     return (
@@ -42,17 +36,47 @@ const Navbar = () => {
                                     <span className="text-3xl font-bold text-red-600 dark:text-red-500">L</span>
                                 </div>
                                 <span className="text-xl font-bold text-white tracking-tighter uppercase">
-                                    KIM LONG MOTOR
+                                    KIM LONG MIỀN NAM
                                 </span>
                             </Link>
                         </div>
-                        <div className="hidden md:ml-10 md:flex md:space-x-6">
-                            <Link to="/" className="text-white hover:text-red-500 dark:hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium uppercase transition-colors">Trang chủ</Link>
-                            <button onClick={() => scrollToSection('giuong-nam')} className="text-white hover:text-red-500 dark:hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium uppercase transition-colors">Xe Khách Giường Nằm</button>
-                            <button onClick={() => scrollToSection('ghe-ngoi')} className="text-white hover:text-red-500 dark:hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium uppercase transition-colors">Xe Khách Ghế Ngồi</button>
-                            <button onClick={() => scrollToSection('16-cho')} className="text-white hover:text-red-500 dark:hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium uppercase transition-colors">Xe Khách 16 Chỗ</button>
-                            <button onClick={() => scrollToSection('limousine')} className="text-white hover:text-red-500 dark:hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium uppercase transition-colors">Xe Khách Limousine</button>
-                            <button onClick={() => scrollToSection('contact')} className="text-white hover:text-red-500 dark:hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium uppercase transition-colors">Liên hệ</button>
+                        <div className="hidden md:ml-10 md:flex md:items-center md:space-x-6">
+                            <Link to="/" className="text-white hover:text-red-500 dark:hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium uppercase transition-colors">Trang Chủ</Link>
+                            <Link to="/gioi-thieu" className="text-white hover:text-red-500 dark:hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium uppercase transition-colors">Giới Thiệu</Link>
+
+                            {/* Sản Phẩm dropdown */}
+                            <div
+                                className="relative"
+                                onMouseEnter={openProductsMenu}
+                                onMouseLeave={closeProductsMenuDelayed}
+                            >
+                                <button
+                                    onClick={() => setIsProductsOpen((prev) => !prev)}
+                                    className="flex items-center text-white hover:text-red-500 dark:hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium uppercase transition-colors"
+                                    aria-haspopup="true"
+                                    aria-expanded={isProductsOpen}
+                                >
+                                    Sản Phẩm
+                                    <ChevronDown size={16} className={`ml-1 transition-transform ${isProductsOpen ? 'rotate-180' : ''}`} />
+                                </button>
+                                {isProductsOpen && (
+                                    <div className="absolute left-0 mt-1 w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 py-1 z-50">
+                                        {productCategories.map((cat) => (
+                                            <Link
+                                                key={cat.slug}
+                                                to={`/category/${cat.slug}`}
+                                                onClick={() => setIsProductsOpen(false)}
+                                                className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                                            >
+                                                {cat.name}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            <Link to="/news" className="text-white hover:text-red-500 dark:hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium uppercase transition-colors">Tin Tức</Link>
+                            <Link to="/lien-he" className="text-white hover:text-red-500 dark:hover:text-red-400 px-3 py-2 rounded-md text-sm font-medium uppercase transition-colors">Liên Hệ</Link>
                         </div>
                     </div>
                     <div className="flex items-center">
@@ -81,12 +105,40 @@ const Navbar = () => {
             {isOpen && (
                 <div className="md:hidden bg-gray-800 dark:bg-gray-900 border-t border-gray-700 dark:border-gray-800" id="mobile-menu">
                     <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                        <Link to="/" onClick={() => setIsOpen(false)} className="text-white hover:text-red-500 dark:hover:text-red-400 block px-3 py-2 rounded-md text-base font-medium uppercase transition-colors">Trang chủ</Link>
-                        <button onClick={() => scrollToSection('giuong-nam')} className="text-white hover:text-red-500 dark:hover:text-red-400 block px-3 py-2 rounded-md text-base font-medium uppercase w-full text-left transition-colors">Xe Khách Giường Nằm</button>
-                        <button onClick={() => scrollToSection('ghe-ngoi')} className="text-white hover:text-red-500 dark:hover:text-red-400 block px-3 py-2 rounded-md text-base font-medium uppercase w-full text-left transition-colors">Xe Khách Ghế Ngồi</button>
-                        <button onClick={() => scrollToSection('16-cho')} className="text-white hover:text-red-500 dark:hover:text-red-400 block px-3 py-2 rounded-md text-base font-medium uppercase w-full text-left transition-colors">Xe Khách 16 Chỗ</button>
-                        <button onClick={() => scrollToSection('limousine')} className="text-white hover:text-red-500 dark:hover:text-red-400 block px-3 py-2 rounded-md text-base font-medium uppercase w-full text-left transition-colors">Xe Khách Limousine</button>
-                        <button onClick={() => scrollToSection('contact')} className="text-white hover:text-red-500 dark:hover:text-red-400 block px-3 py-2 rounded-md text-base font-medium uppercase w-full text-left transition-colors">Liên hệ</button>
+                        <Link to="/" onClick={() => setIsOpen(false)} className="text-white hover:text-red-500 dark:hover:text-red-400 block px-3 py-2 rounded-md text-base font-medium uppercase transition-colors">Trang Chủ</Link>
+                        <Link to="/gioi-thieu" onClick={() => setIsOpen(false)} className="text-white hover:text-red-500 dark:hover:text-red-400 block px-3 py-2 rounded-md text-base font-medium uppercase transition-colors">Giới Thiệu</Link>
+
+                        {/* Sản Phẩm (mobile expandable) */}
+                        <div>
+                            <button
+                                onClick={() => setIsMobileProductsOpen((prev) => !prev)}
+                                className="flex items-center justify-between w-full text-white hover:text-red-500 dark:hover:text-red-400 px-3 py-2 rounded-md text-base font-medium uppercase transition-colors"
+                                aria-expanded={isMobileProductsOpen}
+                            >
+                                Sản Phẩm
+                                <ChevronDown size={18} className={`transition-transform ${isMobileProductsOpen ? 'rotate-180' : ''}`} />
+                            </button>
+                            {isMobileProductsOpen && (
+                                <div className="pl-5 space-y-1">
+                                    {productCategories.map((cat) => (
+                                        <Link
+                                            key={cat.slug}
+                                            to={`/category/${cat.slug}`}
+                                            onClick={() => {
+                                                setIsOpen(false);
+                                                setIsMobileProductsOpen(false);
+                                            }}
+                                            className="text-gray-300 hover:text-red-500 dark:hover:text-red-400 block px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                                        >
+                                            {cat.name}
+                                        </Link>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        <Link to="/news" onClick={() => setIsOpen(false)} className="text-white hover:text-red-500 dark:hover:text-red-400 block px-3 py-2 rounded-md text-base font-medium uppercase transition-colors">Tin Tức</Link>
+                        <Link to="/lien-he" onClick={() => setIsOpen(false)} className="text-white hover:text-red-500 dark:hover:text-red-400 block px-3 py-2 rounded-md text-base font-medium uppercase transition-colors">Liên Hệ</Link>
                     </div>
                 </div>
             )}
