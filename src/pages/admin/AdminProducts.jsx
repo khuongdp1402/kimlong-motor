@@ -3,6 +3,7 @@ import { getProducts, createProduct, updateProduct, deleteProduct, setProductFea
 import { Plus, Pencil, Trash2, X, Star } from 'lucide-react';
 import ImageUpload from '../../components/admin/ImageUpload';
 import GalleryUpload from '../../components/admin/GalleryUpload';
+import { landingCategories, getLandingCategoryName } from '../../data/landingCategories';
 
 const emptyProduct = {
     name: '',
@@ -116,7 +117,7 @@ const AdminProducts = () => {
                                     )}
                                 </td>
                                 <td className="px-4 py-3 text-sm text-gray-900 dark:text-white font-medium">{p.name}</td>
-                                <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{p.category}</td>
+                                <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{getLandingCategoryName(p.category)}</td>
                                 <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{p.priceDisplay || "Liên hệ"}</td>
                                 <td className="px-4 py-3 text-center">
                                     <button
@@ -225,7 +226,12 @@ const ProductForm = ({ initial, onCancel, onSave }) => {
                     </Field>
                     <div className="grid grid-cols-2 gap-4">
                         <Field label="Danh mục">
-                            <input name="category" value={form.category} onChange={handleChange} className={inputClass} placeholder="xe-khach, xe-van, xe-bus, xe-tai, xe-dien" />
+                            <select name="category" value={form.category} onChange={handleChange} className={inputClass}>
+                                <option value="">-- Chọn danh mục --</option>
+                                {landingCategories.map((c) => (
+                                    <option key={c.slug} value={c.slug}>{c.name}</option>
+                                ))}
+                            </select>
                         </Field>
                         <Field label="Giá">
                             <input name="price" value={form.price} onChange={handleChange} className={inputClass} />

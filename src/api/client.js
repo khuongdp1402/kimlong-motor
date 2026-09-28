@@ -96,3 +96,9 @@ export const getPhotoStrip = () => request('/photoStrip');
 export const getShowroom = () => request('/showroom');
 export const getFooterContent = () => request('/footer');
 export const getHomepageProductSections = () => request('/homepageProductSections');
+
+// ---- Landing page (simple) settings ----
+export const getLandingSocial = () => request('/landingSocial');
+export const putLandingSocial = (data) => request('/landingSocial', { method: 'PUT', body: JSON.stringify(data) });
+export const getLandingBanner = () => request('/landingBanner');
+export const putLandingBanner = (slides) => request('/landingBanner', { method: 'PUT', body: JSON.stringify(slides) });

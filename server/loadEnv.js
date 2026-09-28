@@ -34,3 +34,6 @@ export default function loadEnv() {
         break; // only load the first candidate found
     }
 }
+
+loadEnv();
+

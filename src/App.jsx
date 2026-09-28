@@ -24,6 +24,7 @@ import NewsListPage from './pages/NewsListPage';
 import NewsDetailPage from './pages/NewsDetailPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
+import LandingSimple from './pages/LandingSimple';
 
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminLayout from './pages/admin/AdminLayout';
@@ -31,6 +32,7 @@ import AdminProducts from './pages/admin/AdminProducts';
 import AdminArticles from './pages/admin/AdminArticles';
 import AdminTestimonials from './pages/admin/AdminTestimonials';
 import AdminLeads from './pages/admin/AdminLeads';
+import AdminLandingSettings from './pages/admin/AdminLandingSettings';
 import { AdminAuthProvider } from './context/AdminAuthContext';
 
 const Home = () => {
@@ -122,7 +124,7 @@ function App() {
       <AdminAuthProvider>
         <SmoothScroll />
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<LandingSimple />} />
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/category/:slug" element={<ProductCategory />} />
           <Route path="/news" element={<NewsListPage />} />
@@ -137,6 +139,7 @@ function App() {
             <Route path="articles" element={<AdminArticles />} />
             <Route path="testimonials" element={<AdminTestimonials />} />
             <Route path="leads" element={<AdminLeads />} />
+            <Route path="landing-settings" element={<AdminLandingSettings />} />
           </Route>
         </Routes>
       </AdminAuthProvider>

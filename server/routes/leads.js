@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { query } from '../db.js';
 import { requireAuth } from '../middleware/auth.js';
+import { sendContactNotification } from '../lib/mailer.js';
 
 const router = Router();
 
@@ -24,6 +25,13 @@ router.post('/', async (req, res) => {
 
     const { rows } = await query('INSERT INTO leads (data) VALUES ($1) RETURNING *', [JSON.stringify(data)]);
     res.status(201).json(toApi(rows[0]));
+
+    // Best-effort email notification — never let a mail failure affect the response above.
+    try {
+        await sendContactNotification(data);
+    } catch (err) {
+        console.error('[Leads] sendContactNotification failed:', err.message);
+    }
 });
 
 // Admin: list submitted leads.

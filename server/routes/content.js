@@ -61,5 +61,7 @@ block('footer', { columns: [], socialLinks: [], hotline: '', copyright: '' });
 block('homepageProductSections', []);
 block('careers', { content: '', images: [] });
 block('newsSectionTitle', '');
+block('landingSocial', { youtubeUrl: '', tiktokUrl: '', youtubeVideos: [], tiktokVideos: [] });
+block('landingBanner', []);
 
 export default router;

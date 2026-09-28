@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink, Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '../../context/AdminAuthContext';
-import { LogOut, Package, Newspaper, Star, Phone } from 'lucide-react';
+import { LogOut, Package, Newspaper, Star, Phone, Image } from 'lucide-react';
 
 const AdminLayout = () => {
     const { isAuthenticated, logout } = useAdminAuth();
@@ -52,6 +52,9 @@ const AdminLayout = () => {
                     </NavLink>
                     <NavLink to="/admin/leads" className={tabClass}>
                         <Phone size={16} /> Khách hàng liên hệ
+                    </NavLink>
+                    <NavLink to="/admin/landing-settings" className={tabClass}>
+                        <Image size={16} /> Banner & Mạng xã hội
                     </NavLink>
                 </nav>
 

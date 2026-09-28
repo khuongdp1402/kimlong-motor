@@ -9,8 +9,9 @@ const ThemeModeProvider = ({ children }) => {
     const [mode, setMode] = useState(readStoredMode);
 
     useEffect(() => {
-        const isAdmin = pathname.startsWith('/admin');
-        document.documentElement.classList.toggle('dark', !isAdmin && mode === 'dark');
+        // Admin and the (now light-only) landing homepage never get the dark class.
+        const forceLight = pathname.startsWith('/admin') || pathname === '/';
+        document.documentElement.classList.toggle('dark', !forceLight && mode === 'dark');
     }, [pathname, mode]);
 
     const toggleMode = useCallback(() => {
