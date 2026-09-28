@@ -60,16 +60,16 @@ const Home = () => {
       <Navbar onOpenQuoteModal={() => handleOpenQuote(null)} />
 
       <main>
-        {/* Hero Banner Slider */}
+        {/* Hero */}
         <HeroSlider />
 
-        {/* Brand Introduction & Metrics */}
+        {/* 01 — Brand introduction */}
         <BrandIntro />
 
-        {/* Scroll-Driven Video Showcase — Kim Long 99 */}
+        {/* 02 — Real-world video showcase */}
         <VehicleShowcase />
 
-        {/* Vehicle Catalog with Curated Grid */}
+        {/* 03 — Model range */}
         <VehicleCatalogSection
           onOpenDetail={handleOpenDetail}
           onOpenQuote={handleOpenQuote}
@@ -81,10 +81,10 @@ const Home = () => {
         {/* 05 — Customers & handovers */}
         <CustomerStories />
 
-        {/* News Preview — Latest articles (API-driven, returns null if no data) */}
+        {/* 06 — News */}
         <NewsViral />
 
-        {/* Quote Form & Price Table Section */}
+        {/* Quote CTA */}
         <QuoteFormSection />
       </main>
 
