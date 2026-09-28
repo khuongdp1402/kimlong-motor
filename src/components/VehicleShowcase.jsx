@@ -1,25 +1,17 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { Shield, Zap, Gauge, Wrench, ArrowRight } from 'lucide-react';
-
-/**
- * Vehicle Showcase — Scroll-driven video + content section.
- *
- * Desktop: Sticky video left (55%) + scrolling content right (45%).
- * As user scrolls through each scene card, the video crossfades.
- *
- * Inspired by Dribbble logistics reference — dark theme, kinetic text,
- * numbered service rows.
- */
+import React, { useRef, useState, useEffect } from 'react';
+import { Shield, Zap, Gauge, Wrench } from 'lucide-react';
+import { gsap, useGSAP } from './motion/gsap';
+import SectionHeader from './ui/SectionHeader';
+import Reveal from './motion/Reveal';
+import { GhostButton } from './ui/Buttons';
 
 const scenes = [
     {
         id: 'scene-1',
-        number: '01',
         video: '/media/showcase/video_sciene1.mp4',
         poster: '/media/showcase/img_sciene1.jpg',
-        eyebrow: 'Trải Nghiệm Thực Tế',
-        title: 'Chinh Phục Mọi',
-        titleAccent: 'Cung Đường',
+        eyebrow: 'Trải nghiệm thực tế',
+        title: 'Chinh phục mọi cung đường',
         description: 'Kim Long 99 vận hành êm ái trên mọi cung đường cao tốc với hệ thống treo bóng hơi thế hệ mới, giảm rung lắc tối đa cho hành khách.',
         highlights: [
             { icon: Gauge, text: 'Động cơ Weichai / Yuchai Euro 5 mạnh mẽ' },
@@ -28,27 +20,23 @@ const scenes = [
     },
     {
         id: 'scene-2',
-        number: '02',
         video: '/media/showcase/video_sciene2.mp4',
         poster: '/media/showcase/img_sciene2.jpg',
-        eyebrow: 'Thiết Kế Sang Trọng',
-        title: 'Nội Thất Đẳng Cấp',
-        titleAccent: 'Châu Âu',
+        eyebrow: 'Thiết kế sang trọng',
+        title: 'Nội thất đẳng cấp Châu Âu',
         description: 'Mỗi chiếc xe khách Kim Long 99 được hoàn thiện tỉ mỉ với nội thất da cao cấp, hệ thống giải trí cá nhân và chiếu sáng LED ambient.',
         highlights: [
-            { icon: Zap, text: '24-34 phòng VIP massage & giường nằm êm ái' },
+            { icon: Zap, text: '24–34 phòng VIP massage & giường nằm êm ái' },
             { icon: Wrench, text: 'Tùy chỉnh nội thất theo yêu cầu khách hàng' },
         ],
     },
     {
         id: 'scene-3',
-        number: '03',
         video: '/media/showcase/video_sciene3.mp4',
         poster: '/media/showcase/img_sciene3.jpg',
-        eyebrow: 'Vận Hành Bền Bỉ',
-        title: 'Đồng Hành Cùng',
-        titleAccent: 'Doanh Nghiệp',
-        description: 'Từ nội thành đến liên tỉnh, Kim Long 99 là sự lựa chọn hàng đầu của hơn 100 nhà xe trên cả nước nhờ chi phí vận hành tối ưu và dịch vụ hậu mãi 24/7.',
+        eyebrow: 'Vận hành bền bỉ',
+        title: 'Đồng hành cùng doanh nghiệp',
+        description: 'Từ nội thành đến liên tỉnh, Kim Long 99 là lựa chọn của hơn 100 nhà xe trên cả nước nhờ chi phí vận hành tối ưu và dịch vụ hậu mãi 24/7.',
         highlights: [
             { icon: Shield, text: 'Bảo hành chính hãng 3 năm / 150.000 km' },
             { icon: Gauge, text: 'Tiết kiệm nhiên liệu hàng đầu phân khúc' },
@@ -56,238 +44,101 @@ const scenes = [
     },
 ];
 
-const VehicleShowcase = () => {
+const scrollToCatalog = () => document.getElementById('danh-muc-xe')?.scrollIntoView({ behavior: 'smooth' });
+
+const SceneCopy = ({ scene, index }) => (
+    <>
+        <div className="flex items-center gap-3 mb-4">
+            <span className="text-accent font-bold text-sm tabular-nums">0{index + 1}</span>
+            <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-ink-muted">{scene.eyebrow}</span>
+        </div>
+        <h3 className="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight text-ink">{scene.title}</h3>
+        <p className="mt-4 text-[15px] text-ink-muted leading-relaxed max-w-md">{scene.description}</p>
+        <ul className="mt-6 border-t border-line">
+            {scene.highlights.map((h) => (
+                <li key={h.text} className="flex items-center gap-3 py-3.5 border-b border-line text-sm text-ink">
+                    <h.icon size={17} className="text-accent shrink-0" />
+                    {h.text}
+                </li>
+            ))}
+        </ul>
+    </>
+);
+
+// Desktop: pinned stage. Scroll progress drives the crossfade between scenes.
+const PinnedStage = () => {
+    const rootRef = useRef(null);
     const videoRefs = useRef([]);
-    const [activeScene, setActiveScene] = useState(0);
+    const [active, setActive] = useState(0);
 
-    // Observe which scene card is in center view → switch video
-    useEffect(() => {
-        const cards = document.querySelectorAll('[data-scene-card]');
-        if (!cards.length) return;
+    useGSAP(() => {
+        const mm = gsap.matchMedia();
+        mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
+            const videos = gsap.utils.toArray('[data-scene-video]', rootRef.current);
+            const copies = gsap.utils.toArray('[data-scene-copy]', rootRef.current);
+            gsap.set(videos.slice(1), { autoAlpha: 0 });
+            gsap.set(copies.slice(1), { autoAlpha: 0, y: 40 });
 
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        setActiveScene(Number(entry.target.dataset.sceneCard));
-                    }
-                });
-            },
-            { threshold: 0.45, rootMargin: '-15% 0px -15% 0px' }
-        );
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: rootRef.current,
+                    start: 'top top',
+                    end: () => `+=${window.innerHeight * (scenes.length - 1) * 1.1}`,
+                    pin: true,
+                    scrub: 0.8,
+                    onUpdate: (self) => setActive(Math.round(self.progress * (scenes.length - 1))),
+                },
+            });
+            for (let i = 1; i < scenes.length; i++) {
+                tl.to(copies[i - 1], { autoAlpha: 0, y: -40, duration: 0.4 })
+                  .to(videos[i - 1], { autoAlpha: 0, duration: 0.5 }, '<')
+                  .to(videos[i], { autoAlpha: 1, duration: 0.5 }, '<')
+                  // Start the next copy only once the previous one is nearly
+                  // gone, so the two text blocks never read on top of each other.
+                  .to(copies[i], { autoAlpha: 1, y: 0, duration: 0.4 }, '<0.35')
+                  .to({}, { duration: 0.6 });
+            }
+        });
+        return () => mm.revert();
+    }, { scope: rootRef });
 
-        cards.forEach((card) => observer.observe(card));
-        return () => observer.disconnect();
-    }, []);
-
-    // Play/pause videos based on active scene
     useEffect(() => {
         videoRefs.current.forEach((video, idx) => {
             if (!video) return;
-            if (idx === activeScene) {
-                video.play().catch(() => {});
-            } else {
-                video.pause();
-            }
+            if (idx === active) video.play().catch(() => {});
+            else video.pause();
         });
-    }, [activeScene]);
+    }, [active]);
 
     return (
-        <section className="bg-gray-950 text-white overflow-hidden">
-            {/* ─── Section Header ─── */}
-            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 pt-20 sm:pt-28 pb-10 sm:pb-14">
-                <div className="max-w-3xl">
-                    <span className="text-red-500 text-xs sm:text-sm font-bold uppercase tracking-widest">
-                        Khám Phá Xe Kim Long 99
-                    </span>
-                    <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.1]">
-                        Trải nghiệm{' '}
-                        <span className="text-red-500">thực tế</span>{' '}
-                        từng chi tiết
-                    </h2>
-                    <p className="mt-4 sm:mt-5 text-sm sm:text-base text-gray-400 leading-relaxed max-w-xl">
-                        Cuộn để khám phá — video và nội dung chi tiết về dòng xe khách hàng đầu Việt Nam.
-                    </p>
-                </div>
-            </div>
-
-            {/* ─── Desktop: Sticky video left + scrolling cards right ─── */}
-            <div className="hidden lg:block">
-                <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10">
-                    <div className="flex gap-12 xl:gap-16">
-                        {/* LEFT — Sticky video panel */}
-                        <div className="w-[55%] xl:w-[58%] shrink-0">
-                            <div className="sticky top-20 h-[calc(100vh-6rem)]">
-                                <div className="relative w-full h-full rounded-3xl overflow-hidden bg-gray-900">
-                                    {scenes.map((scene, idx) => (
-                                        <video
-                                            key={scene.id}
-                                            ref={(el) => (videoRefs.current[idx] = el)}
-                                            src={scene.video}
-                                            poster={scene.poster}
-                                            muted
-                                            loop
-                                            playsInline
-                                            preload="metadata"
-                                            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
-                                                idx === activeScene ? 'opacity-100' : 'opacity-0'
-                                            }`}
-                                        />
-                                    ))}
-
-                                    {/* Subtle bottom gradient */}
-                                    <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-gray-950/70 to-transparent pointer-events-none" />
-
-                                    {/* Scene indicator */}
-                                    <div className="absolute bottom-6 left-6 flex items-center gap-3">
-                                        <div className="flex gap-1.5">
-                                            {scenes.map((_, i) => (
-                                                <div
-                                                    key={i}
-                                                    className={`h-1 rounded-full transition-all duration-500 ${
-                                                        i === activeScene ? 'w-10 bg-red-500' : 'w-3 bg-white/25'
-                                                    }`}
-                                                />
-                                            ))}
-                                        </div>
-                                        <span className="text-white/60 text-xs font-bold tabular-nums">
-                                            0{activeScene + 1} / 0{scenes.length}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* RIGHT — Scrolling content cards */}
-                        <div className="flex-1 py-6">
-                            {scenes.map((scene, idx) => (
-                                <div
-                                    key={scene.id}
-                                    data-scene-card={idx}
-                                    className="min-h-[85vh] flex items-center"
-                                >
-                                    <div className={`transition-all duration-600 ${
-                                        idx === activeScene
-                                            ? 'opacity-100 translate-y-0'
-                                            : 'opacity-30 translate-y-6'
-                                    }`}>
-                                        {/* Number + Eyebrow */}
-                                        <div className="flex items-center gap-3 mb-4">
-                                            <span className="text-4xl xl:text-5xl font-black text-red-600/30 tabular-nums leading-none">
-                                                {scene.number}
-                                            </span>
-                                            <span className="text-[11px] font-bold uppercase tracking-widest text-red-400">
-                                                {scene.eyebrow}
-                                            </span>
-                                        </div>
-
-                                        {/* Title with accent word */}
-                                        <h3 className="text-2xl xl:text-3xl font-extrabold leading-tight tracking-tight">
-                                            {scene.title}{' '}
-                                            <span className="text-red-500">{scene.titleAccent}</span>
-                                        </h3>
-
-                                        {/* Description */}
-                                        <p className="mt-4 text-[15px] text-gray-400 leading-relaxed max-w-md">
-                                            {scene.description}
-                                        </p>
-
-                                        {/* Highlight rows — like numbered service list */}
-                                        <div className="mt-6 space-y-3">
-                                            {scene.highlights.map((h, i) => (
-                                                <div
-                                                    key={i}
-                                                    className="flex items-center gap-3.5 py-3 px-4 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] transition-colors"
-                                                >
-                                                    <div className="w-9 h-9 rounded-lg bg-red-600/15 text-red-400 flex items-center justify-center shrink-0">
-                                                        <h.icon size={18} />
-                                                    </div>
-                                                    <span className="text-sm font-medium text-gray-300">{h.text}</span>
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        {/* CTA link */}
-                                        <button
-                                            onClick={() => {
-                                                const el = document.getElementById('danh-muc-xe');
-                                                if (el) el.scrollIntoView({ behavior: 'smooth' });
-                                            }}
-                                            className="mt-8 group inline-flex items-center gap-2 text-sm font-bold text-white hover:text-red-400 transition-colors cursor-pointer"
-                                        >
-                                            Xem Dòng Xe Khách
-                                            <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+        <div ref={rootRef} className="hidden lg:block motion-reduce:lg:hidden h-screen">
+            <div className="h-full max-w-[1400px] mx-auto px-10 py-24 grid grid-cols-12 gap-14 items-center">
+                <div className="col-span-7 relative h-full max-h-[640px] rounded-[28px] overflow-hidden bg-graphite-800">
+                    {scenes.map((scene, idx) => (
+                        <video
+                            key={scene.id}
+                            data-scene-video
+                            ref={(el) => { videoRefs.current[idx] = el; }}
+                            src={scene.video}
+                            poster={scene.poster}
+                            muted
+                            loop
+                            playsInline
+                            preload="metadata"
+                            className="absolute inset-0 w-full h-full object-cover"
+                        />
+                    ))}
+                    <div className="absolute bottom-6 left-6 flex items-center gap-3">
+                        {scenes.map((scene, i) => (
+                            <span key={scene.id} className={`h-[3px] rounded-full transition-all duration-500 ${i === active ? 'w-10 bg-accent' : 'w-4 bg-white/30'}`} />
+                        ))}
+                        <span className="ml-1 text-xs font-bold text-white/70 tabular-nums">0{active + 1} / 0{scenes.length}</span>
                     </div>
                 </div>
-            </div>
-
-            {/* ─── Mobile: Vertical cards with inline video ─── */}
-            <div className="lg:hidden px-4 sm:px-6 pb-14 space-y-6">
-                {scenes.map((scene) => (
-                    <MobileSceneCard key={scene.id} scene={scene} />
-                ))}
-            </div>
-        </section>
-    );
-};
-
-const MobileSceneCard = ({ scene }) => {
-    const cardRef = useRef(null);
-    const videoRef = useRef(null);
-
-    useEffect(() => {
-        const card = cardRef.current;
-        if (!card) return;
-
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    videoRef.current?.play().catch(() => {});
-                } else {
-                    videoRef.current?.pause();
-                }
-            },
-            { threshold: 0.3 }
-        );
-
-        observer.observe(card);
-        return () => observer.disconnect();
-    }, []);
-
-    return (
-        <div ref={cardRef} className="rounded-2xl overflow-hidden bg-white/[0.03] border border-white/[0.06]">
-            <div className="relative aspect-video">
-                <video
-                    ref={videoRef}
-                    src={scene.video}
-                    poster={scene.poster}
-                    muted
-                    loop
-                    playsInline
-                    preload="metadata"
-                    className="w-full h-full object-cover"
-                />
-            </div>
-
-            <div className="p-5 space-y-2.5">
-                <div className="flex items-center gap-2">
-                    <span className="text-2xl font-black text-red-600/30 tabular-nums">{scene.number}</span>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-red-400">{scene.eyebrow}</span>
-                </div>
-                <h3 className="text-lg font-extrabold tracking-tight">
-                    {scene.title} <span className="text-red-500">{scene.titleAccent}</span>
-                </h3>
-                <p className="text-sm text-gray-400 leading-relaxed">{scene.description}</p>
-                <div className="space-y-2 pt-1">
-                    {scene.highlights.map((h, i) => (
-                        <div key={i} className="flex items-center gap-2.5 text-xs text-gray-300">
-                            <h.icon size={14} className="text-red-400 shrink-0" />
-                            <span>{h.text}</span>
+                <div className="col-span-5 relative h-[420px]">
+                    {scenes.map((scene, idx) => (
+                        <div key={scene.id} data-scene-copy className="absolute inset-0 flex flex-col justify-center">
+                            <SceneCopy scene={scene} index={idx} />
                         </div>
                     ))}
                 </div>
@@ -295,5 +146,58 @@ const MobileSceneCard = ({ scene }) => {
         </div>
     );
 };
+
+// Mobile / reduced motion: stacked scenes, video plays while on screen.
+const StackedScene = ({ scene, index }) => {
+    const videoRef = useRef(null);
+
+    useEffect(() => {
+        const video = videoRef.current;
+        if (!video) return undefined;
+        const observer = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting) video.play().catch(() => {});
+            else video.pause();
+        }, { threshold: 0.3 });
+        observer.observe(video);
+        return () => observer.disconnect();
+    }, []);
+
+    return (
+        <Reveal className="grid gap-6 lg:grid-cols-12 lg:gap-14 lg:items-center">
+            <div className="lg:col-span-7 aspect-video rounded-[24px] overflow-hidden bg-graphite-800">
+                <video ref={videoRef} src={scene.video} poster={scene.poster} muted loop playsInline preload="metadata" className="w-full h-full object-cover" />
+            </div>
+            <div className="lg:col-span-5">
+                <SceneCopy scene={scene} index={index} />
+            </div>
+        </Reveal>
+    );
+};
+
+// Section 02 — real-world showcase.
+const VehicleShowcase = () => (
+    <section id="trai-nghiem" className="bg-noir-900">
+        <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10 pt-24 sm:pt-32">
+            <SectionHeader
+                number="02"
+                eyebrow="Khám phá Kim Long 99"
+                title="Trải nghiệm thực tế từng chi tiết"
+                intro="Cuộn để xem từng khoảnh khắc — video thật về dòng xe khách hàng đầu Việt Nam."
+            />
+        </div>
+
+        <PinnedStage />
+
+        <div className="lg:hidden motion-reduce:lg:block max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10 py-16 space-y-16">
+            {scenes.map((scene, idx) => (
+                <StackedScene key={scene.id} scene={scene} index={idx} />
+            ))}
+        </div>
+
+        <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10 pb-24 sm:pb-32">
+            <GhostButton onClick={scrollToCatalog}>Xem các dòng xe khách</GhostButton>
+        </div>
+    </section>
+);
 
 export default VehicleShowcase;
