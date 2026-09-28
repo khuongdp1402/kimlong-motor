@@ -1,6 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Shield, Zap, Gauge, Wrench } from 'lucide-react';
-import { gsap, useGSAP } from './motion/gsap';
 import SectionHeader from './ui/SectionHeader';
 import Reveal from './motion/Reveal';
 import { GhostButton } from './ui/Buttons';
@@ -46,158 +45,138 @@ const scenes = [
 
 const scrollToCatalog = () => document.getElementById('danh-muc-xe')?.scrollIntoView({ behavior: 'smooth' });
 
-const SceneCopy = ({ scene, index }) => (
-    <>
-        <div className="flex items-center gap-3 mb-4">
-            <span className="text-accent font-bold text-sm tabular-nums">0{index + 1}</span>
-            <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-ink-muted">{scene.eyebrow}</span>
-        </div>
-        <h3 className="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight text-ink">{scene.title}</h3>
-        <p className="mt-4 text-[15px] text-ink-muted leading-relaxed max-w-md">{scene.description}</p>
-        <ul className="mt-6 border-t border-line">
-            {scene.highlights.map((h) => (
-                <li key={h.text} className="flex items-center gap-3 py-3.5 border-b border-line text-sm text-ink">
-                    <h.icon size={17} className="text-accent shrink-0" />
-                    {h.text}
-                </li>
-            ))}
-        </ul>
-    </>
-);
-
-// Desktop: pinned stage. Scroll progress drives the crossfade between scenes.
-const PinnedStage = () => {
-    const rootRef = useRef(null);
+// Section 02 — video carousel: the three clips play one after another (the
+// next starts when the current one ends, looping back to the first), with
+// the copy crossfading alongside. Playback pauses while the section is off
+// screen.
+const VehicleShowcase = () => {
+    const stageRef = useRef(null);
     const videoRefs = useRef([]);
     const [active, setActive] = useState(0);
-
-    useGSAP(() => {
-        const mm = gsap.matchMedia();
-        mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
-            const videos = gsap.utils.toArray('[data-scene-video]', rootRef.current);
-            const copies = gsap.utils.toArray('[data-scene-copy]', rootRef.current);
-            gsap.set(videos.slice(1), { autoAlpha: 0 });
-            gsap.set(copies.slice(1), { autoAlpha: 0, y: 40 });
-
-            const tl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: rootRef.current,
-                    start: 'top top',
-                    end: () => `+=${window.innerHeight * (scenes.length - 1) * 1.1}`,
-                    pin: true,
-                    scrub: 0.8,
-                    onUpdate: (self) => setActive(Math.round(self.progress * (scenes.length - 1))),
-                },
-            });
-            for (let i = 1; i < scenes.length; i++) {
-                tl.to(copies[i - 1], { autoAlpha: 0, y: -40, duration: 0.4 })
-                  .to(videos[i - 1], { autoAlpha: 0, duration: 0.5 }, '<')
-                  .to(videos[i], { autoAlpha: 1, duration: 0.5 }, '<')
-                  // Start the next copy only once the previous one is nearly
-                  // gone, so the two text blocks never read on top of each other.
-                  .to(copies[i], { autoAlpha: 1, y: 0, duration: 0.4 }, '<0.35')
-                  .to({}, { duration: 0.6 });
-            }
-        });
-        return () => mm.revert();
-    }, { scope: rootRef });
+    const [progress, setProgress] = useState(0);
+    const [inView, setInView] = useState(false);
 
     useEffect(() => {
-        videoRefs.current.forEach((video, idx) => {
-            if (!video) return;
-            if (idx === active) video.play().catch(() => {});
-            else video.pause();
-        });
-    }, [active]);
-
-    return (
-        <div ref={rootRef} className="hidden lg:block motion-reduce:lg:hidden h-screen">
-            <div className="h-full max-w-[1400px] mx-auto px-10 py-24 grid grid-cols-12 gap-14 items-center">
-                <div className="col-span-7 relative h-full max-h-[640px] rounded-[28px] overflow-hidden bg-graphite-800">
-                    {scenes.map((scene, idx) => (
-                        <video
-                            key={scene.id}
-                            data-scene-video
-                            ref={(el) => { videoRefs.current[idx] = el; }}
-                            src={scene.video}
-                            poster={scene.poster}
-                            muted
-                            loop
-                            playsInline
-                            preload="metadata"
-                            className="absolute inset-0 w-full h-full object-cover"
-                        />
-                    ))}
-                    <div className="absolute bottom-6 left-6 flex items-center gap-3">
-                        {scenes.map((scene, i) => (
-                            <span key={scene.id} className={`h-[3px] rounded-full transition-all duration-500 ${i === active ? 'w-10 bg-accent' : 'w-4 bg-white/30'}`} />
-                        ))}
-                        <span className="ml-1 text-xs font-bold text-white/70 tabular-nums">0{active + 1} / 0{scenes.length}</span>
-                    </div>
-                </div>
-                <div className="col-span-5 relative h-[420px]">
-                    {scenes.map((scene, idx) => (
-                        <div key={scene.id} data-scene-copy className="absolute inset-0 flex flex-col justify-center">
-                            <SceneCopy scene={scene} index={idx} />
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
-    );
-};
-
-// Mobile / reduced motion: stacked scenes, video plays while on screen.
-const StackedScene = ({ scene, index }) => {
-    const videoRef = useRef(null);
-
-    useEffect(() => {
-        const video = videoRef.current;
-        if (!video) return undefined;
-        const observer = new IntersectionObserver(([entry]) => {
-            if (entry.isIntersecting) video.play().catch(() => {});
-            else video.pause();
-        }, { threshold: 0.3 });
-        observer.observe(video);
+        const el = stageRef.current;
+        if (!el) return undefined;
+        const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { threshold: 0.25 });
+        observer.observe(el);
         return () => observer.disconnect();
     }, []);
 
+    // Only the active clip plays (from the start); the rest are paused and rewound.
+    useEffect(() => {
+        videoRefs.current.forEach((video, idx) => {
+            if (!video) return;
+            if (idx === active && inView) {
+                video.play().catch(() => {});
+            } else {
+                video.pause();
+                if (idx !== active) video.currentTime = 0;
+            }
+        });
+    }, [active, inView]);
+
+    const goTo = (idx) => {
+        setProgress(0);
+        setActive(idx);
+    };
+    const next = () => goTo((active + 1) % scenes.length);
+
     return (
-        <Reveal className="grid gap-6 lg:grid-cols-12 lg:gap-14 lg:items-center">
-            <div className="lg:col-span-7 aspect-video rounded-[24px] overflow-hidden bg-graphite-800">
-                <video ref={videoRef} src={scene.video} poster={scene.poster} muted loop playsInline preload="metadata" className="w-full h-full object-cover" />
+        <section id="trai-nghiem" className="bg-noir-900 py-24 sm:py-32">
+            <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10">
+                <SectionHeader
+                    number="02"
+                    eyebrow="Khám phá Kim Long 99"
+                    title="Trải nghiệm thực tế từng chi tiết"
+                    intro="Video thật về dòng xe khách hàng đầu Việt Nam — từ cung đường, nội thất đến vận hành."
+                />
+
+                <Reveal className="mt-14 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 lg:items-center">
+                    {/* Video stage */}
+                    <div ref={stageRef} className="lg:col-span-7 relative aspect-video rounded-[28px] overflow-hidden bg-graphite-800">
+                        {scenes.map((scene, idx) => (
+                            <video
+                                key={scene.id}
+                                ref={(el) => { videoRefs.current[idx] = el; }}
+                                src={scene.video}
+                                poster={scene.poster}
+                                muted
+                                playsInline
+                                preload={idx === 0 ? 'auto' : 'metadata'}
+                                onEnded={idx === active ? next : undefined}
+                                onTimeUpdate={idx === active ? (e) => {
+                                    const v = e.currentTarget;
+                                    if (v.duration) setProgress(v.currentTime / v.duration);
+                                } : undefined}
+                                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${idx === active ? 'opacity-100' : 'opacity-0'}`}
+                            />
+                        ))}
+                        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />
+                        <span className="absolute bottom-5 right-6 text-xs font-bold text-white/80 tabular-nums">
+                            0{active + 1} / 0{scenes.length}
+                        </span>
+                    </div>
+
+                    {/* Copy — all scenes share one grid cell so the height never jumps */}
+                    <div className="lg:col-span-5">
+                        <div className="grid">
+                            {scenes.map((scene, idx) => (
+                                <div
+                                    key={scene.id}
+                                    aria-hidden={idx !== active}
+                                    className={`col-start-1 row-start-1 transition-all duration-500 ${idx === active ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}
+                                >
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <span className="text-accent font-bold text-sm tabular-nums">0{idx + 1}</span>
+                                        <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-ink-muted">{scene.eyebrow}</span>
+                                    </div>
+                                    <h3 className="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight text-ink">{scene.title}</h3>
+                                    <p className="mt-4 text-[15px] text-ink-muted leading-relaxed max-w-md">{scene.description}</p>
+                                    <ul className="mt-6 border-t border-line">
+                                        {scene.highlights.map((h) => (
+                                            <li key={h.text} className="flex items-center gap-3 py-3.5 border-b border-line text-sm text-ink">
+                                                <h.icon size={17} className="text-accent shrink-0" />
+                                                {h.text}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Scene selector with per-clip progress */}
+                        <div className="mt-8 grid grid-cols-3 gap-3">
+                            {scenes.map((scene, idx) => (
+                                <button
+                                    key={scene.id}
+                                    type="button"
+                                    onClick={() => goTo(idx)}
+                                    aria-label={`Xem video ${idx + 1}: ${scene.title}`}
+                                    className="group text-left cursor-pointer"
+                                >
+                                    <span className="block h-[3px] rounded-full bg-white/15 overflow-hidden">
+                                        <span
+                                            className="block h-full bg-accent"
+                                            style={{ width: idx === active ? `${progress * 100}%` : idx < active ? '100%' : '0%' }}
+                                        />
+                                    </span>
+                                    <span className={`mt-2 block text-xs truncate transition-colors ${idx === active ? 'text-ink' : 'text-ink-muted group-hover:text-ink'}`}>
+                                        {scene.eyebrow}
+                                    </span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </Reveal>
+
+                <div className="mt-14">
+                    <GhostButton onClick={scrollToCatalog}>Xem các dòng xe khách</GhostButton>
+                </div>
             </div>
-            <div className="lg:col-span-5">
-                <SceneCopy scene={scene} index={index} />
-            </div>
-        </Reveal>
+        </section>
     );
 };
-
-// Section 02 — real-world showcase.
-const VehicleShowcase = () => (
-    <section id="trai-nghiem" className="bg-noir-900">
-        <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10 pt-24 sm:pt-32">
-            <SectionHeader
-                number="02"
-                eyebrow="Khám phá Kim Long 99"
-                title="Trải nghiệm thực tế từng chi tiết"
-                intro="Cuộn để xem từng khoảnh khắc — video thật về dòng xe khách hàng đầu Việt Nam."
-            />
-        </div>
-
-        <PinnedStage />
-
-        <div className="lg:hidden motion-reduce:lg:block max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10 py-16 space-y-16">
-            {scenes.map((scene, idx) => (
-                <StackedScene key={scene.id} scene={scene} index={idx} />
-            ))}
-        </div>
-
-        <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10 pb-24 sm:pb-32">
-            <GhostButton onClick={scrollToCatalog}>Xem các dòng xe khách</GhostButton>
-        </div>
-    </section>
-);
 
 export default VehicleShowcase;
