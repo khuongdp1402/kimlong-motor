@@ -73,11 +73,12 @@ const HeroSlider = () => {
                             <div className="relative w-full h-screen min-h-[600px] max-h-[1000px] overflow-hidden">
                                 {/* Full-screen background image */}
                                 <img
+                                    key={`img-${animKey}-${slide.id}`}
                                     src={slide.image}
-                                    alt={slide.title}
+                                    alt={slide.eyebrow}
                                     loading={idx === 0 ? 'eager' : 'lazy'}
                                     fetchPriority={idx === 0 ? 'high' : 'auto'}
-                                    className="absolute inset-0 w-full h-full object-cover object-center"
+                                    className={`absolute inset-0 w-full h-full object-cover object-center ${idx === activeIndex ? 'motion-safe:animate-ken-burns' : ''}`}
                                     style={slide.mirror ? { transform: 'scaleX(-1)' } : undefined}
                                 />
 
@@ -105,11 +106,17 @@ const HeroSlider = () => {
                                             </span>
 
                                             {/* Main headline */}
-                                            <h1
-                                                className="text-3xl sm:text-5xl lg:text-[3.5rem] xl:text-[4rem] font-extrabold text-white leading-[1.1] tracking-tight whitespace-pre-line"
-                                                style={{ animation: 'heroSlideIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both' }}
-                                            >
-                                                {slide.title}
+                                            <h1 className="text-3xl sm:text-5xl lg:text-[3.5rem] xl:text-[4rem] font-extrabold text-white leading-[1.1] tracking-tight">
+                                                {slide.title.split('\n').map((line, lineIdx) => (
+                                                    <span key={lineIdx} className="block overflow-hidden pb-1">
+                                                        <span
+                                                            className="block motion-safe:animate-line-up"
+                                                            style={{ animationDelay: `${0.2 + lineIdx * 0.12}s` }}
+                                                        >
+                                                            {line}
+                                                        </span>
+                                                    </span>
+                                                ))}
                                             </h1>
 
                                             {/* Subtitle */}
@@ -132,7 +139,7 @@ const HeroSlider = () => {
                                                     }`}
                                                 >
                                                     <span className="text-sm sm:text-base">{slide.cta}</span>
-                                                    <span className={`w-9 h-9 rounded-full bg-red-600 text-white flex items-center justify-center transition-transform ${
+                                                    <span className={`w-9 h-9 rounded-full bg-accent text-white flex items-center justify-center transition-transform ${
                                                         isRight ? 'group-hover:-translate-x-0.5 rotate-180' : 'group-hover:translate-x-0.5'
                                                     }`}>
                                                         <ArrowRight size={16} />
@@ -181,7 +188,7 @@ const HeroSlider = () => {
                                                 <div
                                                     key={i}
                                                     className={`h-[3px] rounded-full transition-all duration-500 ${
-                                                        i === activeIndex ? 'w-8 bg-red-500' : 'w-4 bg-white/30'
+                                                        i === activeIndex ? 'w-8 bg-accent' : 'w-4 bg-white/30'
                                                     }`}
                                                 />
                                             ))}

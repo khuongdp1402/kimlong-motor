@@ -39,7 +39,7 @@ const Navbar = ({ onOpenQuoteModal }) => {
         { label: 'Danh Mục Xe', action: () => scrollTo('danh-muc-xe') },
         { label: 'Dịch Vụ', action: () => scrollTo('bang-bao-gia') },
         { label: 'Tin Tức', action: () => goTo('/news') },
-        { label: 'Về Chúng Tôi', action: () => scrollTo('ve-hong-thuong') },
+        { label: 'Về Chúng Tôi', action: () => scrollTo('ve-chung-toi') },
     ];
 
     return (
@@ -85,11 +85,6 @@ const Navbar = ({ onOpenQuoteModal }) => {
                             }`}
                             onError={(e) => { e.target.src = '/images/logo-ngang-do.png'; }}
                         />
-                        <span className={`hidden sm:block font-extrabold text-white uppercase tracking-tight leading-none transition-all duration-500 ${
-                            scrolled ? 'text-base' : 'text-lg sm:text-xl'
-                        }`}>
-                            Kim Long
-                        </span>
                     </button>
 
                     {/* ─── RIGHT: Action Buttons ─── */}
@@ -110,7 +105,7 @@ const Navbar = ({ onOpenQuoteModal }) => {
                         {/* CTA — filled red */}
                         <button
                             onClick={onOpenQuoteModal}
-                            className={`inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-full shadow-md transition-all hover:shadow-lg hover:shadow-red-600/20 cursor-pointer ${
+                            className={`inline-flex items-center gap-1.5 bg-accent hover:bg-accent-dark text-white font-bold rounded-full shadow-md transition-all hover:shadow-lg hover:shadow-red-600/20 cursor-pointer ${
                                 scrolled
                                     ? 'text-xs px-3.5 py-1.5'
                                     : 'text-[13px] px-4 sm:px-5 py-2 sm:py-2.5'
@@ -154,7 +149,7 @@ const Navbar = ({ onOpenQuoteModal }) => {
                         <div className="pt-3 mt-2 border-t border-white/10 flex gap-2">
                             <button
                                 onClick={() => { setIsOpen(false); onOpenQuoteModal(); }}
-                                className="flex-1 bg-red-600 text-white font-bold py-2.5 rounded-full text-center text-sm cursor-pointer"
+                                className="flex-1 bg-accent text-white font-bold py-2.5 rounded-full text-center text-sm cursor-pointer"
                             >
                                 Nhận Báo Giá
                             </button>
