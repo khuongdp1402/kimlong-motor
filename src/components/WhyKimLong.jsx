@@ -29,15 +29,15 @@ const WhyKimLong = () => (
                 </ol>
 
                 <Reveal className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <a href={`tel:${businessInfo.hotlineSalesRaw}`} className="flex items-center gap-4 p-4 rounded-2xl border border-line hover:border-white/25 transition-colors">
+                    <a href={`tel:${businessInfo.hotlineSalesRaw}`} className="flex items-center gap-4 p-4 rounded-2xl border border-line hover:border-ink/25 transition-colors">
                         <span className="w-11 h-11 rounded-full bg-accent text-white flex items-center justify-center shrink-0"><Phone size={18} /></span>
                         <span>
                             <span className="block text-xs text-ink-muted">Tư vấn & báo giá</span>
                             <span className="block text-lg font-bold text-ink tabular-nums">{businessInfo.hotlineSales}</span>
                         </span>
                     </a>
-                    <a href={`tel:${businessInfo.hotlineServiceRaw}`} className="flex items-center gap-4 p-4 rounded-2xl border border-line hover:border-white/25 transition-colors">
-                        <span className="w-11 h-11 rounded-full bg-graphite-700 text-white flex items-center justify-center shrink-0"><Wrench size={18} /></span>
+                    <a href={`tel:${businessInfo.hotlineServiceRaw}`} className="flex items-center gap-4 p-4 rounded-2xl border border-line hover:border-ink/25 transition-colors">
+                        <span className="w-11 h-11 rounded-full bg-graphite-700 text-ink flex items-center justify-center shrink-0"><Wrench size={18} /></span>
                         <span>
                             <span className="block text-xs text-ink-muted">Kỹ thuật & dịch vụ 24/7</span>
                             <span className="block text-lg font-bold text-ink tabular-nums">{businessInfo.hotlineService}</span>

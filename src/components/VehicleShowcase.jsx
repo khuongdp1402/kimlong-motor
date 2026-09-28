@@ -156,7 +156,7 @@ const VehicleShowcase = () => {
                                     aria-label={`Xem video ${idx + 1}: ${scene.title}`}
                                     className="group text-left cursor-pointer"
                                 >
-                                    <span className="block h-[3px] rounded-full bg-white/15 overflow-hidden">
+                                    <span className="block h-[3px] rounded-full bg-ink/15 overflow-hidden">
                                         <span
                                             className="block h-full bg-accent"
                                             style={{ width: idx === active ? `${progress * 100}%` : idx < active ? '100%' : '0%' }}

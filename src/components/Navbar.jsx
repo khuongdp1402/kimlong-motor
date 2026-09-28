@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, Phone, FileText } from 'lucide-react';
+import { Menu, X, Phone, FileText, Sun, Moon } from 'lucide-react';
 import { businessInfo } from '../data/hongthuong-data';
+import { useThemeMode } from '../context/themeMode';
 
 const Navbar = ({ onOpenQuoteModal }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const { mode, toggleMode } = useThemeMode();
+    const isDark = mode === 'dark';
     const [scrolled, setScrolled] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
+    // Detail pages have no dark hero behind the header, so in light mode the
+    // transparent top state would put white text on a light page.
+    const onHeroLessPage = /^\/(product|news)\/.+/.test(location.pathname);
+    const solidBar = scrolled || (!isDark && onHeroLessPage);
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 80);
@@ -46,7 +53,7 @@ const Navbar = ({ onOpenQuoteModal }) => {
         <header className="fixed w-full z-50 top-0 left-0">
             <nav
                 className={`transition-all duration-500 ${
-                    scrolled
+                    solidBar
                         ? 'bg-gray-950/98 backdrop-blur-lg shadow-[0_2px_20px_rgba(0,0,0,0.3)]'
                         : 'bg-gradient-to-b from-black/60 via-black/30 to-transparent'
                 }`}
@@ -89,6 +96,17 @@ const Navbar = ({ onOpenQuoteModal }) => {
 
                     {/* ─── RIGHT: Action Buttons ─── */}
                     <div className="flex items-center gap-2.5 flex-1 justify-end">
+                        {/* Dark / light mode toggle */}
+                        <button
+                            type="button"
+                            onClick={toggleMode}
+                            aria-label={isDark ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối'}
+                            title={isDark ? 'Giao diện sáng' : 'Giao diện tối'}
+                            className="w-9 h-9 rounded-full border border-white/15 hover:border-white/30 hover:bg-white/5 text-gray-300 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+                        >
+                            {isDark ? <Sun size={16} /> : <Moon size={16} />}
+                        </button>
+
                         {/* Phone — ghost/outlined style */}
                         <a
                             href={`tel:${businessInfo.hotlineSalesRaw}`}

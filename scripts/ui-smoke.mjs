@@ -73,8 +73,11 @@ async function checkSections(page, label) {
     }
 }
 
-async function runPage(browser, { path, forbiddenScope, checkSections: doSections }, contextOptions, label) {
+async function runPage(browser, { path, forbiddenScope, checkSections: doSections }, contextOptions, label, theme) {
     const context = await browser.newContext(contextOptions);
+    if (theme) {
+        await context.addInitScript((t) => { try { localStorage.setItem('theme', t); } catch { /* ignore */ } }, theme);
+    }
     const page = await context.newPage();
     const errors = [];
     page.on('pageerror', (err) => errors.push(err.message));
@@ -107,6 +110,10 @@ try {
     await runPage(browser, PAGES[0], { viewport: { width: 390, height: 844 }, isMobile: true }, '/ mobile');
     console.log('\n/ reduced motion');
     await runPage(browser, PAGES[0], { viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' }, '/ reduced-motion');
+    for (const p of PAGES) {
+        console.log(`\n${p.path} light mode`);
+        await runPage(browser, p, { viewport: { width: 1440, height: 900 } }, `${p.path} light`, 'light');
+    }
 } finally {
     await browser.close();
 }

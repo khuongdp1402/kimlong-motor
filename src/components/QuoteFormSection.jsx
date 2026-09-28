@@ -38,7 +38,7 @@ const QuoteFormSection = () => {
     };
 
     return (
-        <section id="bang-bao-gia" className="relative overflow-hidden bg-noir-950 py-28 sm:py-40">
+        <section id="bang-bao-gia" className="force-dark relative overflow-hidden bg-noir-950 py-28 sm:py-40">
             <img src="/images/banners/banner-xetai.jpg" alt="" aria-hidden="true" loading="lazy" className="absolute inset-0 w-full h-full object-cover opacity-30 blur-[2px] scale-105" />
             <div className="absolute inset-0 bg-gradient-to-b from-noir-950 via-noir-950/70 to-noir-950" />
 

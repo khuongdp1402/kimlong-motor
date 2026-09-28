@@ -24,7 +24,7 @@ const Footer = () => {
     };
 
     return (
-        <footer id="lien-he" className="bg-noir-900 text-ink border-t border-line overflow-hidden">
+        <footer id="lien-he" className="force-dark bg-noir-900 text-ink border-t border-line overflow-hidden">
             <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10 pt-20">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
                     <div className="md:col-span-5 space-y-5">

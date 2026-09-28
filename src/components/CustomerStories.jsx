@@ -94,7 +94,7 @@ const CustomerStories = () => {
                                         <span className="w-11 h-11 rounded-full bg-accent text-white flex items-center justify-center"><Play size={16} fill="white" /></span>
                                     </span>
                                 </div>
-                                <p className="mt-3 text-xs sm:text-sm text-ink line-clamp-2 group-hover:text-white">{video.title}</p>
+                                <p className="mt-3 text-xs sm:text-sm text-ink line-clamp-2 group-hover:text-accent">{video.title}</p>
                                 <p className="mt-1 text-[11px] text-ink-muted flex items-center gap-1"><Youtube size={12} /> Kim Long Motor</p>
                             </a>
                         </Reveal>

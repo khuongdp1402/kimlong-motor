@@ -63,9 +63,9 @@ const ProductCategory = () => {
                             <article
                                 key={product.id}
                                 onClick={() => navigate(`/product/${product.slug || product.id}`)}
-                                className="group cursor-pointer rounded-[22px] bg-graphite-800 border border-line overflow-hidden flex flex-col transition-colors hover:border-white/20"
+                                className="group cursor-pointer rounded-[22px] bg-graphite-800 border border-line overflow-hidden flex flex-col transition-colors hover:border-ink/20"
                             >
-                                <div className="relative p-3 bg-[radial-gradient(ellipse_at_50%_70%,#2B313B_0%,#1A1D23_70%)]">
+                                <div className="relative p-3 bg-[radial-gradient(ellipse_at_50%_70%,var(--color-graphite-700)_0%,var(--color-graphite-800)_70%)]">
                                     <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-graphite-700">
                                         {product.image && (
                                             <img src={product.image} alt={product.name} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />

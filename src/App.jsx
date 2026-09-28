@@ -15,7 +15,7 @@ import VehicleModal from './components/VehicleModal';
 import QuickQuoteModal from './components/QuickQuoteModal';
 import SeoJsonLd from './components/SeoJsonLd';
 import SmoothScroll from './components/motion/SmoothScroll';
-import { useRouteTheme } from './hooks/useRouteTheme';
+import ThemeModeProvider from './context/ThemeModeProvider';
 
 import ProductDetail from './pages/ProductDetail';
 import ProductCategory from './pages/ProductCategory';
@@ -113,30 +113,30 @@ const Home = () => {
 };
 
 function App() {
-  useRouteTheme();
-
   return (
-    <AdminAuthProvider>
-      <SmoothScroll />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/category/:slug" element={<ProductCategory />} />
-        <Route path="/news" element={<NewsListPage />} />
-        <Route path="/news/:id" element={<NewsDetailPage />} />
-        <Route path="/gioi-thieu" element={<AboutPage />} />
-        <Route path="/lien-he" element={<ContactPage />} />
+    <ThemeModeProvider>
+      <AdminAuthProvider>
+        <SmoothScroll />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/category/:slug" element={<ProductCategory />} />
+          <Route path="/news" element={<NewsListPage />} />
+          <Route path="/news/:id" element={<NewsDetailPage />} />
+          <Route path="/gioi-thieu" element={<AboutPage />} />
+          <Route path="/lien-he" element={<ContactPage />} />
 
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminProducts />} />
-          <Route path="products" element={<AdminProducts />} />
-          <Route path="articles" element={<AdminArticles />} />
-          <Route path="testimonials" element={<AdminTestimonials />} />
-          <Route path="leads" element={<AdminLeads />} />
-        </Route>
-      </Routes>
-    </AdminAuthProvider>
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminProducts />} />
+            <Route path="products" element={<AdminProducts />} />
+            <Route path="articles" element={<AdminArticles />} />
+            <Route path="testimonials" element={<AdminTestimonials />} />
+            <Route path="leads" element={<AdminLeads />} />
+          </Route>
+        </Routes>
+      </AdminAuthProvider>
+    </ThemeModeProvider>
   );
 }
 

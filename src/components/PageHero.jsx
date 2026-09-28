@@ -6,7 +6,7 @@ import SplitHeading from './motion/SplitHeading';
 // Shared noir hero for sub-pages. Always dark, so the transparent navbar that
 // sits on top of it stays legible.
 const PageHero = ({ eyebrow, title, description, image, crumbs = [] }) => (
-    <section className="relative overflow-hidden bg-noir-950 pt-36 sm:pt-44 pb-16 sm:pb-24">
+    <section className="force-dark relative overflow-hidden bg-noir-950 pt-36 sm:pt-44 pb-16 sm:pb-24">
         {image && (
             <>
                 <img src={image} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover opacity-25" />

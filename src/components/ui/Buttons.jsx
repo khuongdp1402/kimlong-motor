@@ -21,7 +21,7 @@ export const GhostButton = ({ as: Tag = 'button', className = '', children, ...r
     <Tag
         {...(Tag === 'button' ? { type: 'button' } : {})}
         {...rest}
-        className={`group inline-flex items-center gap-2 border border-white/20 hover:border-white/50 text-ink font-semibold px-5 py-2.5 rounded-full text-sm transition-colors cursor-pointer ${className}`}
+        className={`group inline-flex items-center gap-2 border border-ink/20 hover:border-ink/50 text-ink font-semibold px-5 py-2.5 rounded-full text-sm transition-colors cursor-pointer ${className}`}
     >
         {children}
         <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />

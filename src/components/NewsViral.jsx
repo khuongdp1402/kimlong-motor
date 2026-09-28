@@ -44,7 +44,7 @@ const NewsViral = () => {
                                 <span className="text-accent font-semibold uppercase tracking-[0.18em]">{getNewsCategoryLabel(main.category)}</span>
                                 <span>{formatDate(main.date)}</span>
                             </div>
-                            <h3 data-cms-content className="mt-2 text-xl sm:text-3xl font-bold tracking-tight text-ink leading-snug group-hover:text-white">{main.title}</h3>
+                            <h3 data-cms-content className="mt-2 text-xl sm:text-3xl font-bold tracking-tight text-ink leading-snug group-hover:text-accent">{main.title}</h3>
                         </Link>
                     </Reveal>
 
@@ -57,7 +57,7 @@ const NewsViral = () => {
                                     </div>
                                     <div className="min-w-0">
                                         <div className="text-[11px] text-ink-muted">{formatDate(item.date)}</div>
-                                        <h3 data-cms-content className="mt-1.5 text-sm sm:text-base font-semibold text-ink leading-snug line-clamp-3 group-hover:text-white">{item.title}</h3>
+                                        <h3 data-cms-content className="mt-1.5 text-sm sm:text-base font-semibold text-ink leading-snug line-clamp-3 group-hover:text-accent">{item.title}</h3>
                                     </div>
                                 </Link>
                             </Reveal>

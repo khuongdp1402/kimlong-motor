@@ -2,9 +2,9 @@
 @import "lenis/dist/lenis.css";
 @plugin "@tailwindcss/typography";
 
-/* `dark:` utilities follow a `.dark` class on <html> (set per route by
-   src/hooks/useRouteTheme.js: public pages dark, admin light) instead of the
-   OS preference. */
+/* `dark:` utilities follow a `.dark` class on <html> (set by
+   src/context/ThemeModeProvider.jsx from the visitor's choice; admin is
+   always light) instead of the OS preference. */
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -48,8 +48,33 @@
   to { transform: translateY(0); }
 }
 
+/* Light mode: the same semantic tokens, re-valued. Every component styled
+   with the noir, graphite, ink and line utilities flips automatically. */
+html:not(.dark) {
+  --color-noir-950: #FAFAFC;
+  --color-noir-900: #F1F2F5;
+  --color-graphite-800: #FFFFFF;
+  --color-graphite-700: #E6E8EC;
+  --color-line: rgba(15, 23, 42, 0.1);
+  --color-ink: #0F172A;
+  --color-ink-muted: #5B6474;
+}
+
+/* Bands that sit on photography or anchor the page (hero, sub-page hero,
+   quote CTA, footer) stay dark in both modes. */
+.force-dark {
+  --color-noir-950: #0A0B0D;
+  --color-noir-900: #111317;
+  --color-graphite-800: #1A1D23;
+  --color-graphite-700: #252A32;
+  --color-line: rgba(255, 255, 255, 0.08);
+  --color-ink: #F4F5F7;
+  --color-ink-muted: #9AA1AC;
+  color: var(--color-ink);
+}
+
 @layer base {
-  html.dark body {
+  body {
     background-color: var(--color-noir-950);
     color: var(--color-ink);
   }

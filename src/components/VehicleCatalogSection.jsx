@@ -25,10 +25,10 @@ const StageCard = ({ car, onOpenDetail, onOpenQuote }) => {
     return (
         <article
             onClick={() => onOpenDetail(car)}
-            className="group cursor-pointer rounded-[22px] bg-graphite-800 border border-line overflow-hidden flex flex-col transition-colors hover:border-white/20"
+            className="group cursor-pointer rounded-[22px] bg-graphite-800 border border-line overflow-hidden flex flex-col transition-colors hover:border-ink/20"
         >
             {/* Uniform gradient "stage" so every photo sits on the same backdrop */}
-            <div className="relative p-3 bg-[radial-gradient(ellipse_at_50%_70%,#2B313B_0%,#1A1D23_70%)]">
+            <div className="relative p-3 bg-[radial-gradient(ellipse_at_50%_70%,var(--color-graphite-700)_0%,var(--color-graphite-800)_70%)]">
                 <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
                     <img
                         src={car.image}
@@ -60,7 +60,7 @@ const StageCard = ({ car, onOpenDetail, onOpenQuote }) => {
                     <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); onOpenQuote(car); }}
-                        className="shrink-0 inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-accent hover:text-white transition-colors cursor-pointer"
+                        className="shrink-0 inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-accent hover:text-ink transition-colors cursor-pointer"
                     >
                         Báo giá <ArrowUpRight size={15} />
                     </button>
