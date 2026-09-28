@@ -6,9 +6,8 @@ import BrandIntro from './components/BrandIntro';
 import VehicleShowcase from './components/VehicleShowcase';
 import VehicleCatalogSection from './components/VehicleCatalogSection';
 import RealVideoSection from './components/RealVideoSection';
-import WhyChooseUs from './components/WhyChooseUs';
+import WhyKimLong from './components/WhyKimLong';
 import Testimonials from './components/Testimonials';
-import AboutHongThuong from './components/AboutHongThuong';
 import NewsViral from './components/NewsViral';
 import QuoteFormSection from './components/QuoteFormSection';
 import Footer from './components/Footer';
@@ -77,17 +76,14 @@ const Home = () => {
           onOpenQuote={handleOpenQuote}
         />
 
-        {/* Why Choose Us — Trust pillars (API-driven, returns null if no data) */}
-        <WhyChooseUs />
+        {/* 04 — Why Kim Long Motor */}
+        <WhyKimLong />
 
         {/* Real Videos Section (YouTube & TikTok @thuongkimlong) */}
         <RealVideoSection />
 
         {/* Customer Testimonials (API-driven, returns null if no data) */}
         <Testimonials />
-
-        {/* About Hong Thuong Section */}
-        <AboutHongThuong />
 
         {/* News Preview — Latest articles (API-driven, returns null if no data) */}
         <NewsViral />
