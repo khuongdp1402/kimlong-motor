@@ -58,8 +58,8 @@ Reusable primitives in `src/components/motion/`:
 - `Reveal` — fade + 24px translate; plays on enter, reverses when scrolled
   past (bidirectional).
 - `SplitHeading` — heading lines slide up from behind a mask, staggered.
-- `ImageReveal` — clip-path wipe + scale 1.15 → 1.
-- `Parallax` — subtle scroll-linked translate.
+- `ImageReveal` — clip-path wipe + scale 1.15 → 1 (scrubbed, so it doubles
+  as the subtle scroll-linked depth effect; no separate Parallax primitive).
 - `Counter` — rolling number on enter.
 
 All primitives render static, fully visible content when
@@ -84,7 +84,11 @@ All primitives render static, fully visible content when
 - Shared `PageHero` for category, news list, about, contact: noir
   background with dimmed photo, breadcrumb, line-reveal title. Fixes navbar
   legibility.
-- Category / product detail: reuse the stage card and hairline spec rows.
+- Category: reuse the stage card and hairline spec rows.
+- Product detail: adopts the noir palette through its existing `dark:`
+  classes (public routes force `.dark`; `gray-950/900/800` are remapped to
+  the noir scale); only brand strings are edited.
+- CMS-sourced text is marked `data-cms-content` and is not rewritten.
 - News detail: header/footer in noir, article body on `paper`.
 - Admin: unchanged.
 - Remove all "Miền Nam Auto / Kim Long Miền Nam / Miền Nam Group" strings.
