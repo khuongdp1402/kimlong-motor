@@ -1,124 +1,68 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useApiData } from '../hooks/useApiData';
 import { getArticles } from '../api/client';
-import { useScrollAnimation } from '../hooks/useScrollAnimation';
+import { getNewsCategoryLabel } from '../data/newsCategories';
+import SectionHeader from './ui/SectionHeader';
+import Reveal from './motion/Reveal';
+import ImageReveal from './motion/ImageReveal';
+import { GhostButton } from './ui/Buttons';
 
-const formatDate = (dateStr) => {
-    if (!dateStr) return '';
-    const d = new Date(dateStr);
-    if (Number.isNaN(d.getTime())) return '';
-    return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+const formatDate = (value) => {
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
 };
 
-// "Tin Tức Nổi Bật" — exactly 4 cards: 1 large featured + 3 side items.
+// Section 06 — one large featured story + three side stories.
 const NewsViral = () => {
+    const navigate = useNavigate();
     const { data: articles } = useApiData(getArticles, []);
     const all = articles || [];
     const featured = all.filter((a) => a.featured);
-    const latestNews = (featured.length > 0 ? featured : all)
+    const news = (featured.length ? featured : all)
         .slice()
         .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0))
         .slice(0, 4);
 
-    const sectionRef = useScrollAnimation();
-
-    if (!latestNews.length) return null;
-
-    const [main, ...rest] = latestNews;
+    if (!news.length) return null;
+    const [main, ...rest] = news;
+    const href = (a) => `/news/${a.slug || a.id}`;
 
     return (
-        <section id="news" className="py-16 sm:py-20 bg-brand-bg">
-            <div ref={sectionRef} className="scroll-fade-up max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center mb-10 sm:mb-12">
-                    <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-brand-text uppercase">
-                        Tin Tức Nổi Bật
-                    </h2>
+        <section id="news" className="bg-noir-900 py-24 sm:py-36">
+            <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10">
+                <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-8">
+                    <SectionHeader number="06" eyebrow="Tin tức" title="Câu chuyện từ Kim Long Motor" />
+                    <GhostButton onClick={() => navigate('/news')}>Tất cả tin tức</GhostButton>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* Featured large article */}
-                    <Link
-                        to={`/news/${main.slug || main.id}`}
-                        className="group relative rounded-brand-lg overflow-hidden border border-brand-border shadow-brand-soft bg-white flex flex-col"
-                    >
-                        <div className="relative h-56 sm:h-72 lg:h-full overflow-hidden">
-                            {main.image ? (
-                                <img
-                                    src={main.image}
-                                    alt={main.title}
-                                    loading="lazy"
-                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                />
-                            ) : (
-                                <div className="w-full h-full bg-brand-surface" />
-                            )}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
-                            {main.category && (
-                                <span className="absolute top-3 left-3 bg-brand-primary text-white text-[10px] font-bold uppercase px-2.5 py-1 rounded-full">
-                                    {main.category}
-                                </span>
-                            )}
-                            {formatDate(main.date) && (
-                                <span className="absolute top-3 right-3 bg-white/90 text-brand-text text-[10px] font-bold px-2.5 py-1 rounded-full">
-                                    {formatDate(main.date)}
-                                </span>
-                            )}
-                            <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
-                                <p className="text-white text-base sm:text-xl font-bold leading-snug line-clamp-3">
-                                    {main.title}
-                                </p>
+                <div className="mt-14 grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <Reveal className="lg:col-span-7">
+                        <Link to={href(main)} className="group block">
+                            <ImageReveal src={main.image} alt={main.title} className="rounded-[24px] aspect-[16/10]" imgClassName="transition-transform duration-700 group-hover:scale-105" />
+                            <div className="mt-5 flex items-center gap-3 text-xs text-ink-muted">
+                                <span className="text-accent font-semibold uppercase tracking-[0.18em]">{getNewsCategoryLabel(main.category)}</span>
+                                <span>{formatDate(main.date)}</span>
                             </div>
-                        </div>
-                    </Link>
+                            <h3 data-cms-content className="mt-2 text-xl sm:text-3xl font-bold tracking-tight text-ink leading-snug group-hover:text-white">{main.title}</h3>
+                        </Link>
+                    </Reveal>
 
-                    {/* 3 side articles */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-4">
-                        {rest.map((item) => (
-                            <Link
-                                key={item.id}
-                                to={`/news/${item.slug || item.id}`}
-                                className="group flex gap-3 sm:flex-col lg:flex-row items-stretch bg-white rounded-brand-lg border border-brand-border shadow-brand-soft overflow-hidden hover:shadow-brand-lifted transition-shadow"
-                            >
-                                <div className="relative w-28 sm:w-full lg:w-28 shrink-0 h-24 sm:h-32 lg:h-24 overflow-hidden">
-                                    {item.image ? (
-                                        <img
-                                            src={item.image}
-                                            alt={item.title}
-                                            loading="lazy"
-                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full bg-brand-surface" />
-                                    )}
-                                    {formatDate(item.date) && (
-                                        <span className="absolute bottom-1.5 left-1.5 bg-black/70 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
-                                            {formatDate(item.date)}
-                                        </span>
-                                    )}
-                                </div>
-                                <div className="flex-1 py-2 pr-3 flex flex-col justify-center min-w-0">
-                                    {item.category && (
-                                        <span className="text-[10px] font-bold uppercase text-brand-primary mb-1">
-                                            {item.category}
-                                        </span>
-                                    )}
-                                    <p className="text-xs sm:text-sm font-semibold text-brand-text group-hover:text-brand-primary transition-colors line-clamp-2 leading-snug">
-                                        {item.title}
-                                    </p>
-                                </div>
-                            </Link>
+                    <div className="lg:col-span-5 border-t border-line">
+                        {rest.map((item, idx) => (
+                            <Reveal key={item.id} delay={idx * 0.08}>
+                                <Link to={href(item)} className="group grid grid-cols-[112px_1fr] sm:grid-cols-[140px_1fr] gap-5 py-6 border-b border-line">
+                                    <div className="aspect-[4/3] rounded-xl overflow-hidden bg-graphite-800">
+                                        {item.image && <img src={item.image} alt={item.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />}
+                                    </div>
+                                    <div className="min-w-0">
+                                        <div className="text-[11px] text-ink-muted">{formatDate(item.date)}</div>
+                                        <h3 data-cms-content className="mt-1.5 text-sm sm:text-base font-semibold text-ink leading-snug line-clamp-3 group-hover:text-white">{item.title}</h3>
+                                    </div>
+                                </Link>
+                            </Reveal>
                         ))}
                     </div>
-                </div>
-
-                <div className="mt-10 text-center">
-                    <Link
-                        to="/news"
-                        className="inline-flex items-center justify-center px-6 py-3 rounded-full text-white bg-brand-primary hover:bg-brand-primary-dark font-semibold transition-colors"
-                    >
-                        Xem Tất Cả Tin Tức
-                    </Link>
                 </div>
             </div>
         </section>
