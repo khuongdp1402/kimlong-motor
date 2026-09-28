@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Car, Wrench, Factory, Package, Truck, Bike, Phone, MapPin } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import PageHero from '../components/PageHero';
 import Footer from '../components/Footer';
 import { useApiData } from '../hooks/useApiData';
 import { getAbout, getContact } from '../api/client';
@@ -87,38 +88,17 @@ const AboutPage = () => {
     return (
         <>
             <Navbar />
-            <div className="pt-20 min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-                {/* Hero */}
-                <section className="bg-white dark:bg-gray-800 transition-colors duration-300">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-                        <div>
-                            <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white uppercase leading-tight">
-                                Kim Long Miền Nam
-                                <span className="block text-red-600 dark:text-red-500">Vững Bước Tiên Phong</span>
-                            </h1>
-                            <p className="mt-4 text-gray-600 dark:text-gray-300 leading-relaxed">{parsed.intro}</p>
-                            <button
-                                onClick={() => document.getElementById('showroom-network')?.scrollIntoView({ behavior: 'smooth' })}
-                                className="mt-6 inline-flex items-center justify-center px-7 py-3 rounded-full bg-red-600 hover:bg-red-700 text-white font-semibold transition-colors"
-                            >
-                                Khám Phá Hệ Thống Showroom
-                            </button>
-                        </div>
-                        <div className="relative rounded-2xl overflow-hidden shadow-lg">
-                            {images[0] && (
-                                <img src={images[0]} alt="Kim Long Miền Nam" className="w-full h-72 md:h-80 object-cover" />
-                            )}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
-                                <p className="text-xs uppercase tracking-widest text-gray-200 mb-1">Miền Nam Auto</p>
-                                <h3 className="text-xl font-bold">Hồ Sơ Năng Lực Kim Long Miền Nam</h3>
-                                <p className="text-3xl font-extrabold text-red-400 mt-2">12 SHOWROOM</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+                <PageHero
+                    eyebrow="Về chúng tôi"
+                    title="Kim Long Motor — vững bước tiên phong"
+                    description={parsed.intro}
+                    image={images[0]}
+                    crumbs={[{ label: 'Giới thiệu' }]}
+                />
 
                 {!loading && (
-                    <>
+                    <div data-cms-content>
                         {/* Tập Đoàn Đầu Tư Miền Nam */}
                         <section className="py-4">
                             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -137,9 +117,9 @@ const AboutPage = () => {
                                     ))}
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
-                                    {images[1] && <img src={images[1]} alt="Trụ sở Kim Long Miền Nam" className="w-full h-40 object-cover rounded-xl col-span-2" />}
-                                    {images[2] && <img src={images[2]} alt="Đội ngũ Kim Long Miền Nam" className="w-full h-32 object-cover rounded-xl" />}
-                                    {images[3] && <img src={images[3]} alt="Nhân viên Kim Long Miền Nam" className="w-full h-32 object-cover rounded-xl" />}
+                                    {images[1] && <img src={images[1]} alt="Trụ sở Kim Long Motor" className="w-full h-40 object-cover rounded-xl col-span-2" />}
+                                    {images[2] && <img src={images[2]} alt="Đội ngũ Kim Long Motor" className="w-full h-32 object-cover rounded-xl" />}
+                                    {images[3] && <img src={images[3]} alt="Nhân viên Kim Long Motor" className="w-full h-32 object-cover rounded-xl" />}
                                 </div>
                             </div>
                         </section>
@@ -276,10 +256,10 @@ const AboutPage = () => {
                         <section className="py-14">
                             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                                 <div className="relative rounded-2xl overflow-hidden shadow-lg">
-                                    {images[4] && <img src={images[4]} alt="Kim Long Miền Nam" className="w-full h-64 md:h-80 object-cover" />}
+                                    {images[4] && <img src={images[4]} alt="Kim Long Motor" className="w-full h-64 md:h-80 object-cover" />}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-8 text-white">
-                                        <p className="text-xs uppercase tracking-widest text-gray-200 mb-1">Miền Nam Auto</p>
-                                        <h3 className="text-2xl md:text-3xl font-extrabold">Hồ Sơ Năng Lực Kim Long Miền Nam</h3>
+                                        <p className="text-xs uppercase tracking-widest text-gray-200 mb-1">Kim Long Motor</p>
+                                        <h3 className="text-2xl md:text-3xl font-extrabold">Hồ Sơ Năng Lực Kim Long Motor</h3>
                                         <p className="text-4xl font-extrabold text-red-400 mt-2">{parsed.showroomRows.length || 12} SHOWROOM</p>
                                     </div>
                                 </div>
@@ -336,7 +316,7 @@ const AboutPage = () => {
                                 </div>
                             </section>
                         )}
-                    </>
+                    </div>
                 )}
             </div>
             <Footer />

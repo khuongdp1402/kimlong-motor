@@ -4,6 +4,7 @@ import { getCategoryBySlug, productCategories } from '../data/categories';
 import { useApiData } from '../hooks/useApiData';
 import { getProducts } from '../api/client';
 import Navbar from '../components/Navbar';
+import PageHero from '../components/PageHero';
 import Footer from '../components/Footer';
 import FloatingButtons from '../components/FloatingButtons';
 
@@ -24,33 +25,18 @@ const ProductCategory = () => {
     const categoryProducts = slug === 'all' ? allProducts : allProducts.filter((p) => p.category === category?.id);
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+        <div className="min-h-screen bg-noir-950">
             <Navbar />
 
-            {/* Hero */}
-            <section className="relative h-72 md:h-96 overflow-hidden">
-                <img src={HERO_IMAGE} alt={category ? category.name : 'Sản phẩm'} className="absolute inset-0 w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-black/60" />
-                <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center text-white">
-                    <p className="text-sm uppercase tracking-widest text-gray-200 mb-2">Miền Nam Auto</p>
-                    <h1 className="text-4xl md:text-5xl font-extrabold uppercase mb-3">
-                        {category ? category.name : 'Tất Cả Sản Phẩm'}
-                    </h1>
-                    <p className="text-gray-200 max-w-2xl">
-                        {category ? category.description : 'Toàn bộ dòng xe thương mại Kim Long do Kim Long Miền Nam phân phối chính hãng.'}
-                    </p>
-                </div>
-            </section>
+            <PageHero
+                eyebrow="Sản phẩm"
+                title={category ? category.name : 'Tất cả dòng xe'}
+                description={category ? category.description : 'Toàn bộ dòng xe thương mại Kim Long Motor phân phối chính hãng.'}
+                image={HERO_IMAGE}
+                crumbs={[{ label: 'Sản phẩm', to: '/category/all' }, { label: category ? category.name : 'Tất cả' }]}
+            />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                {/* Breadcrumb */}
-                <nav className="flex mb-8 text-sm text-gray-500 dark:text-gray-400">
-                    <Link to="/" className="hover:text-red-600 dark:hover:text-red-400">Trang chủ</Link>
-                    <span className="mx-2">/</span>
-                    <span>Sản phẩm</span>
-                    <span className="mx-2">/</span>
-                    <span className="text-gray-800 dark:text-gray-200 font-medium">{category ? category.name : 'Tất cả'}</span>
-                </nav>
 
                 {/* Category quick-switch pills */}
                 <div className="flex flex-wrap gap-2 mb-10">
@@ -58,7 +44,7 @@ const ProductCategory = () => {
                         <Link
                             key={cat.slug}
                             to={`/category/${cat.slug}`}
-                            className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors ${slug === cat.slug ? 'bg-red-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-600'}`}
+                            className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors ${slug === cat.slug ? 'bg-accent text-white' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-600'}`}
                         >
                             {cat.name}
                         </Link>
@@ -72,43 +58,41 @@ const ProductCategory = () => {
                 {loading && <div className="text-center py-16 text-gray-500 dark:text-gray-400">Đang tải sản phẩm...</div>}
 
                 {!loading && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                         {categoryProducts.map((product) => (
-                            <div
+                            <article
                                 key={product.id}
-                                className="group bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1 cursor-pointer flex flex-col border border-gray-100 dark:border-gray-700"
                                 onClick={() => navigate(`/product/${product.slug || product.id}`)}
+                                className="group cursor-pointer rounded-[22px] bg-graphite-800 border border-line overflow-hidden flex flex-col transition-colors hover:border-white/20"
                             >
-                                <div className="relative w-full h-48 bg-gray-100 dark:bg-gray-700 overflow-hidden">
-                                    {product.image ? (
-                                        <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500 text-sm">Chưa có ảnh</div>
-                                    )}
+                                <div className="relative p-3 bg-[radial-gradient(ellipse_at_50%_70%,#2B313B_0%,#1A1D23_70%)]">
+                                    <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-graphite-700">
+                                        {product.image && (
+                                            <img src={product.image} alt={product.name} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                                        )}
+                                    </div>
                                     {product.badges?.[0] && (
-                                        <span className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold uppercase px-2 py-1 rounded-full shadow">
+                                        <span className="absolute top-6 left-6 text-[10px] font-semibold uppercase tracking-[0.18em] text-white bg-black/55 backdrop-blur-sm px-2.5 py-1 rounded-full">
                                             {product.badges[0]}
                                         </span>
                                     )}
                                 </div>
-                                <div className="p-4 flex-1 flex flex-col">
-                                    <h3 className="text-base font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 min-h-[2.75rem]">{product.name}</h3>
-                                    {(product.highlights || []).slice(0, 3).length > 0 && (
-                                        <ul className="text-xs text-gray-500 dark:text-gray-400 space-y-1 mb-3">
-                                            {(product.highlights || []).slice(0, 3).map((s, i) => (
-                                                <li key={i} className="flex justify-between gap-2">
-                                                    <span>{s.label}:</span>
-                                                    <span className="text-gray-700 dark:text-gray-300 font-medium text-right">{s.value}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
-                                    <div className="mt-auto pt-2 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
-                                        <span className="text-red-600 dark:text-red-400 font-bold text-sm">{product.priceDisplay || 'Liên hệ'}</span>
-                                        <span className="text-red-600 dark:text-red-400 text-sm font-semibold group-hover:translate-x-1 transition-transform">Xem chi tiết →</span>
+                                <div className="px-5 pb-5 pt-3 flex-1 flex flex-col">
+                                    <h3 className="text-base font-bold text-ink leading-snug line-clamp-2">{product.name}</h3>
+                                    <dl className="mt-3 text-xs sm:text-[13px]">
+                                        {(product.highlights || []).slice(0, 3).map((s) => (
+                                            <div key={s.label} className="flex justify-between gap-3 py-2 border-t border-line">
+                                                <dt className="text-ink-muted shrink-0">{s.label}</dt>
+                                                <dd className="text-ink text-right truncate">{s.value}</dd>
+                                            </div>
+                                        ))}
+                                    </dl>
+                                    <div className="mt-auto pt-4 flex items-center justify-between gap-3">
+                                        <span className="text-sm text-ink-muted truncate">{product.priceDisplay || 'Liên hệ'}</span>
+                                        <span className="text-sm font-semibold text-accent group-hover:translate-x-1 transition-transform">Chi tiết →</span>
                                     </div>
                                 </div>
-                            </div>
+                            </article>
                         ))}
                     </div>
                 )}
@@ -120,10 +104,10 @@ const ProductCategory = () => {
                 )}
 
                 {/* CTA banner */}
-                <div className="mt-14 border-2 border-dashed border-red-300 dark:border-red-800 rounded-xl p-8 text-center bg-white dark:bg-gray-800 transition-colors duration-300">
+                <div className="mt-14 rounded-[24px] p-10 text-center border border-line bg-graphite-800">
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Bạn muốn nhận giá tốt hơn?</h3>
                     <p className="text-gray-500 dark:text-gray-400 mb-5">
-                        Để lại thông tin, đội ngũ tư vấn Kim Long Miền Nam sẽ liên hệ gửi báo giá ưu đãi nhất.
+                        Để lại thông tin, đội ngũ tư vấn Kim Long Motor sẽ liên hệ gửi báo giá ưu đãi nhất.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-3 justify-center">
                         <Link

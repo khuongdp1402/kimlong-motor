@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Phone } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import PageHero from '../components/PageHero';
 import Footer from '../components/Footer';
 import FloatingButtons from '../components/FloatingButtons';
 import { useApiData } from '../hooks/useApiData';
@@ -30,7 +31,7 @@ const ArticleCard = ({ item }) => (
             ) : (
                 <div className="h-full w-full bg-gray-200 dark:bg-gray-700" />
             )}
-            <span className="absolute top-3 left-3 bg-red-600 text-white text-[11px] font-bold px-3 py-1 rounded-full uppercase">
+            <span className="absolute top-3 left-3 bg-accent text-white text-[11px] font-bold px-3 py-1 rounded-full uppercase">
                 {item.category}
             </span>
         </div>
@@ -38,12 +39,12 @@ const ArticleCard = ({ item }) => (
             <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500 mb-2">
                 <time dateTime={item.date}>{formatDate(item.date)}</time>
                 <span>•</span>
-                <span>{item.author}</span>
+                <span>Kim Long Motor</span>
             </div>
-            <h3 className="text-base font-bold text-gray-900 dark:text-white hover:text-red-600 dark:hover:text-red-400 transition-colors line-clamp-2 mb-2">
+            <h3 data-cms-content className="text-base font-bold text-gray-900 dark:text-white hover:text-red-600 dark:hover:text-red-400 transition-colors line-clamp-2 mb-2">
                 {item.title}
             </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 flex-1">{item.excerpt}</p>
+            <p data-cms-content className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 flex-1">{item.excerpt}</p>
             <span className="mt-3 text-red-600 dark:text-red-400 font-semibold text-sm">Xem thêm →</span>
         </div>
     </Link>
@@ -83,20 +84,14 @@ const NewsListPage = () => {
     return (
         <>
             <Navbar />
-            <div className="pt-20 min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-                {/* Hero */}
-                <section className="relative h-64 md:h-80 overflow-hidden">
-                    <img src={HERO_IMAGE} alt="Tin tức Kim Long Miền Nam" className="absolute inset-0 w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black/60" />
-                    <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center text-white">
-                        <h1 className="text-3xl md:text-4xl font-extrabold uppercase mb-3">
-                            Cẩm Nang Vận Tải &amp; Tin Tức Kim Long
-                        </h1>
-                        <p className="text-gray-200 max-w-2xl">
-                            Cập nhật tin tức thương hiệu, sản phẩm mới và kiến thức vận tải từ Kim Long Miền Nam.
-                        </p>
-                    </div>
-                </section>
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+                <PageHero
+                    eyebrow="Tin tức"
+                    title="Cẩm nang vận tải & tin tức Kim Long Motor"
+                    description="Cập nhật tin thương hiệu, sản phẩm mới và kiến thức vận tải."
+                    image={HERO_IMAGE}
+                    crumbs={[{ label: 'Tin tức' }]}
+                />
 
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -119,7 +114,7 @@ const NewsListPage = () => {
 
                             <div className="bg-red-600 rounded-xl p-5 text-white">
                                 <h3 className="font-bold mb-2">Bạn cần hỗ trợ tư vấn?</h3>
-                                <p className="text-sm text-red-100 mb-4">Để lại số điện thoại, Kim Long Miền Nam sẽ gọi lại tư vấn miễn phí.</p>
+                                <p className="text-sm text-red-100 mb-4">Để lại số điện thoại, Kim Long Motor sẽ gọi lại tư vấn miễn phí.</p>
                                 {sent ? (
                                     <p className="text-sm font-semibold bg-white/15 rounded-lg px-3 py-2">
                                         Cảm ơn bạn! Chúng tôi sẽ liên hệ sớm nhất.

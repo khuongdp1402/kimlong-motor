@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Phone, MapPin, Clock, MessageCircle, User, ClipboardList } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import PageHero from '../components/PageHero';
+import { PrimaryButton, GhostButton } from '../components/ui/Buttons';
 import Footer from '../components/Footer';
 import FloatingButtons from '../components/FloatingButtons';
 import { useApiData } from '../hooks/useApiData';
@@ -67,40 +69,24 @@ const ContactPage = () => {
     return (
         <>
             <Navbar />
-            <div className="pt-20 min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-                {/* Split hero */}
-                <section className="grid grid-cols-1 lg:grid-cols-2">
-                    <div className="bg-white dark:bg-gray-800 px-6 sm:px-10 lg:px-16 py-16 flex flex-col justify-center transition-colors duration-300">
-                        <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white uppercase leading-tight mb-4">
-                            Liên Hệ Ngay<br />Với Chúng Tôi
-                        </h1>
-                        <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-md">
-                            Đội ngũ tư vấn Kim Long Miền Nam sẵn sàng hỗ trợ bạn lựa chọn dòng xe phù hợp và mức giá tốt nhất.
-                        </p>
-                        <div className="flex flex-col sm:flex-row gap-4">
-                            <button
-                                onClick={() => document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' })}
-                                className="inline-flex items-center justify-center px-7 py-3.5 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold uppercase text-sm tracking-wide transition-colors"
-                            >
-                                Gửi Yêu Cầu
-                            </button>
-                            <a
-                                href={`tel:${HOTLINE}`}
-                                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full border-2 border-gray-900 dark:border-white text-gray-900 dark:text-white font-bold uppercase text-sm tracking-wide hover:bg-gray-900 hover:text-white dark:hover:bg-white dark:hover:text-gray-900 transition-colors"
-                            >
-                                <Phone size={16} /> Hotline: {HOTLINE_DISPLAY}
-                            </a>
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+                <PageHero
+                    eyebrow="Liên hệ"
+                    title="Liên hệ ngay với Kim Long Motor"
+                    description="Đội ngũ tư vấn Kim Long Motor sẵn sàng hỗ trợ bạn lựa chọn dòng xe phù hợp và mức giá tốt nhất."
+                    crumbs={[{ label: 'Liên hệ' }]}
+                />
+                <section className="bg-noir-950 pb-16">
+                    <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10">
+                        <div className="flex flex-col sm:flex-row gap-3">
+                            <PrimaryButton onClick={() => document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' })}>Gửi yêu cầu</PrimaryButton>
+                            <GhostButton as="a" href={`tel:${HOTLINE}`}>Hotline {HOTLINE_DISPLAY}</GhostButton>
                         </div>
-                    </div>
-                    <div
-                        className="bg-red-600 px-6 sm:px-10 lg:px-16 py-16 flex flex-col justify-center text-white"
-                        style={{ clipPath: 'polygon(6% 0, 100% 0, 100% 100%, 0% 100%)' }}
-                    >
-                        <div className="space-y-6 max-w-sm ml-auto">
-                            {STATS.map((s, i) => (
-                                <div key={i} className="flex items-center gap-4 border-b border-white/20 pb-4 last:border-b-0">
-                                    <span className="text-3xl font-extrabold w-24 flex-shrink-0">{s.value}</span>
-                                    <span className="text-red-50 text-sm">{s.label}</span>
+                        <div className="mt-14 grid grid-cols-2 lg:grid-cols-4 border-t border-line">
+                            {STATS.map((s) => (
+                                <div key={s.label} className="py-8 pr-4 border-b lg:border-b-0 border-line">
+                                    <div className="text-3xl sm:text-4xl font-extrabold text-ink">{s.value}</div>
+                                    <div className="mt-2 text-sm text-ink-muted">{s.label}</div>
                                 </div>
                             ))}
                         </div>
@@ -113,7 +99,7 @@ const ContactPage = () => {
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
                             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-5 transition-colors duration-300">
                                 <MapPin className="text-red-600 dark:text-red-500 mb-3" size={24} />
-                                <h4 className="font-bold text-gray-900 dark:text-white text-sm mb-1">{showrooms[0]?.name || 'Showroom'}</h4>
+                                <h4 data-cms-content className="font-bold text-gray-900 dark:text-white text-sm mb-1">{showrooms[0]?.name || 'Showroom'}</h4>
                                 <p className="text-xs text-gray-500 dark:text-gray-400">{showrooms[0]?.address}</p>
                             </div>
                             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-5 transition-colors duration-300">
@@ -206,6 +192,7 @@ const ContactPage = () => {
                             <h2 className="text-xl font-extrabold text-gray-900 dark:text-white mb-1">Bạn cần tìm chi nhánh?</h2>
                             <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Chọn showroom gần bạn nhất để xem địa chỉ và hotline.</p>
                             <select
+                                data-cms-content
                                 value={showroomIdx}
                                 onChange={(e) => setShowroomIdx(Number(e.target.value))}
                                 className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
@@ -251,7 +238,7 @@ const ContactPage = () => {
                 </section>
 
                 {/* Dark red process band */}
-                <section className="bg-red-800 py-16">
+                <section className="bg-graphite-800 py-16 border-y border-line">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <h2 className="text-2xl md:text-3xl font-extrabold text-white uppercase text-center mb-10">
                             Mua Xe Thật Đơn Giản
