@@ -9,6 +9,7 @@ import { getCategoryById } from '../data/categories';
 import { useApiData } from '../hooks/useApiData';
 import { getProducts, getArticles } from '../api/client';
 import { useCountdown, getPromoEndDate } from '../hooks/useCountdown';
+import { useScrollLock } from '../hooks/useScrollLock';
 import { calcInstallment, calcRollingCost, formatVnd } from '../utils/loanCalculator';
 
 const HOTLINE = '0379398798';
@@ -36,6 +37,7 @@ const ProductDetail = () => {
 
     const promoEndTime = useMemo(() => getPromoEndDate(product), [product]);
     const countdown = useCountdown(promoEndTime);
+    useScrollLock(popupOpen);
 
     if (loading) {
         return (

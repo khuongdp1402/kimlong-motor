@@ -16,6 +16,7 @@ import QuickQuoteModal from './components/QuickQuoteModal';
 import SeoJsonLd from './components/SeoJsonLd';
 import SmoothScroll from './components/motion/SmoothScroll';
 import ThemeModeProvider from './context/ThemeModeProvider';
+import { useScrollLock } from './hooks/useScrollLock';
 
 import ProductDetail from './pages/ProductDetail';
 import ProductCategory from './pages/ProductCategory';
@@ -40,6 +41,9 @@ const Home = () => {
   // Modal state for Quick Quote Popup
   const [selectedCarForQuote, setSelectedCarForQuote] = useState(null);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+
+  // While a popup is open, only the popup scrolls — the page behind is frozen.
+  useScrollLock(isDetailModalOpen || isQuoteModalOpen);
 
   const handleOpenDetail = (car) => {
     setSelectedCarForDetail(car);

@@ -19,7 +19,7 @@ const VehicleModal = ({ car, isOpen, onClose, onOpenQuote }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/75 backdrop-blur-sm animate-fadeIn">
+        <div data-lenis-prevent className="fixed inset-0 z-50 overflow-y-auto overscroll-contain flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/75 backdrop-blur-sm animate-fadeIn">
             {/* Modal Container */}
             <div 
                 className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-5xl max-h-[92vh] overflow-hidden flex flex-col border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white"
@@ -48,7 +48,7 @@ const VehicleModal = ({ car, isOpen, onClose, onOpenQuote }) => {
                 </div>
 
                 {/* Modal Body - Scrollable */}
-                <div className="overflow-y-auto p-4 sm:p-6 space-y-6 flex-1">
+                <div data-lenis-prevent className="overflow-y-auto overscroll-contain p-4 sm:p-6 space-y-6 flex-1">
                     {/* Top Section: Vehicle Image & Quick Summary */}
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                         {/* Car Image Preview */}

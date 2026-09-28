@@ -20,7 +20,7 @@ const QuickQuoteModal = ({ isOpen, onClose, defaultCar = null }) => {
     const currentCar = carsData.find(c => c.id === selectedCarId) || defaultCar || carsData[0];
 
     return (
-        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
+        <div data-lenis-prevent className="fixed inset-0 z-50 overflow-y-auto overscroll-contain flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
             <div 
                 className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-white"
                 onClick={(e) => e.stopPropagation()}

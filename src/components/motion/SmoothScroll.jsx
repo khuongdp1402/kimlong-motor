@@ -12,7 +12,13 @@ const SmoothScroll = () => {
     useEffect(() => {
         if (!window.matchMedia(MOTION_OK).matches) return undefined;
 
-        const lenis = new Lenis({ autoRaf: false, lerp: 0.1 });
+        const lenis = new Lenis({
+            autoRaf: false,
+            lerp: 0.1,
+            // Let full-screen overlays (modals/popups) scroll natively instead
+            // of Lenis hijacking the wheel and scrolling the page behind them.
+            prevent: (node) => Boolean(node.closest?.('[data-lenis-prevent], .fixed.inset-0')),
+        });
         window.__lenis = lenis;
         lenis.on('scroll', ScrollTrigger.update);
         const tick = (time) => lenis.raf(time * 1000);
