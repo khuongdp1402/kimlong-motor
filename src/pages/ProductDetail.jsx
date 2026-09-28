@@ -372,7 +372,7 @@ const ProductDetail = () => {
                             <div className="border-2 border-dashed border-red-300 dark:border-red-800 rounded-xl p-8 text-center bg-white dark:bg-gray-800 mb-8 transition-colors duration-300">
                                 <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Bạn muốn nhận giá tốt hơn?</h3>
                                 <p className="text-gray-500 dark:text-gray-400 mb-5">
-                                    Để lại thông tin, đội ngũ tư vấn Kim Long Miền Nam sẽ liên hệ gửi báo giá ưu đãi nhất.
+                                    Để lại thông tin, đội ngũ tư vấn Kim Long Motor sẽ liên hệ gửi báo giá ưu đãi nhất.
                                 </p>
                                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                                     <button

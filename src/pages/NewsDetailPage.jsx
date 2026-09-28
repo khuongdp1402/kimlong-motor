@@ -67,19 +67,19 @@ const NewsDetailPage = () => {
     return (
         <>
             <Navbar />
-            <div className="pt-24 pb-16 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300">
+            <div className="pt-28 pb-16 bg-noir-950 min-h-screen">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Back Button */}
                     <Link
                         to="/news"
-                        className="inline-flex items-center text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 mb-6 transition-colors"
+                        className="inline-flex items-center text-ink-muted hover:text-ink mb-6 transition-colors"
                     >
                         <ArrowLeft className="mr-2" size={20} />
                         Quay lại danh sách tin tức
                     </Link>
 
-                    {/* Article Header */}
-                    <article className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-colors duration-300">
+                    {/* Article — light "paper" reading surface; no dark: variants inside */}
+                    <article className="bg-paper text-gray-900 rounded-[24px] overflow-hidden">
                         {/* Featured Image */}
                         {article.image && (
                             <div className="relative h-96 w-full">
@@ -99,21 +99,21 @@ const NewsDetailPage = () => {
                         {/* Article Content */}
                         <div className="p-8 md:p-12">
                             {/* Title */}
-                            <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight">
+                            <h1 data-cms-content className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6 leading-tight">
                                 {article.title}
                             </h1>
 
                             {/* Meta Information */}
-                            <div className="flex flex-wrap items-center gap-6 mb-8 pb-8 border-b border-gray-200 dark:border-gray-700">
-                                <div className="flex items-center text-gray-600 dark:text-gray-400">
+                            <div className="flex flex-wrap items-center gap-6 mb-8 pb-8 border-b border-gray-200">
+                                <div className="flex items-center text-gray-600">
                                     <Calendar size={18} className="mr-2" />
                                     <span className="text-sm">{formatDate(article.date)}</span>
                                 </div>
-                                <div className="flex items-center text-gray-600 dark:text-gray-400">
+                                <div className="flex items-center text-gray-600">
                                     <User size={18} className="mr-2" />
-                                    <span className="text-sm">{article.author}</span>
+                                    <span className="text-sm">Kim Long Motor</span>
                                 </div>
-                                <div className="flex items-center text-gray-600 dark:text-gray-400">
+                                <div className="flex items-center text-gray-600">
                                     <Tag size={18} className="mr-2" />
                                     <span className="text-sm">{getNewsCategoryLabel(article.category)}</span>
                                 </div>
@@ -121,8 +121,8 @@ const NewsDetailPage = () => {
 
                             {/* Excerpt */}
                             {article.excerpt && (
-                                <div className="mb-8 p-6 bg-gray-50 dark:bg-gray-700 rounded-lg border-l-4 border-red-600">
-                                    <p className="text-lg text-gray-700 dark:text-gray-300 italic leading-relaxed">
+                                <div data-cms-content className="mb-8 p-6 bg-white rounded-lg border-l-4 border-accent">
+                                    <p className="text-lg text-gray-700 italic leading-relaxed">
                                         {article.excerpt}
                                     </p>
                                 </div>
@@ -130,13 +130,8 @@ const NewsDetailPage = () => {
 
                             {/* Article Body */}
                             <div
-                                className="prose prose-lg dark:prose-invert max-w-none
-                                    prose-headings:text-gray-900 dark:prose-headings:text-white
-                                    prose-p:text-gray-700 dark:prose-p:text-gray-300
-                                    prose-a:text-red-600 dark:prose-a:text-red-400
-                                    prose-strong:text-gray-900 dark:prose-strong:text-white
-                                    prose-ul:text-gray-700 dark:prose-ul:text-gray-300
-                                    prose-li:text-gray-700 dark:prose-li:text-gray-300"
+                                data-cms-content
+                                className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-accent prose-strong:text-gray-900 prose-ul:text-gray-700 prose-li:text-gray-700"
                                 dangerouslySetInnerHTML={{ __html: article.content }}
                             />
 
