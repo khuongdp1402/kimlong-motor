@@ -1,21 +1,31 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useTheme } from '../context/ThemeContext';
-import { Sun, Moon, Menu, X, Phone, Calculator } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Menu, X, Phone, FileText } from 'lucide-react';
 import { businessInfo } from '../data/hongthuong-data';
 
 const Navbar = ({ onOpenQuoteModal }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const { theme, toggleTheme } = useTheme();
+    const [scrolled, setScrolled] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 80);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     const scrollTo = (id) => {
         setIsOpen(false);
-        const element = document.getElementById(id);
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        } else {
+        if (location.pathname !== '/') {
             navigate('/');
+            setTimeout(() => {
+                const el = document.getElementById(id);
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+        } else {
+            const el = document.getElementById(id);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     };
 
@@ -24,164 +34,140 @@ const Navbar = ({ onOpenQuoteModal }) => {
         navigate(path);
     };
 
+    const navLinks = [
+        { label: 'Trang Chủ', action: () => scrollTo('hero'), active: true },
+        { label: 'Danh Mục Xe', action: () => scrollTo('danh-muc-xe') },
+        { label: 'Dịch Vụ', action: () => scrollTo('bang-bao-gia') },
+        { label: 'Tin Tức', action: () => goTo('/news') },
+        { label: 'Về Chúng Tôi', action: () => scrollTo('ve-hong-thuong') },
+    ];
+
     return (
-        <header className="fixed w-full z-50 top-0 left-0 shadow-md">
-            {/* Single-line Navbar - Compact Height h-14 / h-16 */}
-            <nav className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200/80 dark:border-gray-800 transition-colors duration-200">
-                <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-                    <div className="flex justify-between items-center h-14 sm:h-16">
-                        {/* Logo & Brand on a Single Clean Line */}
-                        <div className="flex-shrink-0 flex items-center">
-                            <button
-                                onClick={() => scrollTo('hero')}
-                                className="flex items-center space-x-2.5 text-left focus:outline-none group cursor-pointer"
-                            >
-                                <img
-                                    src="/images/logo-official.png"
-                                    alt="Kim Long Motor"
-                                    className="h-8 sm:h-9 w-auto object-contain transition-transform group-hover:scale-105"
-                                    onError={(e) => {
-                                        e.target.src = '/images/logo-ngang-do.png';
-                                    }}
-                                />
-                                <div className="flex items-center space-x-2">
-                                    <span className="text-sm sm:text-base font-black tracking-tight text-red-600 dark:text-red-500 uppercase whitespace-nowrap">
-                                        KIM LONG MOTOR
-                                    </span>
-                                </div>
-                            </button>
-                        </div>
+        <header className="fixed w-full z-50 top-0 left-0">
+            <nav
+                className={`transition-all duration-500 ${
+                    scrolled
+                        ? 'bg-gray-950/98 backdrop-blur-lg shadow-[0_2px_20px_rgba(0,0,0,0.3)]'
+                        : 'bg-gradient-to-b from-black/60 via-black/30 to-transparent'
+                }`}
+            >
+                <div className={`max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-10 flex items-center transition-all duration-500 ${
+                    scrolled ? 'h-14' : 'h-16 sm:h-20'
+                }`}>
 
-                        {/* Navigation Links */}
-                        <div className="hidden lg:flex items-center space-x-5 xl:space-x-6">
+                    {/* ─── LEFT: Navigation Links ─── */}
+                    <div className="hidden lg:flex items-center gap-1 flex-1">
+                        {navLinks.map((link) => (
                             <button
-                                onClick={() => scrollTo('hero')}
-                                className="text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                                key={link.label}
+                                onClick={link.action}
+                                className={`relative text-[13px] font-medium tracking-wide transition-all cursor-pointer whitespace-nowrap rounded-md px-3.5 py-1.5 ${
+                                    link.active
+                                        ? 'text-white bg-white/10'
+                                        : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                }`}
                             >
-                                Trang Chủ
+                                {link.label}
                             </button>
-                            <button
-                                onClick={() => scrollTo('danh-muc-xe')}
-                                className="text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
-                            >
-                                Danh Mục Xe
-                            </button>
-                            <button
-                                onClick={() => scrollTo('bang-bao-gia')}
-                                className="text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
-                            >
-                                Dịch Vụ
-                            </button>
-                            <button
-                                onClick={() => goTo('/news')}
-                                className="text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
-                            >
-                                Tin Tức
-                            </button>
-                            <button
-                                onClick={() => scrollTo('ve-hong-thuong')}
-                                className="text-gray-700 dark:text-gray-200 hover:text-red-600 dark:hover:text-red-400 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
-                            >
-                                Về Chúng Tôi
-                            </button>
-                        </div>
+                        ))}
+                    </div>
 
-                        {/* Action Buttons & Theme Toggle */}
-                        <div className="flex items-center space-x-2 sm:space-x-3">
-                            <button
-                                onClick={onOpenQuoteModal}
-                                className="hidden sm:flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2 px-3.5 rounded-lg shadow-sm transition-all hover:scale-105 uppercase tracking-wider cursor-pointer"
-                            >
-                                <Calculator size={14} />
-                                Báo Giá
-                            </button>
+                    {/* ─── CENTER: Logo ─── */}
+                    <button
+                        onClick={() => scrollTo('hero')}
+                        className="flex items-center gap-3 focus:outline-none group cursor-pointer mx-auto lg:mx-0 shrink-0"
+                    >
+                        <img
+                            src="/images/logo-official.png"
+                            alt="Kim Long Motor"
+                            className={`w-auto object-contain transition-all duration-500 ${
+                                scrolled ? 'h-8' : 'h-9 sm:h-12'
+                            }`}
+                            onError={(e) => { e.target.src = '/images/logo-ngang-do.png'; }}
+                        />
+                        <span className={`hidden sm:block font-extrabold text-white uppercase tracking-tight leading-none transition-all duration-500 ${
+                            scrolled ? 'text-base' : 'text-lg sm:text-xl'
+                        }`}>
+                            Kim Long
+                        </span>
+                    </button>
 
-                            <a
-                                href={`tel:${businessInfo.hotlineSalesRaw}`}
-                                className="bg-gray-900 hover:bg-black dark:bg-gray-800 dark:hover:bg-gray-700 text-white text-xs font-bold py-2 px-3 rounded-lg shadow-sm transition-colors flex items-center gap-1.5"
-                            >
-                                <Phone size={13} className="text-red-500 animate-pulse" />
-                                <span className="hidden sm:inline">{businessInfo.hotlineSales}</span>
-                                <span className="sm:hidden">Gọi</span>
-                            </a>
+                    {/* ─── RIGHT: Action Buttons ─── */}
+                    <div className="flex items-center gap-2.5 flex-1 justify-end">
+                        {/* Phone — ghost/outlined style */}
+                        <a
+                            href={`tel:${businessInfo.hotlineSalesRaw}`}
+                            className={`hidden md:inline-flex items-center gap-2 text-gray-300 hover:text-white font-medium transition-all rounded-full border border-white/15 hover:border-white/30 hover:bg-white/5 ${
+                                scrolled
+                                    ? 'text-xs px-3.5 py-1.5'
+                                    : 'text-[13px] px-4 py-2'
+                            }`}
+                        >
+                            <Phone size={13} className="text-green-400" />
+                            {businessInfo.hotlineSales}
+                        </a>
 
-                            <button
-                                onClick={toggleTheme}
-                                className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none transition-colors cursor-pointer"
-                                title={theme === 'light' ? 'Chuyển sang chế độ tối' : 'Chuyển sang chế độ sáng'}
-                                aria-label="Đổi giao diện"
-                            >
-                                {theme === 'light' ? <Moon size={16} /> : <Sun size={16} className="text-yellow-400" />}
-                            </button>
+                        {/* CTA — filled red */}
+                        <button
+                            onClick={onOpenQuoteModal}
+                            className={`inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-full shadow-md transition-all hover:shadow-lg hover:shadow-red-600/20 cursor-pointer ${
+                                scrolled
+                                    ? 'text-xs px-3.5 py-1.5'
+                                    : 'text-[13px] px-4 sm:px-5 py-2 sm:py-2.5'
+                            }`}
+                        >
+                            <FileText size={14} />
+                            <span className="hidden sm:inline">Nhận Báo Giá</span>
+                            <span className="sm:hidden">Báo Giá</span>
+                        </button>
 
-                            {/* Mobile menu toggle */}
-                            <div className="lg:hidden">
-                                <button
-                                    onClick={() => setIsOpen(!isOpen)}
-                                    type="button"
-                                    className="p-1.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none cursor-pointer"
-                                >
-                                    {!isOpen ? <Menu size={22} /> : <X size={22} />}
-                                </button>
-                            </div>
-                        </div>
+                        {/* Mobile hamburger */}
+                        <button
+                            onClick={() => setIsOpen(!isOpen)}
+                            type="button"
+                            className="lg:hidden p-2 rounded-lg text-white hover:bg-white/10 focus:outline-none cursor-pointer"
+                        >
+                            {!isOpen ? <Menu size={22} /> : <X size={22} />}
+                        </button>
                     </div>
                 </div>
+            </nav>
 
-                {/* Mobile Menu Dropdown */}
-                {isOpen && (
-                    <div className="lg:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 shadow-xl px-4 py-3 space-y-2">
-                        <button
-                            onClick={() => scrollTo('hero')}
-                            className="w-full text-left py-1.5 text-xs font-bold text-gray-800 dark:text-gray-200 hover:text-red-600 uppercase cursor-pointer"
-                        >
-                            Trang Chủ
-                        </button>
-                        <button
-                            onClick={() => scrollTo('danh-muc-xe')}
-                            className="w-full text-left py-1.5 text-xs font-bold text-gray-800 dark:text-gray-200 hover:text-red-600 uppercase cursor-pointer"
-                        >
-                            Danh Mục Xe
-                        </button>
-                        <button
-                            onClick={() => scrollTo('bang-bao-gia')}
-                            className="w-full text-left py-1.5 text-xs font-bold text-gray-800 dark:text-gray-200 hover:text-red-600 uppercase cursor-pointer"
-                        >
-                            Dịch Vụ
-                        </button>
-                        <button
-                            onClick={() => goTo('/news')}
-                            className="w-full text-left py-1.5 text-xs font-bold text-gray-800 dark:text-gray-200 hover:text-red-600 uppercase cursor-pointer"
-                        >
-                            Tin Tức
-                        </button>
-                        <button
-                            onClick={() => scrollTo('ve-hong-thuong')}
-                            className="w-full text-left py-1.5 text-xs font-bold text-gray-800 dark:text-gray-200 hover:text-red-600 uppercase cursor-pointer"
-                        >
-                            Về Chúng Tôi
-                        </button>
-
-                        <div className="pt-2 border-t border-gray-200 dark:border-gray-800 flex gap-2">
+            {/* ─── Mobile Dropdown ─── */}
+            {isOpen && (
+                <div className="lg:hidden bg-gray-950/98 backdrop-blur-lg border-t border-white/5 animate-fadeIn">
+                    <div className="max-w-lg mx-auto px-5 py-4 space-y-1">
+                        {navLinks.map((link) => (
                             <button
-                                onClick={() => {
-                                    setIsOpen(false);
-                                    onOpenQuoteModal();
-                                }}
-                                className="flex-1 bg-red-600 text-white font-bold py-2 rounded-lg text-center text-xs uppercase cursor-pointer"
+                                key={link.label}
+                                onClick={link.action}
+                                className={`w-full text-left py-2.5 px-4 text-sm font-medium rounded-lg cursor-pointer transition-colors ${
+                                    link.active
+                                        ? 'text-white bg-white/10'
+                                        : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                }`}
+                            >
+                                {link.label}
+                            </button>
+                        ))}
+
+                        <div className="pt-3 mt-2 border-t border-white/10 flex gap-2">
+                            <button
+                                onClick={() => { setIsOpen(false); onOpenQuoteModal(); }}
+                                className="flex-1 bg-red-600 text-white font-bold py-2.5 rounded-full text-center text-sm cursor-pointer"
                             >
                                 Nhận Báo Giá
                             </button>
                             <a
                                 href={`tel:${businessInfo.hotlineSalesRaw}`}
-                                className="flex-1 bg-gray-900 dark:bg-gray-800 text-white font-bold py-2 rounded-lg text-center text-xs flex items-center justify-center gap-1.5"
+                                className="flex-1 bg-white/10 text-white font-bold py-2.5 rounded-full text-center text-sm flex items-center justify-center gap-1.5"
                             >
-                                <Phone size={13} /> {businessInfo.hotlineSales}
+                                <Phone size={13} /> Gọi Ngay
                             </a>
                         </div>
                     </div>
-                )}
-            </nav>
+                </div>
+            )}
         </header>
     );
 };

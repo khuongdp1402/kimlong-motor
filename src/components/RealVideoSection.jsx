@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
-import { Play, Youtube, ExternalLink, X, Video, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Play, Youtube, ExternalLink, X, Video, Phone } from 'lucide-react';
 import { realVideos, businessInfo } from '../data/hongthuong-data';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
 const RealVideoSection = () => {
     const [selectedVideo, setSelectedVideo] = useState(null);
+    const headerRef = useScrollAnimation();
+    const cardsRef = useScrollAnimation({ threshold: 0.05 });
+    const gridRef = useScrollAnimation({ threshold: 0.08 });
 
     return (
-        <section id="video-thuc-te" className="py-16 bg-white dark:bg-gray-800 transition-colors duration-300">
+        <section id="video-thuc-te" className="py-16 sm:py-20 bg-white dark:bg-gray-800 transition-colors duration-300">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
-                <div className="text-center max-w-2xl mx-auto mb-10">
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 text-[11px] font-bold uppercase tracking-wider mb-2.5">
+                <div ref={headerRef} className="scroll-fade-up text-center max-w-2xl mx-auto mb-10">
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 text-[11px] font-bold uppercase tracking-wider mb-2.5">
                         <Video size={12} />
                         Kênh Video Thực Tế - Kim Long
                     </div>
@@ -23,9 +27,9 @@ const RealVideoSection = () => {
                 </div>
 
                 {/* Social Channel Highlight Cards (YouTube + TikTok) */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                <div ref={cardsRef} className="scroll-fade-up grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
                     {/* YouTube Card */}
-                    <div className="bg-gradient-to-br from-red-600 to-red-700 text-white rounded-2xl p-6 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6 border border-red-500">
+                    <div className="scroll-child bg-gradient-to-br from-red-600 to-red-700 text-white rounded-2xl p-6 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6 border border-red-500" style={{ '--child-i': 0 }}>
                         <div className="flex items-center gap-4">
                             <div className="w-16 h-16 rounded-2xl bg-white text-red-600 flex items-center justify-center flex-shrink-0 shadow-lg">
                                 <Youtube size={36} />
@@ -50,7 +54,7 @@ const RealVideoSection = () => {
                     </div>
 
                     {/* TikTok Card */}
-                    <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white rounded-2xl p-6 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6 border border-gray-700">
+                    <div className="scroll-child bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white rounded-2xl p-6 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6 border border-gray-700" style={{ '--child-i': 1 }}>
                         <div className="flex items-center gap-4">
                             <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-400 to-pink-500 text-black flex items-center justify-center flex-shrink-0 shadow-lg font-black text-2xl">
                                 🎵
@@ -76,11 +80,12 @@ const RealVideoSection = () => {
                 </div>
 
                 {/* Videos Grid - 2 Cards per row on Mobile */}
-                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-6">
-                    {realVideos.map((video) => (
+                <div ref={gridRef} className="scroll-fade-up grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-6">
+                    {realVideos.map((video, idx) => (
                         <div
                             key={video.id}
-                            className="bg-gray-50 dark:bg-gray-900 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700 flex flex-col group cursor-pointer"
+                            className="scroll-child bg-gray-50 dark:bg-gray-900 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700 flex flex-col group cursor-pointer"
+                            style={{ '--child-i': idx }}
                             onClick={() => setSelectedVideo(video)}
                         >
                             {/* Thumbnail with Play Icon */}
@@ -88,6 +93,7 @@ const RealVideoSection = () => {
                                 <img
                                     src={video.thumbnailUrl}
                                     alt={video.title}
+                                    loading="lazy"
                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
                                 />
                                 <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors flex items-center justify-center">
@@ -138,7 +144,7 @@ const RealVideoSection = () => {
                             </h3>
                             <button
                                 onClick={() => setSelectedVideo(null)}
-                                className="w-8 h-8 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-white transition-colors"
+                                className="w-8 h-8 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center text-white transition-colors cursor-pointer"
                             >
                                 <X size={18} />
                             </button>

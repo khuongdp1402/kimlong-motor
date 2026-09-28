@@ -1,13 +1,25 @@
 import React from 'react';
-import { Phone, ShieldCheck, MapPin, CheckCircle2, Users, Wrench } from 'lucide-react';
+import { Phone, ShieldCheck, MapPin, CheckCircle2, Users, Wrench, Banknote, Truck } from 'lucide-react';
 import { businessInfo, trustPillars } from '../data/hongthuong-data';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
+
+// Map icon strings from data to actual components — unique per pillar
+const iconMap = {
+    ShieldCheck,
+    Banknote,
+    Truck,
+    Wrench,
+};
 
 const AboutHongThuong = () => {
+    const introRef = useScrollAnimation();
+    const pillarsRef = useScrollAnimation({ threshold: 0.08 });
+
     return (
-        <section id="ve-hong-thuong" className="py-16 bg-white dark:bg-gray-800 transition-colors duration-300">
+        <section id="ve-hong-thuong" className="py-16 sm:py-20 bg-white dark:bg-gray-800 transition-colors duration-300">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Intro Card */}
-                <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 rounded-3xl p-6 sm:p-10 border border-gray-200 dark:border-gray-700 shadow-xl mb-12">
+                <div ref={introRef} className="scroll-fade-up bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 rounded-3xl p-6 sm:p-10 border border-gray-200 dark:border-gray-700 shadow-xl mb-12">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                         {/* Team Info */}
                         <div className="lg:col-span-8 space-y-3 sm:space-y-4">
@@ -95,27 +107,38 @@ const AboutHongThuong = () => {
                     </div>
                 </div>
 
-                {/* 4 Pillars of Trust - 2 Columns on Mobile */}
-                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-6">
-                    {trustPillars.map((pillar, idx) => (
-                        <div
-                            key={idx}
-                            className="bg-gray-50 dark:bg-gray-900 p-3.5 sm:p-6 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
-                        >
-                            <div>
-                                <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-red-600/10 text-red-600 dark:bg-red-950/50 dark:text-red-400 flex items-center justify-center mb-2.5 sm:mb-4">
-                                    <ShieldCheck size={18} className="sm:hidden" />
-                                    <ShieldCheck size={22} className="hidden sm:inline" />
+                {/* 4 Pillars of Trust - 2 Columns on Mobile — Each with unique icon */}
+                <div ref={pillarsRef} className="scroll-fade-up grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-6">
+                    {trustPillars.map((pillar, idx) => {
+                        const IconComp = iconMap[pillar.icon] || ShieldCheck;
+                        // Alternate accent colors per pillar
+                        const accentColors = [
+                            'bg-red-600/10 text-red-600 dark:bg-red-950/50 dark:text-red-400',
+                            'bg-amber-500/10 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400',
+                            'bg-blue-500/10 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400',
+                            'bg-green-500/10 text-green-600 dark:bg-green-950/50 dark:text-green-400',
+                        ];
+                        return (
+                            <div
+                                key={idx}
+                                className="scroll-child bg-gray-50 dark:bg-gray-900 p-3.5 sm:p-6 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
+                                style={{ '--child-i': idx }}
+                            >
+                                <div>
+                                    <div className={`w-8 h-8 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl flex items-center justify-center mb-2.5 sm:mb-4 ${accentColors[idx % accentColors.length]}`}>
+                                        <IconComp size={18} className="sm:hidden" />
+                                        <IconComp size={22} className="hidden sm:inline" />
+                                    </div>
+                                    <h4 className="text-xs sm:text-sm md:text-base font-bold text-gray-900 dark:text-white mb-1 sm:mb-2 uppercase leading-snug">
+                                        {pillar.title}
+                                    </h4>
                                 </div>
-                                <h4 className="text-xs sm:text-sm md:text-base font-bold text-gray-900 dark:text-white mb-1 sm:mb-2 uppercase leading-snug">
-                                    {pillar.title}
-                                </h4>
+                                <p className="text-[10px] sm:text-xs md:text-sm text-gray-600 dark:text-gray-400 leading-relaxed mt-1 line-clamp-4 sm:line-clamp-none">
+                                    {pillar.description}
+                                </p>
                             </div>
-                            <p className="text-[10px] sm:text-xs md:text-sm text-gray-600 dark:text-gray-400 leading-relaxed mt-1 line-clamp-4 sm:line-clamp-none">
-                                {pillar.description}
-                            </p>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </div>
         </section>

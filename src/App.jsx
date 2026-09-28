@@ -2,14 +2,20 @@ import React, { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import HeroSlider from './components/HeroSlider';
+import BrandIntro from './components/BrandIntro';
+import VehicleShowcase from './components/VehicleShowcase';
 import VehicleCatalogSection from './components/VehicleCatalogSection';
 import RealVideoSection from './components/RealVideoSection';
+import WhyChooseUs from './components/WhyChooseUs';
+import Testimonials from './components/Testimonials';
 import AboutHongThuong from './components/AboutHongThuong';
+import NewsViral from './components/NewsViral';
 import QuoteFormSection from './components/QuoteFormSection';
 import Footer from './components/Footer';
 import FloatingButtons from './components/FloatingButtons';
 import VehicleModal from './components/VehicleModal';
 import QuickQuoteModal from './components/QuickQuoteModal';
+import SeoJsonLd from './components/SeoJsonLd';
 
 import ProductDetail from './pages/ProductDetail';
 import ProductCategory from './pages/ProductCategory';
@@ -46,7 +52,10 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 selection:bg-red-500 selection:text-white">
+    <div className="min-h-screen bg-brand-bg text-brand-text selection:bg-red-500 selection:text-white">
+      {/* SEO: AutoDealer + AutomotiveBusiness structured data */}
+      <SeoJsonLd />
+
       {/* Header & Navigation */}
       <Navbar onOpenQuoteModal={() => handleOpenQuote(null)} />
 
@@ -54,17 +63,32 @@ const Home = () => {
         {/* Hero Banner Slider */}
         <HeroSlider />
 
-        {/* Vehicle Catalog with Tabs (Giường Nằm, Xe Ghế, Van Điện, Xe Tải, Đầu Kéo Điện) */}
+        {/* Brand Introduction & Metrics */}
+        <BrandIntro />
+
+        {/* Scroll-Driven Video Showcase — Kim Long 99 */}
+        <VehicleShowcase />
+
+        {/* Vehicle Catalog with Curated Grid */}
         <VehicleCatalogSection
           onOpenDetail={handleOpenDetail}
           onOpenQuote={handleOpenQuote}
         />
 
+        {/* Why Choose Us — Trust pillars (API-driven, returns null if no data) */}
+        <WhyChooseUs />
+
         {/* Real Videos Section (YouTube & TikTok @thuongkimlong) */}
         <RealVideoSection />
 
+        {/* Customer Testimonials (API-driven, returns null if no data) */}
+        <Testimonials />
+
         {/* About Hong Thuong Section */}
         <AboutHongThuong />
+
+        {/* News Preview — Latest articles (API-driven, returns null if no data) */}
+        <NewsViral />
 
         {/* Quote Form & Price Table Section */}
         <QuoteFormSection />
@@ -73,7 +97,7 @@ const Home = () => {
       {/* Footer */}
       <Footer />
 
-      {/* Floating Action Buttons (Hotline 0379.398.798, Zalo, TikTok, YouTube) */}
+      {/* Floating Action Button — Expandable contact menu */}
       <FloatingButtons />
 
       {/* 1. Vehicle Detail Popup Modal */}

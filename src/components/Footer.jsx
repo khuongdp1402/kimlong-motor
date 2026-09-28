@@ -1,6 +1,20 @@
 import React from 'react';
-import { Phone, MapPin, Youtube, Wrench, ExternalLink } from 'lucide-react';
+import { Phone, MapPin, Wrench, Youtube } from 'lucide-react';
 import { businessInfo, carCategories } from '../data/hongthuong-data';
+
+// Minimal round icon button (36x36) for social links — no label, just an
+// elegant glyph next to the copyright line.
+const SocialIconButton = ({ href, label, children }) => (
+    <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={label}
+        className="w-9 h-9 rounded-full bg-white/10 hover:bg-brand-primary text-white flex items-center justify-center transition-colors"
+    >
+        {children}
+    </a>
+);
 
 const Footer = () => {
     const scrollTo = (id) => {
@@ -9,7 +23,7 @@ const Footer = () => {
     };
 
     return (
-        <footer id="lien-he" className="bg-gray-950 text-white border-t border-gray-800 transition-colors duration-300">
+        <footer id="lien-he" className="bg-brand-text text-white">
             <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {/* Company Info */}
@@ -23,8 +37,8 @@ const Footer = () => {
                                     e.target.src = '/images/logo-ngang-do.png';
                                 }}
                             />
-                            <div className="border-l border-gray-700 pl-3">
-                                <div className="text-lg font-black text-red-500 uppercase tracking-tight">
+                            <div className="border-l border-white/15 pl-3">
+                                <div className="text-lg font-black text-red-400 uppercase tracking-tight">
                                     KIM LONG MOTOR
                                 </div>
                                 <div className="text-[11px] text-gray-400 uppercase font-semibold">
@@ -39,7 +53,7 @@ const Footer = () => {
 
                         <div className="pt-1 text-xs text-gray-400 space-y-1.5">
                             <div className="flex items-start gap-2">
-                                <MapPin size={15} className="text-red-500 shrink-0 mt-0.5" />
+                                <MapPin size={15} className="text-red-400 shrink-0 mt-0.5" />
                                 <span>{businessInfo.address}</span>
                             </div>
                         </div>
@@ -47,7 +61,7 @@ const Footer = () => {
 
                     {/* Product Links */}
                     <div>
-                        <h3 className="text-sm font-bold uppercase tracking-wider text-white mb-4 border-l-2 border-red-600 pl-2.5">
+                        <h3 className="text-sm font-bold uppercase tracking-wider text-white mb-4 border-l-2 border-brand-primary pl-2.5">
                             Danh Mục Xe
                         </h3>
                         <ul className="space-y-2 text-xs sm:text-sm text-gray-400">
@@ -66,67 +80,39 @@ const Footer = () => {
 
                     {/* Customer Support */}
                     <div>
-                        <h3 className="text-sm font-bold uppercase tracking-wider text-white mb-4 border-l-2 border-red-600 pl-2.5">
+                        <h3 className="text-sm font-bold uppercase tracking-wider text-white mb-4 border-l-2 border-brand-primary pl-2.5">
                             Hỗ Trợ Khách Hàng
                         </h3>
-                        <ul className="space-y-3 text-xs sm:text-sm text-gray-400 mb-4">
+                        <ul className="space-y-3 text-xs sm:text-sm text-gray-400">
                             <li className="flex items-center gap-2.5">
-                                <Phone size={16} className="text-red-500 shrink-0" />
+                                <Phone size={16} className="text-red-400 shrink-0" />
                                 <a href={`tel:${businessInfo.hotlineSalesRaw}`} className="text-red-400 font-bold hover:underline">
                                     Bán Hàng: {businessInfo.hotlineSales}
                                 </a>
                             </li>
                             <li className="flex items-center gap-2.5">
-                                <Wrench size={16} className="text-red-500 shrink-0" />
+                                <Wrench size={16} className="text-red-400 shrink-0" />
                                 <a href={`tel:${businessInfo.hotlineServiceRaw}`} className="text-white font-bold hover:underline">
                                     Kỹ Thuật: {businessInfo.hotlineService}
                                 </a>
                             </li>
                         </ul>
-                        <div className="space-y-2">
-                            <a
-                                href={businessInfo.youtubeUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="w-full bg-red-600/20 hover:bg-red-600 text-white p-2.5 rounded-xl border border-red-500/30 flex items-center justify-between transition-colors text-xs font-semibold"
-                            >
-                                <span className="flex items-center gap-2">
-                                    <Youtube size={16} className="text-red-500" />
-                                    <span>YouTube</span>
-                                </span>
-                                <ExternalLink size={13} />
-                            </a>
-                            <a
-                                href={businessInfo.zaloUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="w-full bg-blue-600/20 hover:bg-blue-600 text-white p-2.5 rounded-xl border border-blue-500/30 flex items-center justify-between transition-colors text-xs font-semibold"
-                            >
-                                <span className="flex items-center gap-2">
-                                    <span>💬</span>
-                                    <span>Zalo</span>
-                                </span>
-                                <ExternalLink size={13} />
-                            </a>
-                        </div>
                     </div>
                 </div>
 
-                {/* Bottom Bar */}
-                <div className="mt-10 pt-8 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
+                {/* Bottom Bar — copyright + minimal round social icons */}
+                <div className="mt-10 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
                     <div>
                         © {new Date().getFullYear()} KIM LONG MOTOR. Bản quyền đại lý phân phối chính thức.
                     </div>
-                    <div className="flex gap-4">
-                        <button onClick={() => scrollTo('danh-muc-xe')} className="hover:text-gray-300 cursor-pointer">
-                            Danh Mục Xe
-                        </button>
-                        <button onClick={() => scrollTo('bang-bao-gia')} className="hover:text-gray-300 cursor-pointer">
-                            Báo Giá
-                        </button>
-                        <button onClick={() => scrollTo('ve-hong-thuong')} className="hover:text-gray-300 cursor-pointer">
-                            Về Chúng Tôi
-                        </button>
+                    <div className="flex items-center gap-3">
+                        {/* Facebook icon intentionally omitted — no confirmed page URL yet in businessInfo */}
+                        <SocialIconButton href={businessInfo.youtubeUrl} label="YouTube">
+                            <Youtube size={16} />
+                        </SocialIconButton>
+                        <SocialIconButton href={businessInfo.tiktokUrl} label="TikTok">
+                            <span className="text-sm">🎵</span>
+                        </SocialIconButton>
                     </div>
                 </div>
             </div>

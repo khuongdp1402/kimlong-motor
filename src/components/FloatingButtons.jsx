@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Phone, ArrowUp, Youtube } from 'lucide-react';
+import { Phone, ArrowUp, Youtube, X, MessageSquare } from 'lucide-react';
 import { businessInfo } from '../data/hongthuong-data';
 
 const FloatingButtons = () => {
     const [showScrollTop, setShowScrollTop] = useState(false);
+    const [fabOpen, setFabOpen] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -18,88 +19,108 @@ const FloatingButtons = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    // Close FAB when clicking outside
+    useEffect(() => {
+        if (!fabOpen) return;
+        const close = () => setFabOpen(false);
+        window.addEventListener('click', close);
+        return () => window.removeEventListener('click', close);
+    }, [fabOpen]);
+
+    const socialItems = [
+        {
+            href: `tel:${businessInfo.hotlineSalesRaw}`,
+            label: `Gọi: ${businessInfo.hotlineSales}`,
+            icon: <Phone size={18} />,
+            bgClass: 'bg-red-600 hover:bg-red-700 text-white',
+            external: false,
+        },
+        {
+            href: businessInfo.zaloUrl,
+            label: 'Chat Zalo',
+            icon: <MessageSquare size={18} />,
+            bgClass: 'bg-blue-600 hover:bg-blue-700 text-white',
+            external: true,
+        },
+        {
+            href: businessInfo.youtubeUrl,
+            label: 'YouTube',
+            icon: <Youtube size={18} />,
+            bgClass: 'bg-red-600 hover:bg-red-700 text-white',
+            external: true,
+        },
+        {
+            href: businessInfo.tiktokUrl,
+            label: 'TikTok',
+            icon: <span className="text-sm">🎵</span>,
+            bgClass: 'bg-gray-900 hover:bg-gray-800 text-white',
+            external: true,
+        },
+    ];
+
     return (
         <aside aria-label="Nút liên hệ nhanh">
-            {/* Left Bottom: Quick Call Hotline Pill */}
-            <div className="fixed left-4 bottom-4 z-40 hidden sm:flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white pl-2 pr-4 py-2 rounded-full shadow-2xl transition-all transform hover:scale-105 border border-white/20">
-                <div className="w-9 h-9 rounded-full bg-white text-red-600 flex items-center justify-center font-bold shadow animate-bounce">
-                    <Phone size={18} />
-                </div>
-                <div>
-                    <div className="text-[10px] uppercase font-bold text-red-100 tracking-wider">Hotline Tư Vấn</div>
-                    <a href={`tel:${businessInfo.hotlineSalesRaw}`} className="text-sm font-black tracking-wide">
-                        {businessInfo.hotlineSales}
-                    </a>
-                </div>
-            </div>
-
-            {/* Right Bottom: Social & Action Floating Bar */}
+            {/* Right Bottom: FAB + Expandable Social Menu */}
             <div className="fixed right-4 bottom-4 z-40 flex flex-col items-end gap-2.5">
-                {/* TikTok */}
-                <a
-                    href={businessInfo.tiktokUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-12 h-12 bg-black hover:bg-gray-800 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 border border-gray-700 group relative"
-                    aria-label="TikTok @thuongkimlong"
-                >
-                    <span className="text-lg">🎵</span>
-                    <span className="absolute right-14 bg-gray-900 text-white text-xs font-semibold px-2.5 py-1 rounded shadow whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                        TikTok @thuongkimlong
-                    </span>
-                </a>
+                {/* Expanded items */}
+                {fabOpen && (
+                    <div
+                        className="flex flex-col items-end gap-2 mb-1 animate-fadeIn"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {socialItems.map((item, idx) => (
+                            <a
+                                key={idx}
+                                href={item.href}
+                                target={item.external ? '_blank' : undefined}
+                                rel={item.external ? 'noopener noreferrer' : undefined}
+                                className={`flex items-center gap-2.5 pl-4 pr-3 py-2 rounded-full shadow-lg transition-all transform hover:scale-105 ${item.bgClass}`}
+                                style={{
+                                    animation: `heroFadeUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) ${idx * 0.05}s both`,
+                                }}
+                            >
+                                <span className="text-xs font-bold whitespace-nowrap">{item.label}</span>
+                                {item.icon}
+                            </a>
+                        ))}
+                    </div>
+                )}
 
-                {/* YouTube */}
-                <a
-                    href={businessInfo.youtubeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-12 h-12 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 group relative"
-                    aria-label="YouTube @thuongkimlong"
+                {/* FAB Main Button */}
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setFabOpen((o) => !o);
+                    }}
+                    className={`w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all transform hover:scale-110 cursor-pointer border-2 border-white/30 ${
+                        fabOpen
+                            ? 'bg-gray-800 hover:bg-gray-700 text-white rotate-0'
+                            : 'bg-red-600 hover:bg-red-700 text-white animate-pulse-ring'
+                    }`}
+                    aria-label={fabOpen ? 'Đóng menu liên hệ' : 'Mở menu liên hệ'}
                 >
-                    <Youtube size={22} />
-                    <span className="absolute right-14 bg-gray-900 text-white text-xs font-semibold px-2.5 py-1 rounded shadow whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                        YouTube @thuongkimlong
-                    </span>
-                </a>
-
-                {/* Zalo */}
-                <a
-                    href={businessInfo.zaloUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-110 animate-pulse group relative"
-                    aria-label="Chat Zalo"
-                >
-                    <span className="font-bold text-xs tracking-tighter">ZALO</span>
-                    <span className="absolute right-14 bg-gray-900 text-white text-xs font-semibold px-2.5 py-1 rounded shadow whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                        Chat Zalo: {businessInfo.hotlineSales}
-                    </span>
-                </a>
-
-                {/* Direct Call Button (Sales) */}
-                <a
-                    href={`tel:${businessInfo.hotlineSalesRaw}`}
-                    className="w-13 h-13 p-3 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center shadow-2xl hover:shadow-red-500/50 transition-all transform hover:scale-110 animate-bounce group relative border-2 border-white"
-                    aria-label="Gọi điện Hotline"
-                >
-                    <Phone size={22} />
-                    <span className="absolute right-16 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-md shadow whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                        Gọi tư vấn: {businessInfo.hotlineSales}
-                    </span>
-                </a>
+                    {fabOpen ? <X size={22} /> : <Phone size={22} />}
+                </button>
 
                 {/* Scroll to Top */}
                 {showScrollTop && (
                     <button
                         onClick={scrollToTop}
-                        className="w-10 h-10 bg-gray-800/90 hover:bg-gray-800 text-white rounded-full flex items-center justify-center shadow-lg transition-all transform hover:scale-110"
+                        className="w-10 h-10 bg-gray-800/90 hover:bg-gray-800 text-white rounded-full flex items-center justify-center shadow-lg transition-all transform hover:scale-110 cursor-pointer"
                         aria-label="Lên đầu trang"
                     >
                         <ArrowUp size={18} />
                     </button>
                 )}
             </div>
+
+            {/* Inline keyframe for FAB item animation (reuses hero keyframe) */}
+            <style>{`
+                @keyframes heroFadeUp {
+                    from { opacity: 0; transform: translateY(12px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+            `}</style>
         </aside>
     );
 };
