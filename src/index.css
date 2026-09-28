@@ -1,15 +1,36 @@
 @import "tailwindcss";
+@import "lenis/dist/lenis.css";
 @plugin "@tailwindcss/typography";
 
-/* The site now ships a single light theme (dark-mode toggle removed) —
-   `dark:` utilities left over in older components are simply inert since
-   `.dark` is never applied to <html>. */
+/* `dark:` utilities follow a `.dark` class on <html> (set per route by
+   src/hooks/useRouteTheme.js: public pages dark, admin light) instead of the
+   OS preference. */
+@custom-variant dark (&:where(.dark, .dark *));
 
-/* Kim Long Motor light design system — background, surface, border, brand
-   red, and text tokens used across the refactored landing sections. */
 @theme {
   --font-sans: "Plus Jakarta Sans", "Inter", sans-serif;
 
+  /* Showroom Noir palette */
+  --color-noir-950: #0A0B0D;
+  --color-noir-900: #111317;
+  --color-graphite-800: #1A1D23;
+  --color-graphite-700: #252A32;
+  --color-line: rgba(255, 255, 255, 0.08);
+  --color-ink: #F4F5F7;
+  --color-ink-muted: #9AA1AC;
+  --color-accent: #D91C24;
+  --color-accent-dark: #B91218;
+  --color-paper: #F6F5F2;
+
+  /* Remap the darkest Tailwind grays onto the noir scale so the existing
+     `dark:bg-gray-900/800` classes on sub-pages adopt the new palette. In
+     light (admin) mode these grays are only used as near-black text, where
+     the shift is imperceptible. */
+  --color-gray-950: #0A0B0D;
+  --color-gray-900: #111317;
+  --color-gray-800: #1A1D23;
+
+  /* Legacy light tokens — still referenced until Task 12 removes them. */
   --color-brand-bg: #FAFAFC;
   --color-brand-surface: #F8FAFC;
   --color-brand-border: #E2E8F0;
@@ -17,21 +38,37 @@
   --color-brand-primary-dark: #B91218;
   --color-brand-text: #0F172A;
   --color-brand-muted: #475569;
-
   --radius-brand-sm: 12px;
   --radius-brand-lg: 16px;
-
   --shadow-brand-soft: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
   --shadow-brand-lifted: 0 20px 40px -12px rgba(0, 0, 0, 0.12);
+
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-ken-burns: kenBurns 9s ease-out forwards;
+  --animate-line-up: lineUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes kenBurns {
+  from { transform: scale(1.08); }
+  to { transform: scale(1); }
+}
+@keyframes lineUp {
+  from { transform: translateY(110%); }
+  to { transform: translateY(0); }
 }
 
 @layer base {
-  html {
-    scroll-behavior: smooth;
+  html.dark body {
+    background-color: var(--color-noir-950);
+    color: var(--color-ink);
   }
-  body {
-    background-color: var(--color-brand-bg);
-    color: var(--color-brand-text);
+  ::selection {
+    background: var(--color-accent);
+    color: #fff;
   }
 }
 

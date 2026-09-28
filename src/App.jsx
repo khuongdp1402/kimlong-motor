@@ -16,6 +16,8 @@ import FloatingButtons from './components/FloatingButtons';
 import VehicleModal from './components/VehicleModal';
 import QuickQuoteModal from './components/QuickQuoteModal';
 import SeoJsonLd from './components/SeoJsonLd';
+import SmoothScroll from './components/motion/SmoothScroll';
+import { useRouteTheme } from './hooks/useRouteTheme';
 
 import ProductDetail from './pages/ProductDetail';
 import ProductCategory from './pages/ProductCategory';
@@ -52,7 +54,7 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-brand-bg text-brand-text selection:bg-red-500 selection:text-white">
+    <div className="min-h-screen bg-noir-950 text-ink">
       {/* SEO: AutoDealer + AutomotiveBusiness structured data */}
       <SeoJsonLd />
 
@@ -119,8 +121,11 @@ const Home = () => {
 };
 
 function App() {
+  useRouteTheme();
+
   return (
     <AdminAuthProvider>
+      <SmoothScroll />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/product/:id" element={<ProductDetail />} />
