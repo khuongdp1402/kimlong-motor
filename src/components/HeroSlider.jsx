@@ -6,14 +6,16 @@ import 'swiper/css';
 import 'swiper/css/effect-fade';
 
 // Two hero slides — text side adapts to where the vehicle sits in the photo.
-// Slide 1 (xe khách): vehicle is on the LEFT → text goes RIGHT
-// Slide 2 (xe tải):   vehicle is on the RIGHT → text goes LEFT
+// Desktop: text left/right beside vehicle.  Mobile: text top/bottom so it
+// doesn't overlap the vehicle in the art-directed portrait images.
 const slides = [
     {
         id: 1,
         image: '/images/banners/banner-xekhach.jpg',
+        mobileImage: '/images/banners/banner-xekhach-mobile.jpg',
         mirror: false,
-        textSide: 'right',   // vehicle is left, text is right
+        textSide: 'right',        // desktop: vehicle left, text right
+        mobileTextPos: 'bottom',   // mobile: vehicle top, text bottom
         eyebrow: 'Xe Khách Kim Long 99',
         title: 'Vận Hành Êm Ái.\nĐẳng Cấp Vượt Trội.',
         subtitle: 'Dòng xe khách giường nằm & xe ghế cao cấp, nội thất chuẩn Châu Âu — sẵn sàng cho mọi hành trình dài.',
@@ -23,8 +25,10 @@ const slides = [
     {
         id: 2,
         image: '/images/banners/banner-xetai.jpg',
+        mobileImage: '/images/banners/banner-xetai-mobile.jpg',
         mirror: false,
-        textSide: 'left',    // vehicle is right, text is left
+        textSide: 'left',         // desktop: vehicle right, text left
+        mobileTextPos: 'top',      // mobile: vehicle bottom, text top
         eyebrow: 'Xe Tải Kim Long',
         title: 'Bền Bỉ Mọi Hành Trình.\nVững Vàng Mọi Cung Đường.',
         subtitle: 'Xe tải tải trọng linh hoạt, động cơ mạnh mẽ tiết kiệm nhiên liệu — tối ưu chi phí vận hành cho doanh nghiệp.',
@@ -71,29 +75,43 @@ const HeroSlider = () => {
                     return (
                         <SwiperSlide key={slide.id}>
                             <div className="relative w-full h-screen min-h-[600px] max-h-[1000px] overflow-hidden">
-                                {/* Full-screen background image */}
-                                <img
-                                    key={`img-${animKey}-${slide.id}`}
-                                    src={slide.image}
-                                    alt={slide.eyebrow}
-                                    loading={idx === 0 ? 'eager' : 'lazy'}
-                                    fetchPriority={idx === 0 ? 'high' : 'auto'}
-                                    className={`absolute inset-0 w-full h-full object-cover object-center ${idx === activeIndex ? 'motion-safe:animate-ken-burns' : ''}`}
-                                    style={slide.mirror ? { transform: 'scaleX(-1)' } : undefined}
-                                />
+                                {/* Full-screen background — art-directed: portrait on mobile, landscape on desktop */}
+                                <picture key={`img-${animKey}-${slide.id}`}>
+                                    {slide.mobileImage && (
+                                        <source media="(max-width: 768px)" srcSet={slide.mobileImage} />
+                                    )}
+                                    <img
+                                        src={slide.image}
+                                        alt={slide.eyebrow}
+                                        loading={idx === 0 ? 'eager' : 'lazy'}
+                                        fetchPriority={idx === 0 ? 'high' : 'auto'}
+                                        className={`absolute inset-0 w-full h-full object-cover object-center ${idx === activeIndex ? 'motion-safe:animate-ken-burns' : ''}`}
+                                        style={slide.mirror ? { transform: 'scaleX(-1)' } : undefined}
+                                    />
+                                </picture>
 
-                                {/* Dark gradient — heavier on the TEXT side */}
-                                <div className={`absolute inset-0 ${
+                                {/* Dark gradient — desktop: heavier on the TEXT side;
+                                    mobile: heavier on top or bottom matching mobileTextPos */}
+                                <div className={`absolute inset-0 hidden md:block ${
                                     isRight
                                         ? 'bg-gradient-to-l from-black/80 via-black/40 to-black/10'
                                         : 'bg-gradient-to-r from-black/80 via-black/40 to-black/10'
                                 }`} />
+                                <div className={`absolute inset-0 md:hidden ${
+                                    slide.mobileTextPos === 'bottom'
+                                        ? 'bg-gradient-to-t from-black/85 via-black/40 to-black/5'
+                                        : 'bg-gradient-to-b from-black/85 via-black/40 to-black/5'
+                                }`} />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
 
-                                {/* Text content — side depends on textSide config */}
+                                {/* Text content — desktop: side; mobile: top/bottom */}
                                 <div
                                     key={`caption-${animKey}-${slide.id}`}
-                                    className={`absolute inset-0 flex items-center ${isRight ? 'justify-end' : 'justify-start'}`}
+                                    className={`absolute inset-0 flex md:items-center ${isRight ? 'md:justify-end' : 'md:justify-start'} ${
+                                        slide.mobileTextPos === 'bottom'
+                                            ? 'items-end pb-20'
+                                            : 'items-start pt-20'
+                                    }`}
                                 >
                                     <div className="max-w-[1400px] mx-auto w-full px-4 sm:px-6 lg:px-10">
                                         <div className={`max-w-2xl ${isRight ? 'ml-auto text-right' : ''}`}>

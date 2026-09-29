@@ -55,14 +55,17 @@ const StageCard = ({ car, onOpenDetail, onOpenQuote }) => {
                         </div>
                     ))}
                 </dl>
-                <div className="mt-auto pt-4 flex items-center justify-between gap-3">
-                    <span className="text-xs sm:text-sm text-ink-muted truncate">{car.price}</span>
+                <div className="mt-auto pt-4 border-t border-line">
+                    <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] uppercase tracking-wider text-ink-muted font-medium">Giá tham khảo</span>
+                    </div>
+                    <div className="text-sm sm:text-base font-bold text-ink mt-0.5">{car.price}</div>
                     <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); onOpenQuote(car); }}
-                        className="shrink-0 inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-accent hover:text-ink transition-colors cursor-pointer"
+                        className="mt-3 w-full inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm font-bold text-white bg-accent hover:bg-accent-dark rounded-full py-2 px-4 transition-colors cursor-pointer"
                     >
-                        Báo giá <ArrowUpRight size={15} />
+                        Nhận báo giá ưu đãi <ArrowUpRight size={14} />
                     </button>
                 </div>
             </div>
@@ -106,7 +109,7 @@ const VehicleCatalogSection = ({ onOpenDetail, onOpenQuote }) => {
                     </div>
                 </div>
 
-                <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                <div className="mt-14 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
                     {cars.map((car, idx) => (
                         <Reveal key={`${activeTab}-${car.id}`} delay={(idx % 4) * 0.07}>
                             <StageCard car={car} onOpenDetail={onOpenDetail} onOpenQuote={onOpenQuote} />

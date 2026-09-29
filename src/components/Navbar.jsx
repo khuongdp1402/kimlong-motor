@@ -36,17 +36,11 @@ const Navbar = ({ onOpenQuoteModal }) => {
         }
     };
 
-    const goTo = (path) => {
-        setIsOpen(false);
-        navigate(path);
-    };
-
     const navLinks = [
         { label: 'Trang Chủ', action: () => scrollTo('hero'), active: true },
         { label: 'Danh Mục Xe', action: () => scrollTo('danh-muc-xe') },
         { label: 'Dịch Vụ', action: () => scrollTo('bang-bao-gia') },
-        { label: 'Tin Tức', action: () => goTo('/news') },
-        { label: 'Về Chúng Tôi', action: () => scrollTo('ve-chung-toi') },
+        { label: 'Tin Tức', action: () => scrollTo('news') },
     ];
 
     return (
