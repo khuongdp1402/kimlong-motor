@@ -16,18 +16,11 @@ const AUTO_POPUP_SESSION_KEY = 'landing_auto_popup_shown';
 const LandingSimple = () => {
     const [popup, setPopup] = useState({ open: false, productName: '' });
 
-    // Auto-show the phone-only quote popup 5s after landing, once per tab session.
+    // Auto-show the quote popup shortly after landing, every time the page loads.
     useEffect(() => {
-        let alreadyShown = false;
-        try {
-            alreadyShown = sessionStorage.getItem(AUTO_POPUP_SESSION_KEY) === '1';
-        } catch { /* storage unavailable */ }
-        if (alreadyShown) return undefined;
-
         const timer = setTimeout(() => {
             setPopup({ open: true, productName: '' });
-            try { sessionStorage.setItem(AUTO_POPUP_SESSION_KEY, '1'); } catch { /* ignore */ }
-        }, 5000);
+        }, 1000);
         return () => clearTimeout(timer);
     }, []);
 

@@ -19,19 +19,23 @@ router.post('/', async (req, res) => {
         phone: body.phone,
         topic: body.topic || '',
         message: body.message || '',
+        note: body.note || '',
         productName: body.productName || '',
         source: body.source || 'contact_page',
     };
 
     const { rows } = await query('INSERT INTO leads (data) VALUES ($1) RETURNING *', [JSON.stringify(data)]);
-    res.status(201).json(toApi(rows[0]));
 
-    // Best-effort email notification — never let a mail failure affect the response above.
-    try {
-        await sendContactNotification(data);
-    } catch (err) {
-        console.error('[Leads] sendContactNotification failed:', err.message);
+    // Awaited BEFORE responding on purpose. On serverless (Vercel) the function
+    // can be frozen the moment a response is flushed, which silently kills an
+    // in-flight SMTP handshake — so the send has to finish inside the request.
+    // sendContactNotification never throws and caps itself at ~10s.
+    const mail = await sendContactNotification(data);
+    if (!mail.sent) {
+        console.error(`[Leads] Lead #${rows[0].id} saved but no email sent (${mail.reason || mail.error}).`);
     }
+
+    res.status(201).json({ ...toApi(rows[0]), emailSent: mail.sent });
 });
 
 // Admin: list submitted leads.

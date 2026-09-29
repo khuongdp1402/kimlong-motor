@@ -12,6 +12,7 @@ const slides = [
     {
         id: 1,
         image: '/images/banners/banner-xekhach.jpg',
+        mobileImage: '/images/banners/banner-xekhach-mobile.jpg',
         mirror: false,
         textSide: 'right',   // vehicle is left, text is right
         eyebrow: 'Xe Khách Kim Long 99',
@@ -23,6 +24,7 @@ const slides = [
     {
         id: 2,
         image: '/images/banners/banner-xetai.jpg',
+        mobileImage: '/images/banners/banner-xetai-mobile.jpg',
         mirror: false,
         textSide: 'left',    // vehicle is right, text is left
         eyebrow: 'Xe Tải Kim Long',
@@ -51,7 +53,7 @@ const HeroSlider = () => {
     };
 
     return (
-        <section id="hero" className="relative w-full h-screen min-h-[600px] max-h-[1000px] bg-gray-950 select-none">
+        <section id="hero" className="relative w-full h-[55vh] sm:h-screen sm:min-h-[600px] sm:max-h-[1000px] bg-gray-950 select-none overflow-hidden">
             <Swiper
                 modules={[Autoplay, EffectFade]}
                 effect="fade"
@@ -70,30 +72,34 @@ const HeroSlider = () => {
 
                     return (
                         <SwiperSlide key={slide.id}>
-                            <div className="relative w-full h-screen min-h-[600px] max-h-[1000px] overflow-hidden">
-                                {/* Full-screen background image */}
+                            <div className="relative w-full h-full overflow-hidden">
+                                {/* Desktop background image */}
                                 <img
-                                    key={`img-${animKey}-${slide.id}`}
+                                    key={`img-desktop-${animKey}-${slide.id}`}
                                     src={slide.image}
                                     alt={slide.eyebrow}
                                     loading={idx === 0 ? 'eager' : 'lazy'}
                                     fetchPriority={idx === 0 ? 'high' : 'auto'}
-                                    className={`absolute inset-0 w-full h-full object-cover object-center ${idx === activeIndex ? 'motion-safe:animate-ken-burns' : ''}`}
+                                    className={`hidden sm:block absolute inset-0 w-full h-full object-cover object-center ${idx === activeIndex ? 'motion-safe:animate-ken-burns' : ''}`}
                                     style={slide.mirror ? { transform: 'scaleX(-1)' } : undefined}
                                 />
+                                {/* Mobile background image */}
+                                <img
+                                    key={`img-mobile-${animKey}-${slide.id}`}
+                                    src={slide.mobileImage}
+                                    alt={slide.eyebrow}
+                                    loading={idx === 0 ? 'eager' : 'lazy'}
+                                    fetchPriority={idx === 0 ? 'high' : 'auto'}
+                                    className={`sm:hidden absolute inset-0 w-full h-full object-cover object-center ${idx === activeIndex ? 'motion-safe:animate-ken-burns' : ''}`}
+                                />
 
-                                {/* Dark gradient — heavier on the TEXT side */}
-                                <div className={`absolute inset-0 ${
-                                    isRight
-                                        ? 'bg-gradient-to-l from-black/80 via-black/40 to-black/10'
-                                        : 'bg-gradient-to-r from-black/80 via-black/40 to-black/10'
-                                }`} />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
+                                {/* Subtle bottom gradient — only for text readability, NOT covering the image */}
+                                <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 via-black/30 to-transparent sm:hidden" />
 
-                                {/* Text content — side depends on textSide config */}
+                                {/* ─── Desktop text content (side layout) ─── */}
                                 <div
-                                    key={`caption-${animKey}-${slide.id}`}
-                                    className={`absolute inset-0 flex items-center ${isRight ? 'justify-end' : 'justify-start'}`}
+                                    key={`caption-desktop-${animKey}-${slide.id}`}
+                                    className={`hidden sm:flex absolute inset-0 items-center ${isRight ? 'justify-end' : 'justify-start'}`}
                                 >
                                     <div className="max-w-[1400px] mx-auto w-full px-4 sm:px-6 lg:px-10">
                                         <div className={`max-w-2xl ${isRight ? 'ml-auto text-right' : ''}`}>
@@ -106,7 +112,7 @@ const HeroSlider = () => {
                                             </span>
 
                                             {/* Main headline */}
-                                            <h1 className="text-3xl sm:text-5xl lg:text-[3.5rem] xl:text-[4rem] font-extrabold text-white leading-[1.1] tracking-tight">
+                                            <h1 className="text-5xl lg:text-[3.5rem] xl:text-[4rem] font-extrabold text-white leading-[1.1] tracking-tight">
                                                 {slide.title.split('\n').map((line, lineIdx) => (
                                                     <span key={lineIdx} className="block overflow-hidden pb-1">
                                                         <span
@@ -121,7 +127,7 @@ const HeroSlider = () => {
 
                                             {/* Subtitle */}
                                             <p
-                                                className={`mt-5 sm:mt-6 text-sm sm:text-base lg:text-lg text-gray-300 max-w-xl leading-relaxed ${isRight ? 'ml-auto' : ''}`}
+                                                className={`mt-5 sm:mt-6 text-base lg:text-lg text-gray-300 max-w-xl leading-relaxed ${isRight ? 'ml-auto' : ''}`}
                                                 style={{ animation: 'heroSlideIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both' }}
                                             >
                                                 {slide.subtitle}
@@ -138,7 +144,7 @@ const HeroSlider = () => {
                                                         isRight ? 'pr-6 pl-2 flex-row-reverse' : 'pl-6 pr-2'
                                                     }`}
                                                 >
-                                                    <span className="text-sm sm:text-base">{slide.cta}</span>
+                                                    <span className="text-base">{slide.cta}</span>
                                                     <span className={`w-9 h-9 rounded-full bg-accent text-white flex items-center justify-center transition-transform ${
                                                         isRight ? 'group-hover:-translate-x-0.5 rotate-180' : 'group-hover:translate-x-0.5'
                                                     }`}>
@@ -150,7 +156,48 @@ const HeroSlider = () => {
                                     </div>
                                 </div>
 
-                                {/* Bottom-left stats row */}
+                                {/* ─── Mobile text overlay (bottom of image) ─── */}
+                                <div
+                                    key={`caption-mobile-${animKey}-${slide.id}`}
+                                    className="sm:hidden absolute bottom-0 left-0 right-0 px-5 pb-6 pt-16"
+                                >
+                                    {/* Eyebrow */}
+                                    <span
+                                        className="inline-flex items-center px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white text-[11px] font-semibold tracking-wide mb-3"
+                                        style={{ animation: 'heroSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both' }}
+                                    >
+                                        {slide.eyebrow}
+                                    </span>
+
+                                    {/* Headline */}
+                                    <h1 className="text-2xl font-extrabold text-white leading-[1.15] tracking-tight">
+                                        {slide.title.split('\n').map((line, lineIdx) => (
+                                            <span key={lineIdx} className="block overflow-hidden pb-0.5">
+                                                <span
+                                                    className="block motion-safe:animate-line-up"
+                                                    style={{ animationDelay: `${0.2 + lineIdx * 0.12}s` }}
+                                                >
+                                                    {line}
+                                                </span>
+                                            </span>
+                                        ))}
+                                    </h1>
+
+                                    {/* CTA */}
+                                    <div style={{ animation: 'heroSlideIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both' }}>
+                                        <button
+                                            onClick={() => scrollTo(slide.targetId)}
+                                            className="mt-4 group inline-flex items-center gap-2.5 bg-white/95 hover:bg-white text-gray-900 font-semibold py-1.5 pl-5 pr-1.5 rounded-full shadow-lg transition-all cursor-pointer"
+                                        >
+                                            <span className="text-sm">{slide.cta}</span>
+                                            <span className="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center">
+                                                <ArrowRight size={14} />
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Bottom-left stats row (desktop only) */}
                                 <div className="hidden sm:flex absolute bottom-8 lg:bottom-10 left-0 w-full">
                                     <div className="max-w-[1400px] mx-auto w-full px-4 sm:px-6 lg:px-10">
                                         <div className="flex items-end gap-8 lg:gap-12">
@@ -166,8 +213,8 @@ const HeroSlider = () => {
                                     </div>
                                 </div>
 
-                                {/* Bottom-right: slider navigation + progress */}
-                                <div className="absolute bottom-8 lg:bottom-10 right-4 sm:right-6 lg:right-10 flex items-center gap-3">
+                                {/* Bottom-right: slider nav + progress (desktop) */}
+                                <div className="hidden sm:flex absolute bottom-8 lg:bottom-10 right-4 sm:right-6 lg:right-10 items-center gap-3">
                                     <button
                                         onClick={() => swiperRef?.slidePrev()}
                                         aria-label="Slide trước"
@@ -182,7 +229,7 @@ const HeroSlider = () => {
                                     >
                                         <ChevronRight size={20} />
                                     </button>
-                                    <div className="hidden sm:flex items-center gap-3 ml-2">
+                                    <div className="flex items-center gap-3 ml-2">
                                         <div className="flex gap-1">
                                             {slides.map((_, i) => (
                                                 <div
@@ -198,6 +245,36 @@ const HeroSlider = () => {
                                         </span>
                                     </div>
                                 </div>
+
+                                {/* Mobile: slide dots + nav arrows */}
+                                <div className="sm:hidden absolute bottom-6 left-5 flex items-center gap-2">
+                                    <div className="flex gap-1.5">
+                                        {slides.map((_, i) => (
+                                            <div
+                                                key={i}
+                                                className={`h-[3px] rounded-full transition-all duration-500 ${
+                                                    i === activeIndex ? 'w-7 bg-accent' : 'w-3 bg-white/40'
+                                                }`}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="sm:hidden absolute bottom-5 right-5 flex items-center gap-2">
+                                    <button
+                                        onClick={() => swiperRef?.slidePrev()}
+                                        aria-label="Slide trước"
+                                        className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/25 backdrop-blur-sm border border-white/20 text-white flex items-center justify-center transition-colors cursor-pointer"
+                                    >
+                                        <ChevronLeft size={16} />
+                                    </button>
+                                    <button
+                                        onClick={() => swiperRef?.slideNext()}
+                                        aria-label="Slide tiếp theo"
+                                        className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/25 backdrop-blur-sm border border-white/20 text-white flex items-center justify-center transition-colors cursor-pointer"
+                                    >
+                                        <ChevronRight size={16} />
+                                    </button>
+                                </div>
                             </div>
                         </SwiperSlide>
                     );
@@ -205,6 +282,14 @@ const HeroSlider = () => {
             </Swiper>
 
             <style>{`
+                /* Fix Swiper fade effect — slides must be full-size and images visible */
+                .hero-swiper .swiper-slide {
+                    height: 100% !important;
+                    width: 100% !important;
+                }
+                .hero-swiper .swiper-slide img {
+                    display: block;
+                }
                 @keyframes heroSlideIn {
                     from {
                         opacity: 0;
@@ -221,3 +306,4 @@ const HeroSlider = () => {
 };
 
 export default HeroSlider;
+

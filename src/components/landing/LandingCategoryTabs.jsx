@@ -19,7 +19,7 @@ const LandingCategoryTabs = ({ onRequestQuote }) => {
     const filtered = products.filter((p) => mapProductToLandingCategory(p) === active);
 
     return (
-        <section id="san-pham" className="py-16 sm:py-20 bg-white">
+        <section id="san-pham" className="py-8 sm:py-10 bg-white">
             <div className="max-w-6xl mx-auto px-5 sm:px-6">
                 <Reveal as="div">
                     <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 text-center">Danh Mục Sản Phẩm</h2>
