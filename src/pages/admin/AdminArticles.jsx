@@ -1,7 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { getArticles, createArticle, updateArticle, deleteArticle, setArticleFeatured } from '../../api/client';
-import { Plus, Pencil, Trash2, X, Star } from 'lucide-react';
+import { Plus, Pencil, Trash2, X } from 'lucide-react';
 import ImageUpload from '../../components/admin/ImageUpload';
+import VisibilityToggle from '../../components/admin/VisibilityToggle';
+import ListToolbar from '../../components/admin/ListToolbar';
+import { filterItems } from '../../components/admin/listFilters';
+
+// Stored dates are full ISO timestamps from the original scrape; the column
+// only ever needed the day.
+function formatDate(value) {
+    if (!value) return '—';
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? value : d.toLocaleDateString('vi-VN');
+}
 
 const emptyArticle = {
     title: '',
@@ -27,6 +38,8 @@ const AdminArticles = () => {
     const [error, setError] = useState('');
     const [editing, setEditing] = useState(null);
     const [creating, setCreating] = useState(false);
+    const [search, setSearch] = useState('');
+    const [visibility, setVisibility] = useState('all');
 
     const load = async () => {
         setLoading(true);
@@ -84,9 +97,14 @@ const AdminArticles = () => {
     if (loading) return <p className="text-gray-500 dark:text-gray-400">Đang tải...</p>;
     if (error) return <p className="text-red-600 dark:text-red-400">{error}</p>;
 
+    const visibleCount = articles.filter((a) => a.featured).length;
+    const shown = filterItems(articles, { search, visibility })
+        .slice()
+        .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+
     return (
         <div>
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-2">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">Tin tức ({articles.length})</h2>
                 <button
                     onClick={() => setCreating(true)}
@@ -95,6 +113,19 @@ const AdminArticles = () => {
                     <Plus size={16} /> Thêm bài viết
                 </button>
             </div>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                <strong className="text-gray-700 dark:text-gray-200">{visibleCount}</strong> bài đang hiển thị trên trang chủ
+                (trang chủ lấy 3 bài mới nhất trong số đó). Các bài còn lại vẫn xem được ở trang Tin tức.
+            </p>
+
+            <ListToolbar
+                search={search}
+                onSearch={setSearch}
+                visibility={visibility}
+                onVisibility={setVisibility}
+                counts={{ visible: visibleCount, hidden: articles.length - visibleCount }}
+                searchPlaceholder="Tìm theo tiêu đề bài viết..."
+            />
 
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -104,12 +135,12 @@ const AdminArticles = () => {
                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Tiêu đề</th>
                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Chuyên mục</th>
                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Ngày</th>
-                            <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Nổi bật</th>
+                            <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Trang chủ</th>
                             <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Hành động</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                        {articles.map((a) => (
+                        {shown.map((a) => (
                             <tr key={a.id}>
                                 <td className="px-4 py-3">
                                     {a.image ? (
@@ -120,18 +151,9 @@ const AdminArticles = () => {
                                 </td>
                                 <td className="px-4 py-3 text-sm text-gray-900 dark:text-white font-medium max-w-md truncate">{a.title}</td>
                                 <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{a.category}</td>
-                                <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{a.date}</td>
+                                <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{formatDate(a.date)}</td>
                                 <td className="px-4 py-3 text-center">
-                                    <button
-                                        onClick={() => handleToggleFeatured(a)}
-                                        title={a.featured ? 'Bỏ nổi bật' : 'Đánh dấu nổi bật'}
-                                        className={`inline-flex items-center justify-center h-7 w-7 rounded-full transition-colors ${a.featured
-                                            ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/40 dark:text-yellow-400'
-                                            : 'bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500'
-                                        }`}
-                                    >
-                                        <Star size={14} className={a.featured ? 'fill-yellow-500' : ''} />
-                                    </button>
+                                    <VisibilityToggle visible={!!a.featured} onToggle={() => handleToggleFeatured(a)} />
                                 </td>
                                 <td className="px-4 py-3 text-right">
                                     <button onClick={() => setEditing(a)} className="text-blue-600 hover:text-blue-800 dark:text-blue-400 mr-3">
@@ -143,10 +165,10 @@ const AdminArticles = () => {
                                 </td>
                             </tr>
                         ))}
-                        {articles.length === 0 && (
+                        {shown.length === 0 && (
                             <tr>
                                 <td colSpan={6} className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
-                                    Chưa có bài viết nào.
+                                    {articles.length === 0 ? 'Chưa có bài viết nào.' : 'Không có bài viết nào khớp bộ lọc.'}
                                 </td>
                             </tr>
                         )}
@@ -229,7 +251,7 @@ const ArticleForm = ({ initial, onCancel, onSave }) => {
                             onChange={(e) => setForm({ ...form, featured: e.target.checked })}
                             className="h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
                         />
-                        Nổi bật (hiển thị ở mục "Tin Tức Nổi Bật" trên trang chủ)
+                        Hiển thị bài này trên trang chủ (trang chủ lấy 3 bài mới nhất trong số các bài được bật)
                     </label>
 
                     <ImageUpload

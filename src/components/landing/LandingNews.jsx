@@ -8,7 +8,15 @@ const LandingNews = () => {
 
     useEffect(() => {
         getArticles()
-            .then((data) => setArticles((data || []).slice(-3).reverse()))
+            .then((data) => setArticles(
+                (data || [])
+                    // `featured` is the admin's show/hide switch. With dozens of
+                    // articles in the catalogue, the landing page shows only
+                    // what an editor has deliberately turned on.
+                    .filter((a) => a.featured)
+                    .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')))
+                    .slice(0, 3)
+            ))
             .catch(() => setArticles([]));
     }, []);
 
@@ -37,6 +45,16 @@ const LandingNews = () => {
                         </Reveal>
                     ))}
                 </div>
+
+                {/* Only a curated few are shown above; the rest stay reachable. */}
+                <Reveal delay={0.24} className="mt-10 text-center">
+                    <Link
+                        to="/news"
+                        className="inline-flex items-center gap-2 border border-slate-300 hover:border-red-600 hover:text-red-600 text-slate-700 font-semibold text-sm px-6 py-2.5 rounded-full transition-colors"
+                    >
+                        Xem tất cả tin tức
+                    </Link>
+                </Reveal>
             </div>
         </section>
     );

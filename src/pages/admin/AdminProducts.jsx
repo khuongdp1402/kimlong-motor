@@ -1,9 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { getProducts, createProduct, updateProduct, deleteProduct, setProductFeatured } from '../../api/client';
-import { Plus, Pencil, Trash2, X, Star } from 'lucide-react';
+import { Plus, Pencil, Trash2, X } from 'lucide-react';
 import ImageUpload from '../../components/admin/ImageUpload';
 import GalleryUpload from '../../components/admin/GalleryUpload';
-import { landingCategories, getLandingCategoryName } from '../../data/landingCategories';
+import { landingCategories, getLandingCategoryName, isLandingCategory } from '../../data/landingCategories';
+import VisibilityToggle from '../../components/admin/VisibilityToggle';
+import ListToolbar from '../../components/admin/ListToolbar';
+import { filterItems } from '../../components/admin/listFilters';
+
+// Accepts what an editor actually types — "2960000000", "2.960.000.000",
+// "2,96 tỷ" — and only reformats when it is unambiguously a number. Anything
+// else (notably "Liên hệ") is passed through untouched.
+function formatPrice(raw) {
+    const value = String(raw ?? '').trim();
+    if (!value) return '';
+    const digits = value.replace(/[.,\s]/g, '');
+    if (!/^\d+$/.test(digits)) return value;
+    return `${Number(digits).toLocaleString('vi-VN')} đ`;
+}
 
 const emptyProduct = {
     name: '',
@@ -24,6 +38,8 @@ const AdminProducts = () => {
     const [error, setError] = useState('');
     const [editing, setEditing] = useState(null); // product being edited, or null
     const [creating, setCreating] = useState(false);
+    const [search, setSearch] = useState('');
+    const [visibility, setVisibility] = useState('all');
 
     const load = async () => {
         setLoading(true);
@@ -82,9 +98,12 @@ const AdminProducts = () => {
     if (loading) return <p className="text-gray-500 dark:text-gray-400">Đang tải...</p>;
     if (error) return <p className="text-red-600 dark:text-red-400">{error}</p>;
 
+    const visibleCount = products.filter((p) => p.featured).length;
+    const shown = filterItems(products, { search, visibility });
+
     return (
         <div>
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-2">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">Sản phẩm ({products.length})</h2>
                 <button
                     onClick={() => setCreating(true)}
@@ -93,6 +112,19 @@ const AdminProducts = () => {
                     <Plus size={16} /> Thêm sản phẩm
                 </button>
             </div>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                <strong className="text-gray-700 dark:text-gray-200">{visibleCount}</strong> sản phẩm đang hiển thị trên trang chủ.
+                Chỉ những sản phẩm bật &ldquo;Hiển thị&rdquo; mới xuất hiện ở mục Danh Mục Sản Phẩm.
+            </p>
+
+            <ListToolbar
+                search={search}
+                onSearch={setSearch}
+                visibility={visibility}
+                onVisibility={setVisibility}
+                counts={{ visible: visibleCount, hidden: products.length - visibleCount }}
+                searchPlaceholder="Tìm theo tên sản phẩm..."
+            />
 
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -102,12 +134,12 @@ const AdminProducts = () => {
                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Tên</th>
                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Danh mục</th>
                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Giá</th>
-                            <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Nổi bật</th>
+                            <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Trang chủ</th>
                             <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Hành động</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                        {products.map((p) => (
+                        {shown.map((p) => (
                             <tr key={p.id}>
                                 <td className="px-4 py-3">
                                     {p.image ? (
@@ -120,16 +152,7 @@ const AdminProducts = () => {
                                 <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{getLandingCategoryName(p.category)}</td>
                                 <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{p.priceDisplay || "Liên hệ"}</td>
                                 <td className="px-4 py-3 text-center">
-                                    <button
-                                        onClick={() => handleToggleFeatured(p)}
-                                        title={p.featured ? 'Bỏ nổi bật' : 'Đánh dấu nổi bật'}
-                                        className={`inline-flex items-center justify-center h-7 w-7 rounded-full transition-colors ${p.featured
-                                            ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/40 dark:text-yellow-400'
-                                            : 'bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500'
-                                        }`}
-                                    >
-                                        <Star size={14} className={p.featured ? 'fill-yellow-500' : ''} />
-                                    </button>
+                                    <VisibilityToggle visible={!!p.featured} onToggle={() => handleToggleFeatured(p)} />
                                 </td>
                                 <td className="px-4 py-3 text-right">
                                     <button onClick={() => setEditing(p)} className="text-blue-600 hover:text-blue-800 dark:text-blue-400 mr-3">
@@ -141,10 +164,10 @@ const AdminProducts = () => {
                                 </td>
                             </tr>
                         ))}
-                        {products.length === 0 && (
+                        {shown.length === 0 && (
                             <tr>
                                 <td colSpan={6} className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
-                                    Chưa có sản phẩm nào.
+                                    {products.length === 0 ? 'Chưa có sản phẩm nào.' : 'Không có sản phẩm nào khớp bộ lọc.'}
                                 </td>
                             </tr>
                         )}
@@ -194,6 +217,11 @@ const ProductForm = ({ initial, onCancel, onSave }) => {
             slug: form.slug,
             category: form.category,
             price: form.price,
+            // The catalogue carries both a raw price and a formatted one, and
+            // the list and detail pages read the formatted field. Deriving it
+            // here is what stops an edited price from displaying as the old
+            // one everywhere outside this form.
+            priceDisplay: formatPrice(form.price),
             image: form.image || gallery[0] || '',
             description: form.description,
             gallery,
@@ -225,15 +253,24 @@ const ProductForm = ({ initial, onCancel, onSave }) => {
                         <input name="slug" value={form.slug} onChange={handleChange} className={inputClass} />
                     </Field>
                     <div className="grid grid-cols-2 gap-4">
-                        <Field label="Danh mục">
-                            <select name="category" value={form.category} onChange={handleChange} className={inputClass}>
+                        <Field label="Danh mục *">
+                            <select name="category" required value={form.category} onChange={handleChange} className={inputClass}>
                                 <option value="">-- Chọn danh mục --</option>
                                 {landingCategories.map((c) => (
                                     <option key={c.slug} value={c.slug}>{c.name}</option>
                                 ))}
+                                {/* A product still on an old slug would otherwise show a blank
+                                    select, and saving would silently re-tag it to whatever the
+                                    editor happened to pick. Surfacing the real value makes the
+                                    change deliberate. */}
+                                {form.category && !isLandingCategory(form.category) && (
+                                    <option value={form.category}>
+                                        {`⚠ Chưa phân loại (${form.category})`}
+                                    </option>
+                                )}
                             </select>
                         </Field>
-                        <Field label="Giá">
+                        <Field label="Giá (chỉ nhập số)">
                             <input name="price" value={form.price} onChange={handleChange} className={inputClass} />
                         </Field>
                     </div>
@@ -245,7 +282,7 @@ const ProductForm = ({ initial, onCancel, onSave }) => {
                             onChange={(e) => setForm({ ...form, featured: e.target.checked })}
                             className="h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
                         />
-                        Nổi bật (hiển thị ở mục "Dòng Xe Nổi Bật" trên trang chủ)
+                        Hiển thị sản phẩm này trên trang chủ
                     </label>
 
                     <ImageUpload
