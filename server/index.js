@@ -21,19 +21,14 @@ import { ensureSchema } from './db.js';
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Idempotent — safe to run on every boot/cold-start (local dev and
-// serverless alike).
-let schemaReady = ensureSchema().catch((err) => {
-    console.error('Failed to ensure Postgres schema:', err);
-    throw err;
-});
-app.use(async (req, res, next) => {
-    try {
-        await schemaReady;
-        next();
-    } catch (err) {
-        next(err);
-    }
+// Kicked off eagerly so a warm instance already has its connection, but not
+// awaited as a gate: query() calls ensureSchema() itself, which memoises
+// success and retries after a failure. A cold start that lost the race to a
+// suspended database therefore recovers on the next query instead of running
+// degraded, and routes get the real error so they can answer usefully rather
+// than being turned into a blanket 500 by a gatekeeping middleware.
+ensureSchema().catch((err) => {
+    console.error('[Boot] Initial schema bootstrap failed, will retry on first query:', err.message);
 });
 
 app.use(cors());

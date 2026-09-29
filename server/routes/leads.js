@@ -24,7 +24,23 @@ router.post('/', async (req, res) => {
         source: body.source || 'contact_page',
     };
 
-    const { rows } = await query('INSERT INTO leads (data) VALUES ($1) RETURNING *', [JSON.stringify(data)]);
+    let rows;
+    try {
+        ({ rows } = await query('INSERT INTO leads (data) VALUES ($1) RETURNING *', [JSON.stringify(data)]));
+    } catch (err) {
+        // The lead could not be stored. Still try to email it — an inbox is a
+        // perfectly good record — but tell the visitor plainly, because a
+        // cheerful "đã gửi" over a dropped enquiry is the worst outcome here.
+        console.error('[Leads] Failed to store lead:', err.message, JSON.stringify(data));
+        const mail = await sendContactNotification(data);
+        if (mail.sent) {
+            console.warn('[Leads] Lead was not stored but the notification email went out.');
+            return res.status(201).json({ ...data, id: null, emailSent: true, stored: false });
+        }
+        return res.status(503).json({
+            error: 'Hệ thống đang tạm thời quá tải, chưa ghi nhận được yêu cầu của bạn. Vui lòng gọi hotline để được hỗ trợ ngay.',
+        });
+    }
 
     // Awaited BEFORE responding on purpose. On serverless (Vercel) the function
     // can be frozen the moment a response is flushed, which silently kills an
@@ -35,7 +51,7 @@ router.post('/', async (req, res) => {
         console.error(`[Leads] Lead #${rows[0].id} saved but no email sent (${mail.reason || mail.error}).`);
     }
 
-    res.status(201).json({ ...toApi(rows[0]), emailSent: mail.sent });
+    res.status(201).json({ ...toApi(rows[0]), emailSent: mail.sent, stored: true });
 });
 
 // Admin: list submitted leads.
