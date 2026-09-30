@@ -64,6 +64,26 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
         return '';
     }, [product]);
 
+    // Chuẩn hóa nội dung Chi Phí Lăn Bánh soạn thảo từ admin nếu có
+    const sanitizedRollingCostHtml = useMemo(() => {
+        if (product?.rollingCostHtml) {
+            return product.rollingCostHtml
+                .replace(/<a[^>]*utm_source=chatgpt[^>]*>.*?<\/a>/gi, '')
+                .trim();
+        }
+        if (product?.rollingCost) {
+            const text = String(product.rollingCost).trim();
+            if (text.includes('\n')) {
+                return text
+                    .split(/\n+/)
+                    .map((p) => `<p>${p.trim()}</p>`)
+                    .join('');
+            }
+            return text;
+        }
+        return '';
+    }, [product]);
+
     // Tách riêng các mục chi phí lăn bánh ra khỏi bảng thông số kỹ thuật xe
     const ROLLING_COST_KEYWORDS = [
         'giá niêm yết',
@@ -474,7 +494,7 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
                     )}
 
                     {/* Section: Chi Phí Lăn Bánh (Nằm dưới Mô Tả & Thông Tin Chi Tiết) */}
-                    {rollingCostItems.length > 0 && (
+                    {(sanitizedRollingCostHtml || rollingCostItems.length > 0) && (
                         <div className="border-t border-slate-200 pt-6">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2 uppercase tracking-wide">
@@ -487,23 +507,37 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
                             </div>
 
                             <div className="bg-slate-50/70 rounded-2xl p-5 sm:p-6 border border-slate-200/90 space-y-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-xs sm:text-sm">
-                                    {rollingCostItems.map((item, idx) => (
-                                        <div
-                                            key={idx}
-                                            className={`flex items-center justify-between p-2.5 rounded-lg border border-slate-100 ${
-                                                idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/90'
-                                            }`}
-                                        >
-                                            <span className="text-slate-600 font-medium pr-2">{item.label}</span>
-                                            <span className="font-semibold text-slate-900 text-right">{item.value}</span>
-                                        </div>
-                                    ))}
-                                </div>
+                                {sanitizedRollingCostHtml ? (
+                                    <div
+                                        className="prose prose-slate max-w-none 
+                                            prose-headings:text-slate-900 prose-headings:font-bold prose-headings:tracking-tight
+                                            prose-h2:text-base sm:prose-h2:text-lg prose-h2:mt-4 prose-h2:mb-2 prose-h2:border-l-4 prose-h2:border-red-600 prose-h2:pl-3 prose-h2:text-slate-900
+                                            prose-h3:text-sm sm:prose-h3:text-base prose-h3:mt-3 prose-h3:mb-1.5 prose-h3:font-bold prose-h3:text-slate-800
+                                            prose-p:text-slate-700 prose-p:text-sm sm:prose-p:text-[15px] prose-p:leading-relaxed prose-p:mb-3
+                                            prose-strong:text-slate-900 prose-strong:font-bold
+                                            prose-ul:list-disc prose-ul:pl-5 prose-ul:space-y-1 prose-ul:my-2 prose-ul:text-sm
+                                            prose-table:w-full prose-table:border-collapse prose-table:my-3"
+                                        dangerouslySetInnerHTML={{ __html: sanitizedRollingCostHtml }}
+                                    />
+                                ) : (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-xs sm:text-sm">
+                                        {rollingCostItems.map((item, idx) => (
+                                            <div
+                                                key={idx}
+                                                className={`flex items-center justify-between p-2.5 rounded-lg border border-slate-100 ${
+                                                    idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/90'
+                                                }`}
+                                            >
+                                                <span className="text-slate-600 font-medium pr-2">{item.label}</span>
+                                                <span className="font-semibold text-slate-900 text-right">{item.value}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
 
-                                {/* Total Rolling Cost Highlight */}
-                                {totalRollingCost && (
-                                    <div className="pt-3 border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-3 bg-red-50/70 p-4 rounded-xl border border-red-200/70">
+                                {/* Total Rolling Cost Highlight (khi có dự toán tính toán và chưa có trong nội dung HTML riêng) */}
+                                {totalRollingCost && !sanitizedRollingCostHtml && (
+                                    <div className="flex flex-wrap items-center justify-between gap-3 bg-red-50/70 p-4 rounded-xl border border-red-200/80">
                                         <div>
                                             <div className="text-xs sm:text-sm font-bold uppercase text-red-700 tracking-wide">
                                                 Tổng Chi Phí Lăn Bánh Tạm Tính

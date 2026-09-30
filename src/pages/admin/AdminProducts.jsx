@@ -7,6 +7,51 @@ import { landingCategories, getLandingCategoryName, isLandingCategory } from '..
 import VisibilityToggle from '../../components/admin/VisibilityToggle';
 import ListToolbar from '../../components/admin/ListToolbar';
 import { filterItems } from '../../components/admin/listFilters';
+import RichTextEditor from '../../components/admin/RichTextEditor';
+
+const ROLLING_COST_TEMPLATE = `<table>
+  <thead>
+    <tr>
+      <th>Khoản mục chi phí</th>
+      <th>Mức phí tạm tính</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Giá niêm yết xe</td>
+      <td>Theo giá niêm yết nhà máy</td>
+    </tr>
+    <tr>
+      <td>Thuế trước bạ (2%)</td>
+      <td>Tạm tính theo hóa đơn xe</td>
+    </tr>
+    <tr>
+      <td>Bảo hiểm vật chất xe (1.5%)</td>
+      <td>Tùy chọn gói bảo hiểm toàn diện</td>
+    </tr>
+    <tr>
+      <td>Phí đăng ký biển số</td>
+      <td>500.000 ₫</td>
+    </tr>
+    <tr>
+      <td>Phí sử dụng đường bộ (1 năm)</td>
+      <td>1.560.000 ₫</td>
+    </tr>
+    <tr>
+      <td>Phí đăng kiểm</td>
+      <td>340.000 ₫</td>
+    </tr>
+    <tr>
+      <td>Bảo hiểm trách nhiệm dân sự</td>
+      <td>480.000 ₫</td>
+    </tr>
+    <tr>
+      <td>Chi phí dịch vụ đăng ký xe</td>
+      <td>1.000.000 ₫</td>
+    </tr>
+  </tbody>
+</table>
+<p><em>* Lưu ý: Giá lăn bánh thực tế có thể thay đổi tùy thuộc vào địa phương đăng ký và chính sách ưu đãi tại từng thời điểm.</em></p>`;
 
 // Accepts what an editor actually types — "2960000000", "2.960.000.000",
 // "2,96 tỷ" — and only reformats when it is unambiguously a number. Anything
@@ -26,6 +71,8 @@ const emptyProduct = {
     price: 'Liên hệ',
     image: '',
     description: '',
+    descriptionHtml: '',
+    rollingCostHtml: '',
     gallery: [],
     specs: [],
     features: [],
@@ -190,6 +237,9 @@ const ProductForm = ({ initial, onCancel, onSave }) => {
     const [form, setForm] = useState({
         ...emptyProduct,
         ...initial,
+        description: initial.descriptionHtml || initial.description || '',
+        descriptionHtml: initial.descriptionHtml || initial.description || '',
+        rollingCostHtml: initial.rollingCostHtml || initial.rollingCost || '',
         specsText: (initial.specs || []).map((s) => `${s.label}: ${s.value}`).join('\n'),
         featuresText: (initial.features || []).join('\n'),
         galleryText: (initial.gallery || []).join('\n'),
@@ -224,6 +274,8 @@ const ProductForm = ({ initial, onCancel, onSave }) => {
             priceDisplay: formatPrice(form.price),
             image: form.image || gallery[0] || '',
             description: form.description,
+            descriptionHtml: form.descriptionHtml || form.description,
+            rollingCostHtml: form.rollingCostHtml || '',
             gallery,
             specs,
             features,
@@ -235,7 +287,7 @@ const ProductForm = ({ initial, onCancel, onSave }) => {
 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
                 <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white">
                         {initial.id ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm mới'}
@@ -292,8 +344,29 @@ const ProductForm = ({ initial, onCancel, onSave }) => {
                         category="products"
                         inputClassName={inputClass}
                     />
-                    <Field label="Mô tả">
-                        <textarea name="description" rows={3} value={form.description} onChange={handleChange} className={inputClass} />
+
+                    <Field label="Mô tả & Thông tin chi tiết (Soạn thảo định dạng)">
+                        <RichTextEditor
+                            value={form.descriptionHtml || form.description}
+                            onChange={(html) => setForm((prev) => ({ ...prev, description: html, descriptionHtml: html }))}
+                            placeholder="Nhập bài viết mô tả chi tiết, trang bị, động cơ, đánh giá xe..."
+                            minHeight="220px"
+                        />
+                    </Field>
+
+                    <Field label="Chi phí lăn bánh (Mục riêng hiển thị dưới Mô Tả & TTCT)">
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mb-1.5 flex flex-wrap items-center justify-between gap-1">
+                            <span>Tách riêng 1 ô soạn thảo định dạng bảng tính / chi phí lăn bánh cho xe.</span>
+                            <span className="text-red-600 dark:text-red-400 font-medium">Bấm &quot;Chèn mẫu bảng dự toán&quot; để tạo nhanh</span>
+                        </div>
+                        <RichTextEditor
+                            value={form.rollingCostHtml}
+                            onChange={(html) => setForm((prev) => ({ ...prev, rollingCostHtml: html }))}
+                            placeholder="Nhập bảng chi phí lăn bánh, mức thuế trước bạ, phí biển số, bảo hiểm..."
+                            minHeight="180px"
+                            templateButtonLabel="Chèn mẫu bảng dự toán"
+                            templateHtml={ROLLING_COST_TEMPLATE}
+                        />
                     </Field>
                     <GalleryUpload
                         label="Thư viện ảnh"

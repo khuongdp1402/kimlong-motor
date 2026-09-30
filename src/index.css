@@ -126,3 +126,51 @@ html:not(.dark) {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+/* TipTap Editor & Rich Text Table Styling */
+.tiptap {
+  outline: none;
+}
+.tiptap p.is-editor-empty:first-child::before {
+  color: #94a3b8;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+.tiptap table,
+.prose table {
+  border-collapse: collapse;
+  table-layout: auto;
+  width: 100%;
+  margin: 1rem 0;
+  overflow: hidden;
+  border-radius: 0.5rem;
+}
+.tiptap th,
+.tiptap td,
+.prose th,
+.prose td {
+  border: 1px solid #cbd5e1;
+  padding: 0.5rem 0.75rem;
+  vertical-align: middle;
+}
+.tiptap th,
+.prose th {
+  background-color: #f1f5f9;
+  font-weight: 600;
+  color: #1e293b;
+  text-align: left;
+}
+.dark .tiptap th,
+.dark .tiptap td,
+.dark .prose th,
+.dark .prose td {
+  border-color: #334155;
+}
+.dark .tiptap th,
+.dark .prose th {
+  background-color: #1e293b;
+  color: #f1f5f9;
+}
+

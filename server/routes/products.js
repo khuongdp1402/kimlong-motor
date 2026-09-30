@@ -47,6 +47,8 @@ router.post('/', requireAuth, async (req, res) => {
         price: body.price || 'Liên hệ',
         image: body.image || '',
         description: body.description || '',
+        descriptionHtml: body.descriptionHtml || body.description || '',
+        rollingCostHtml: body.rollingCostHtml || '',
         gallery: Array.isArray(body.gallery) ? body.gallery : [],
         specs: Array.isArray(body.specs) ? body.specs : [],
         features: Array.isArray(body.features) ? body.features : [],
