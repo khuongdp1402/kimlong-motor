@@ -8,6 +8,7 @@ export const landingCategories = [
     { slug: 'van', name: 'Xe Van' },
     { slug: 'tai', name: 'Xe Tải' },
     { slug: 'dau-keo', name: 'Xe Đầu Kéo' },
+    { slug: 'xe-dien', name: 'Xe Điện EV' },
 ];
 
 export const getLandingCategoryName = (slug) =>

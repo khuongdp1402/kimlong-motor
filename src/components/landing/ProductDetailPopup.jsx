@@ -5,6 +5,7 @@ import { X, Phone, ChevronLeft, ChevronRight, CheckCircle2, FileText, Sparkles, 
 import { businessInfo } from '../../data/hongthuong-data';
 import { getLandingCategoryName } from '../../data/landingCategories';
 import { useScrollLock } from '../../hooks/useScrollLock';
+import { calcRollingCost, formatVnd } from '../../utils/loanCalculator';
 import ZaloIcon from './ZaloIcon';
 
 import 'swiper/css';
@@ -15,8 +16,9 @@ import 'swiper/css';
  * - Ảnh bìa/chính tự động trượt (Autoplay) qua các hình ảnh ngoại thất, nội thất, động cơ...
  * - Hỗ trợ vuốt chạm (Touch Swipe) mượt mà trên mobile/tablet và kéo chuột trên desktop
  * - Xem toàn bộ thư viện ảnh (gallery) với thumbnails và nút Prev/Next
- * - Hiển thị đầy đủ thông số kỹ thuật (highlights & toàn bộ specs)
- * - Mô tả & đánh giá chi tiết được trình bày phân đoạn chuyên nghiệp (h2, p, strong) thay vì dính chùm text
+ * - Hiển thị đầy đủ thông số kỹ thuật (highlights & thông số xe)
+ * - Mô tả & thông tin chi tiết được trình bày phân đoạn chuyên nghiệp
+ * - Mục "CHI PHÍ LĂN BÁNH (Giá tạm tính tùy thuộc vào khu vực và thời điểm)" đặt dưới phần mô tả
  * - Tích hợp CTA Báo giá (mở QuickQuotePopup), Hotline và Zalo
  */
 const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
@@ -44,7 +46,7 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
             return product.descriptionHtml
                 .replace(/<img[^>]*>/gi, '') // Bỏ thẻ ảnh hỏng trong nội dung (ảnh đã có gallery ở trên)
                 .replace(/<a[^>]*utm_source=chatgpt[^>]*>.*?<\/a>/gi, '') // Bỏ link rác kéo từ nguồn scrape
-                .replace(/<p>\s*Hotline[^\<]*<\/p>/gi, '') // Bỏ dòng hotline trùng lặp
+                .replace(/<p>\s*Hotline[^<]*<\/p>/gi, '') // Bỏ dòng hotline trùng lặp
                 .replace(/<p>\s*<a[^>]*>Xem chi tiết[^<]*<\/a>\s*<\/p>/gi, '') // Bỏ link chi tiết thừa
                 .replace(/<p>\s*(?:&nbsp;|\s)*<\/p>/gi, '') // Bỏ các đoạn văn trống
                 .trim();
@@ -60,7 +62,66 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
             return `<p>${text}</p>`;
         }
         return '';
-    }, [product?.descriptionHtml, product?.description]);
+    }, [product]);
+
+    // Tách riêng các mục chi phí lăn bánh ra khỏi bảng thông số kỹ thuật xe
+    const ROLLING_COST_KEYWORDS = [
+        'giá niêm yết',
+        'thuế trước bạ',
+        'bảo hiểm vật chất',
+        'phí đăng ký biển số',
+        'phí sử dụng đường bộ',
+        'phí đăng kiểm',
+        'bảo hiểm trách nhiệm dân sự',
+        'chi phí dịch vụ',
+    ];
+
+    const isRollingCostItem = (label = '') => {
+        const l = label.toLowerCase();
+        return ROLLING_COST_KEYWORDS.some((kw) => l.includes(kw));
+    };
+
+    // Chỉ giữ lại thông số kỹ thuật thực tế của xe (động cơ, kích thước, tải trọng...)
+    const technicalSpecs = useMemo(() => {
+        return (product?.specs || []).filter((s) => !isRollingCostItem(s.label));
+    }, [product?.specs]);
+
+    // Lấy các mục chi phí lăn bánh từ specs hoặc tự động tính dự toán từ giá xe
+    const rollingCostItems = useMemo(() => {
+        const fromSpecs = (product?.specs || []).filter((s) => isRollingCostItem(s.label));
+        if (fromSpecs.length > 0) return fromSpecs;
+
+        const priceNum =
+            typeof product?.price === 'number'
+                ? product.price
+                : parseInt(String(product?.price || '').replace(/[^\d]/g, ''), 10);
+
+        if (priceNum && !isNaN(priceNum) && priceNum > 0) {
+            const cost = calcRollingCost(priceNum);
+            return [
+                { label: 'Giá niêm yết xe', value: formatVnd(cost.carPrice) },
+                { label: 'Thuế trước bạ (2%)', value: formatVnd(cost.regTax) },
+                { label: 'Bảo hiểm vật chất (1.5%)', value: formatVnd(cost.physicalInsurance) },
+                { label: 'Phí đăng ký biển số', value: formatVnd(cost.licensePlateFee) },
+                { label: 'Phí sử dụng đường bộ (1 năm)', value: formatVnd(cost.roadUsageFee) },
+                { label: 'Phí đăng kiểm', value: formatVnd(cost.inspectionFee) },
+                { label: 'Bảo hiểm trách nhiệm dân sự', value: formatVnd(cost.civilLiabilityInsurance) },
+                { label: 'Chi phí dịch vụ & chi phí khác', value: formatVnd(cost.otherFee) },
+            ];
+        }
+        return [];
+    }, [product]);
+
+    // Tổng chi phí lăn bánh tạm tính
+    const totalRollingCost = useMemo(() => {
+        if (rollingCostItems.length === 0) return null;
+        let sum = 0;
+        rollingCostItems.forEach((item) => {
+            const num = parseInt(String(item.value || '').replace(/[^\d]/g, ''), 10);
+            if (!isNaN(num)) sum += num;
+        });
+        return sum > 0 ? sum : null;
+    }, [rollingCostItems]);
 
     // Reset về slide đầu tiên, thu gọn mô tả và bật autoplay mỗi khi mở popup xe mới
     useEffect(() => {
@@ -86,7 +147,6 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
     if (!product) return null;
 
     const highlights = product.highlights || [];
-    const specs = product.specs || [];
     const badges = product.badges || [];
     const categoryName = getLandingCategoryName(product.category);
 
@@ -114,7 +174,7 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
                 aria-label={product.name}
             >
                 {/* Header */}
-                <div className="flex items-center justify-between px-5 py-4 sm:px-6 bg-slate-900 text-white border-b border-slate-800 flex-shrink-0">
+                <div className="flex items-center justify-between px-5 py-4 sm:px-6 bg-slate-900 text-white border-b border-slate-800 shrink-0">
                     <div className="min-w-0 pr-4">
                         <div className="flex flex-wrap items-center gap-2 mb-1">
                             {categoryName && (
@@ -135,7 +195,7 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
                     <button
                         onClick={onClose}
                         aria-label="Đóng popup"
-                        className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors flex-shrink-0 cursor-pointer"
+                        className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors shrink-0 cursor-pointer"
                     >
                         <X size={20} />
                     </button>
@@ -148,7 +208,7 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
                         {/* Left: Gallery (col 7) */}
                         <div className="lg:col-span-7 flex flex-col gap-3">
                             {/* Main Image Stage with Swiper Auto-Slide & Touch Swipe */}
-                            <div className="relative aspect-[16/10] bg-slate-100 rounded-xl overflow-hidden border border-slate-200 select-none group">
+                            <div className="relative aspect-16/10 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 select-none group">
                                 <Swiper
                                     modules={[Autoplay]}
                                     autoplay={
@@ -233,7 +293,7 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
                                             key={idx}
                                             type="button"
                                             onClick={() => handleThumbnailClick(idx)}
-                                            className={`relative flex-shrink-0 w-20 h-14 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
+                                            className={`relative shrink-0 w-20 h-14 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
                                                 activeImageIndex === idx
                                                     ? 'border-red-600 ring-2 ring-red-100 shadow-sm opacity-100 scale-102'
                                                     : 'border-slate-200 opacity-60 hover:opacity-100'
@@ -267,15 +327,15 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
                                 </div>
                                 <div className="mt-2.5 space-y-1.5 text-xs text-slate-700 font-medium">
                                     <div className="flex items-center gap-1.5 text-emerald-700">
-                                        <CheckCircle2 size={14} className="flex-shrink-0" />
+                                        <CheckCircle2 size={14} className="shrink-0" />
                                         <span>Hỗ trợ trả góp ngân hàng đến 80 - 85%</span>
                                     </div>
                                     <div className="flex items-center gap-1.5 text-emerald-700">
-                                        <CheckCircle2 size={14} className="flex-shrink-0" />
+                                        <CheckCircle2 size={14} className="shrink-0" />
                                         <span>Bảo hành chính hãng 3 năm / 270.000 km</span>
                                     </div>
                                     <div className="flex items-center gap-1.5 text-emerald-700">
-                                        <CheckCircle2 size={14} className="flex-shrink-0" />
+                                        <CheckCircle2 size={14} className="shrink-0" />
                                         <span>Dịch vụ sửa chữa lưu động 24/7 toàn quốc</span>
                                     </div>
                                 </div>
@@ -331,17 +391,17 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
                         </div>
                     </div>
 
-                    {/* Middle Section: Full Technical Specifications (Specs Table) */}
-                    {specs.length > 0 && (
+                    {/* Middle Section: Technical Specifications (Specs Table) - Không lẫn chi phí lăn bánh */}
+                    {technicalSpecs.length > 0 && (
                         <div className="border-t border-slate-200 pt-6">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2 uppercase tracking-wide">
                                     <span className="w-1.5 h-4.5 bg-red-600 rounded-sm"></span>
-                                    Thông Số Kỹ Thuật Đầy Đủ ({specs.length} mục)
+                                    Thông Số Kỹ Thuật Đầy Đủ ({technicalSpecs.length} mục)
                                 </h3>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-xs sm:text-sm">
-                                {specs.map((item, idx) => (
+                                {technicalSpecs.map((item, idx) => (
                                     <div
                                         key={idx}
                                         className={`flex items-center justify-between p-2.5 rounded-lg border border-slate-100 ${
@@ -356,7 +416,7 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
                         </div>
                     )}
 
-                    {/* Bottom Section: Full Description & Detailed Review */}
+                    {/* Section: Full Description & Detailed Review */}
                     {sanitizedHtml && (
                         <div className="border-t border-slate-200 pt-6">
                             <div className="flex items-center justify-between mb-4">
@@ -387,7 +447,7 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
 
                                 {/* Gradient overlay & Toggle Button when collapsed */}
                                 {!isDescExpanded ? (
-                                    <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-slate-50 via-slate-50/95 to-transparent flex items-end justify-center pb-4 rounded-b-2xl pointer-events-none">
+                                    <div className="absolute inset-x-0 bottom-0 h-36 bg-linear-to-t from-slate-50 via-slate-50/95 to-transparent flex items-end justify-center pb-4 rounded-b-2xl pointer-events-none">
                                         <button
                                             type="button"
                                             onClick={() => setIsDescExpanded(true)}
@@ -412,10 +472,58 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
                             </div>
                         </div>
                     )}
+
+                    {/* Section: Chi Phí Lăn Bánh (Nằm dưới Mô Tả & Thông Tin Chi Tiết) */}
+                    {rollingCostItems.length > 0 && (
+                        <div className="border-t border-slate-200 pt-6">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2 uppercase tracking-wide">
+                                    <span className="w-1.5 h-4.5 bg-red-600 rounded-sm"></span>
+                                    CHI PHÍ LĂN BÁNH (Giá tạm tính tùy thuộc vào khu vực và thời điểm)
+                                </h3>
+                                <span className="text-xs text-slate-400 font-medium hidden sm:inline">
+                                    Dự toán chi phí lăn bánh hoàn thiện
+                                </span>
+                            </div>
+
+                            <div className="bg-slate-50/70 rounded-2xl p-5 sm:p-6 border border-slate-200/90 space-y-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 text-xs sm:text-sm">
+                                    {rollingCostItems.map((item, idx) => (
+                                        <div
+                                            key={idx}
+                                            className={`flex items-center justify-between p-2.5 rounded-lg border border-slate-100 ${
+                                                idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/90'
+                                            }`}
+                                        >
+                                            <span className="text-slate-600 font-medium pr-2">{item.label}</span>
+                                            <span className="font-semibold text-slate-900 text-right">{item.value}</span>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Total Rolling Cost Highlight */}
+                                {totalRollingCost && (
+                                    <div className="pt-3 border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-3 bg-red-50/70 p-4 rounded-xl border border-red-200/70">
+                                        <div>
+                                            <div className="text-xs sm:text-sm font-bold uppercase text-red-700 tracking-wide">
+                                                Tổng Chi Phí Lăn Bánh Tạm Tính
+                                            </div>
+                                            <div className="text-[11px] text-slate-500 mt-0.5">
+                                                * Giá đã bao gồm giá niêm yết, thuế trước bạ, biển số, bảo hiểm, phí đường bộ & đăng kiểm
+                                            </div>
+                                        </div>
+                                        <div className="text-xl sm:text-2xl font-black text-red-600">
+                                            {totalRollingCost.toLocaleString('vi-VN')} ₫
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Sticky/Fixed Footer */}
-                <div className="px-5 py-3 sm:px-6 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 flex-shrink-0 text-xs text-slate-600">
+                <div className="px-5 py-3 sm:px-6 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 shrink-0 text-xs text-slate-600">
                     <div className="flex items-center gap-2">
                         <span className="font-semibold text-slate-800">Showroom Kim Long Motor:</span>
                         <span className="hidden sm:inline">{businessInfo.addressShort || businessInfo.address}</span>

@@ -18,14 +18,27 @@ const LandingCategoryTabs = ({ onRequestQuote, onOpenDetail }) => {
             .finally(() => setLoading(false));
     }, []);
 
+    const isProductInCategory = (p, catSlug) => {
+        if (p.category === catSlug) return true;
+        if (catSlug === 'xe-dien') {
+            return (
+                p.category === 'xe-dien' ||
+                p.category === 'ev' ||
+                /\b(ev|dien|điện)\b/i.test(p.name) ||
+                /-ev\b/i.test(p.name)
+            );
+        }
+        return false;
+    };
+
     // A tab with nothing behind it is a dead end for the visitor, so only
     // categories holding at least one visible product get one.
-    const tabs = landingCategories.filter((cat) => products.some((p) => p.category === cat.slug));
+    const tabs = landingCategories.filter((cat) => products.some((p) => isProductInCategory(p, cat.slug)));
 
     // Derived rather than stored, so the selection cannot point at a tab that
     // stopped existing — no effect needed to repair it.
     const activeSlug = tabs.some((t) => t.slug === active) ? active : tabs[0]?.slug;
-    const filtered = products.filter((p) => p.category === activeSlug);
+    const filtered = products.filter((p) => isProductInCategory(p, activeSlug));
 
     // Nothing to show — either nothing is turned on in admin, or what is turned
     // on sits outside the five categories. A heading over an empty grid reads
