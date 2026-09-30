@@ -1,14 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay } from 'swiper/modules';
 import { X, Phone, ChevronLeft, ChevronRight, CheckCircle2, FileText, Sparkles } from 'lucide-react';
 import { businessInfo } from '../../data/hongthuong-data';
 import { getLandingCategoryName } from '../../data/landingCategories';
 import { useScrollLock } from '../../hooks/useScrollLock';
 import ZaloIcon from './ZaloIcon';
 
+import 'swiper/css';
+
 /**
  * ProductDetailPopup - Popup chi tiết sản phẩm toàn diện cho Landing Page
  * - Kích thước rộng rãi (max-w-5xl, max-h-[92vh])
- * - Xem toàn bộ thư viện ảnh (gallery) với preview lớn, thumbnails và nút Next/Prev
+ * - Ảnh bìa/chính tự động trượt (Autoplay) qua các hình ảnh ngoại thất, nội thất, động cơ...
+ * - Hỗ trợ vuốt chạm (Touch Swipe) mượt mà trên mobile/tablet và kéo chuột trên desktop
+ * - Xem toàn bộ thư viện ảnh (gallery) với thumbnails và nút Prev/Next
  * - Hiển thị đầy đủ thông số kỹ thuật (highlights & toàn bộ specs)
  * - Hiển thị mô tả chi tiết sản phẩm
  * - Tích hợp CTA Báo giá (mở QuickQuotePopup), Hotline và Zalo
@@ -17,20 +23,7 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
     useScrollLock(Boolean(product));
 
     const [activeImageIndex, setActiveImageIndex] = useState(0);
-
-    // Reset về ảnh đầu tiên mỗi khi chuyển sang xem xe khác
-    useEffect(() => {
-        setActiveImageIndex(0);
-    }, [product?.id, product?.slug]);
-
-    useEffect(() => {
-        if (!product) return undefined;
-        const onKey = (e) => {
-            if (e.key === 'Escape') onClose();
-        };
-        window.addEventListener('keydown', onKey);
-        return () => window.removeEventListener('keydown', onKey);
-    }, [product, onClose]);
+    const [swiperRef, setSwiperRef] = useState(null);
 
     // Gom danh sách toàn bộ ảnh từ product.gallery và fallback về product.image
     const gallery = useMemo(() => {
@@ -44,6 +37,26 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
         return unique.length > 0 ? unique : ['/images/banners/slider-1.jpg'];
     }, [product]);
 
+    // Reset về slide đầu tiên và bật autoplay mỗi khi mở popup xe mới
+    useEffect(() => {
+        setActiveImageIndex(0);
+        if (swiperRef && !swiperRef.destroyed) {
+            swiperRef.slideToLoop ? swiperRef.slideToLoop(0, 0) : swiperRef.slideTo(0, 0);
+            if (gallery.length > 1 && swiperRef.autoplay) {
+                swiperRef.autoplay.start();
+            }
+        }
+    }, [product?.id, product?.slug, swiperRef, gallery.length]);
+
+    useEffect(() => {
+        if (!product) return undefined;
+        const onKey = (e) => {
+            if (e.key === 'Escape') onClose();
+        };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [product, onClose]);
+
     if (!product) return null;
 
     const highlights = product.highlights || [];
@@ -51,14 +64,15 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
     const badges = product.badges || [];
     const categoryName = getLandingCategoryName(product.category);
 
-    const handlePrev = (e) => {
-        e.stopPropagation();
-        setActiveImageIndex((prev) => (prev > 0 ? prev - 1 : gallery.length - 1));
-    };
-
-    const handleNext = (e) => {
-        e.stopPropagation();
-        setActiveImageIndex((prev) => (prev < gallery.length - 1 ? prev + 1 : 0));
+    const handleThumbnailClick = (idx) => {
+        setActiveImageIndex(idx);
+        if (swiperRef && !swiperRef.destroyed) {
+            if (swiperRef.slideToLoop) {
+                swiperRef.slideToLoop(idx);
+            } else {
+                swiperRef.slideTo(idx);
+            }
+        }
     };
 
     return (
@@ -103,42 +117,82 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
 
                 {/* Scrollable Content Body */}
                 <div className="overflow-y-auto p-4 sm:p-6 space-y-6 flex-1 text-slate-800">
-                    {/* Top section: Gallery + Main Specs & CTA */}
+                    {/* Top section: Gallery (Slider & Touch Swipe) + Main Specs & CTA */}
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                         {/* Left: Gallery (col 7) */}
                         <div className="lg:col-span-7 flex flex-col gap-3">
-                            {/* Main Image Stage */}
-                            <div className="relative aspect-[16/10] bg-slate-100 rounded-xl overflow-hidden border border-slate-200 flex items-center justify-center group">
-                                <img
-                                    src={gallery[activeImageIndex] || product.image}
-                                    alt={product.name}
-                                    className="w-full h-full object-cover transition-all duration-300"
-                                    onError={(e) => {
-                                        e.currentTarget.onerror = null;
-                                        e.currentTarget.src = product?.image || '/images/banners/slider-1.jpg';
+                            {/* Main Image Stage with Swiper Auto-Slide & Touch Swipe */}
+                            <div className="relative aspect-[16/10] bg-slate-100 rounded-xl overflow-hidden border border-slate-200 select-none group">
+                                <Swiper
+                                    modules={[Autoplay]}
+                                    autoplay={
+                                        gallery.length > 1
+                                            ? {
+                                                  delay: 3500,
+                                                  disableOnInteraction: false,
+                                                  pauseOnMouseEnter: true,
+                                              }
+                                            : false
+                                    }
+                                    loop={gallery.length > 1}
+                                    allowTouchMove={true}
+                                    grabCursor={gallery.length > 1}
+                                    onSwiper={setSwiperRef}
+                                    onSlideChange={(swiper) => {
+                                        setActiveImageIndex(swiper.realIndex);
                                     }}
-                                />
+                                    className="w-full h-full"
+                                >
+                                    {gallery.map((img, idx) => (
+                                        <SwiperSlide key={idx} className="w-full h-full">
+                                            <img
+                                                src={img}
+                                                alt={`${product.name} - ảnh ${idx + 1}`}
+                                                className="w-full h-full object-cover select-none pointer-events-none"
+                                                draggable={false}
+                                                onError={(e) => {
+                                                    e.currentTarget.onerror = null;
+                                                    e.currentTarget.src = product?.image || '/images/banners/slider-1.jpg';
+                                                }}
+                                            />
+                                        </SwiperSlide>
+                                    ))}
+                                </Swiper>
 
                                 {/* Navigation arrows if multiple images */}
                                 {gallery.length > 1 && (
                                     <>
                                         <button
                                             type="button"
-                                            onClick={handlePrev}
-                                            className="absolute left-2.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 hover:bg-black/75 text-white flex items-center justify-center transition-all cursor-pointer opacity-90 hover:opacity-100"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                swiperRef?.slidePrev();
+                                            }}
+                                            className="absolute left-2.5 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/50 hover:bg-black/75 text-white flex items-center justify-center transition-all cursor-pointer opacity-90 hover:opacity-100 shadow-md"
                                             aria-label="Ảnh trước"
                                         >
                                             <ChevronLeft size={20} />
                                         </button>
                                         <button
                                             type="button"
-                                            onClick={handleNext}
-                                            className="absolute right-2.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 hover:bg-black/75 text-white flex items-center justify-center transition-all cursor-pointer opacity-90 hover:opacity-100"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                swiperRef?.slideNext();
+                                            }}
+                                            className="absolute right-2.5 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-black/50 hover:bg-black/75 text-white flex items-center justify-center transition-all cursor-pointer opacity-90 hover:opacity-100 shadow-md"
                                             aria-label="Ảnh tiếp theo"
                                         >
                                             <ChevronRight size={20} />
                                         </button>
-                                        <div className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-md bg-black/60 text-white text-xs font-semibold backdrop-blur-xs">
+
+                                        {/* Status badge: Auto slide & swipe prompt */}
+                                        <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-black/60 text-white text-[11px] font-medium backdrop-blur-xs pointer-events-none">
+                                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                            Tự động trượt ảnh • Vuốt để xem
+                                        </div>
+
+                                        {/* Counter badge */}
+                                        <div className="absolute bottom-2.5 right-2.5 z-10 px-2.5 py-1 rounded-md bg-black/60 text-white text-xs font-semibold backdrop-blur-xs pointer-events-none">
                                             {activeImageIndex + 1} / {gallery.length}
                                         </div>
                                     </>
@@ -152,10 +206,10 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
                                         <button
                                             key={idx}
                                             type="button"
-                                            onClick={() => setActiveImageIndex(idx)}
+                                            onClick={() => handleThumbnailClick(idx)}
                                             className={`relative flex-shrink-0 w-20 h-14 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
                                                 activeImageIndex === idx
-                                                    ? 'border-red-600 ring-2 ring-red-100 shadow-sm opacity-100'
+                                                    ? 'border-red-600 ring-2 ring-red-100 shadow-sm opacity-100 scale-102'
                                                     : 'border-slate-200 opacity-60 hover:opacity-100'
                                             }`}
                                         >
@@ -163,6 +217,7 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
                                                 src={img}
                                                 alt={`Thumbnail ${idx + 1}`}
                                                 className="w-full h-full object-cover"
+                                                draggable={false}
                                                 onError={(e) => {
                                                     e.currentTarget.onerror = null;
                                                     e.currentTarget.src = product?.image || '/images/banners/slider-1.jpg';
