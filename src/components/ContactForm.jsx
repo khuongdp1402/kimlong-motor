@@ -153,7 +153,7 @@ const ContactForm = () => {
                                 </div>
                                 <div className="ml-4">
                                     <h4 className="text-lg font-semibold mb-1">Email</h4>
-                                    <p className="text-red-100">info@miennamgroup.com.vn</p>
+                                    <p className="text-red-100">thuong.kimlongmotor@gmail.com</p>
                                 </div>
                             </div>
 

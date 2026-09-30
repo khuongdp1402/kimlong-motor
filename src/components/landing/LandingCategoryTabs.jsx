@@ -4,7 +4,7 @@ import { landingCategories } from '../../data/landingCategories';
 import LandingProductCard from './LandingProductCard';
 import Reveal from '../motion/Reveal';
 
-const LandingCategoryTabs = ({ onRequestQuote }) => {
+const LandingCategoryTabs = ({ onRequestQuote, onOpenDetail }) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [active, setActive] = useState(null);
@@ -65,7 +65,7 @@ const LandingCategoryTabs = ({ onRequestQuote }) => {
                         <div key={activeSlug} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                             {filtered.map((p, i) => (
                                 <Reveal key={p.id} delay={Math.min(i, 4) * 0.06}>
-                                    <LandingProductCard product={p} onRequestQuote={onRequestQuote} />
+                                    <LandingProductCard product={p} onRequestQuote={onRequestQuote} onOpenDetail={onOpenDetail} />
                                 </Reveal>
                             ))}
                         </div>

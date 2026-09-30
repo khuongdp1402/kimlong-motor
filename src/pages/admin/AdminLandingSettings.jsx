@@ -183,7 +183,7 @@ const AdminLandingSettings = () => {
             <section>
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Mạng xã hội</h2>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mb-4 max-w-lg">
-                    Hotline <strong>{businessInfo.hotlineSales}</strong> và email <strong>info@miennamgroup.com.vn</strong> hiển thị ở mục Liên hệ trên trang chủ (không chỉnh ở đây).
+                    Hotline <strong>{businessInfo.hotlineSales}</strong> và email <strong>thuong.kimlongmotor@gmail.com</strong> hiển thị ở mục Liên hệ trên trang chủ (không chỉnh ở đây).
                     Kênh YouTube/TikTok bên dưới mặc định là kênh chính thức Kim Long Motor — có thể đổi nếu cần.
                 </p>
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-5 space-y-4 max-w-lg">

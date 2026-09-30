@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { X, Phone, MapPin, Clock, MessageCircle } from 'lucide-react';
 import { createLead } from '../../api/client';
 import { businessInfo } from '../../data/hongthuong-data';
+import { useScrollLock } from '../../hooks/useScrollLock';
 import ZaloIcon from './ZaloIcon';
 
 // Full-featured "Contact us for a quote" popup — shown automatically when the
@@ -22,15 +23,11 @@ const QuickQuotePopup = ({ open, onClose, productName }) => {
         }
     }, [open]);
 
-    // Lock body scroll when open
-    useEffect(() => {
-        if (open) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
-        return () => { document.body.style.overflow = ''; };
-    }, [open]);
+    // Shared with the other modals. It restores whatever the overflow was
+    // before it locked, which matters now that this popup can open on top of
+    // the product detail one: clearing the lock outright would let the page
+    // behind both of them scroll again while the lower modal is still up.
+    useScrollLock(open);
 
     if (!open) return null;
 
@@ -51,9 +48,11 @@ const QuickQuotePopup = ({ open, onClose, productName }) => {
         }
     };
 
+    // z-60 layers this above the product detail popup, which stays open
+    // underneath when a quote is requested from inside it.
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4 py-6"
+            className="fixed inset-0 z-60 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4 py-6"
             onClick={onClose}
         >
             <div

@@ -5,7 +5,7 @@ import { businessInfo } from '../../data/hongthuong-data';
 import Reveal from '../motion/Reveal';
 import ZaloIcon from './ZaloIcon';
 
-const DEFAULT_EMAIL = 'info@miennamgroup.com.vn';
+const DEFAULT_EMAIL = 'thuong.kimlongmotor@gmail.com';
 
 const LandingContact = () => {
     const [form, setForm] = useState({ name: '', phone: '', message: '' });
