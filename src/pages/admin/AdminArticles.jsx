@@ -1,11 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { getArticles, createArticle, updateArticle, deleteArticle, setArticleFeatured } from '../../api/client';
-import { Plus, Pencil, Trash2, X } from 'lucide-react';
+import { Plus, Pencil, Trash2, X, Lock } from 'lucide-react';
 import ImageUpload from '../../components/admin/ImageUpload';
 import VisibilityToggle from '../../components/admin/VisibilityToggle';
 import ListToolbar from '../../components/admin/ListToolbar';
 import { filterItems } from '../../components/admin/listFilters';
 import RichTextEditor from '../../components/admin/RichTextEditor';
+
+function slugify(name) {
+    return (name || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
 
 // Stored dates are full ISO timestamps from the original scrape; the column
 // only ever needed the day.
@@ -189,17 +199,30 @@ const AdminArticles = () => {
 };
 
 const ArticleForm = ({ initial, onCancel, onSave }) => {
-    const [form, setForm] = useState({ ...emptyArticle, ...initial });
+    const [form, setForm] = useState({
+        ...emptyArticle,
+        ...initial,
+        slug: initial.slug || (initial.title ? slugify(initial.title) : ''),
+    });
     const [saving, setSaving] = useState(false);
 
     const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+    const handleTitleChange = (e) => {
+        const val = e.target.value;
+        setForm((prev) => ({
+            ...prev,
+            title: val,
+            slug: !initial.id ? slugify(val) : prev.slug,
+        }));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaving(true);
         await onSave({
             title: form.title,
-            slug: form.slug,
+            slug: form.slug || slugify(form.title),
             category: form.category,
             categories: [form.category],
             image: form.image,
@@ -220,17 +243,30 @@ const ArticleForm = ({ initial, onCancel, onSave }) => {
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white">
                         {initial.id ? 'Chỉnh sửa bài viết' : 'Thêm bài viết mới'}
                     </h3>
-                    <button onClick={onCancel} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                    <button onClick={onCancel} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer">
                         <X size={20} />
                     </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
                     <Field label="Tiêu đề *">
-                        <input name="title" required value={form.title} onChange={handleChange} className={inputClass} />
+                        <input name="title" required value={form.title} onChange={handleTitleChange} className={inputClass} />
                     </Field>
-                    <Field label="Slug (để trống để tự sinh)">
-                        <input name="slug" value={form.slug} onChange={handleChange} className={inputClass} />
+
+                    <Field label="Slug (Đường dẫn cố định - Không cho sửa để tránh lỗi)">
+                        <div className="relative">
+                            <input
+                                name="slug"
+                                readOnly
+                                value={form.slug}
+                                className={`${inputClass} bg-gray-100 dark:bg-gray-700/60 text-gray-500 dark:text-gray-400 cursor-not-allowed pl-8 font-mono text-xs`}
+                                placeholder="Tự động sinh theo tiêu đề bài viết"
+                            />
+                            <Lock size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                        </div>
+                        <p className="text-[11px] text-gray-400 mt-1">
+                            * Đường dẫn cố định, không cho sửa thủ công để bảo vệ liên kết bài viết và SEO.
+                        </p>
                     </Field>
                     <div className="grid grid-cols-2 gap-4">
                         <Field label="Chuyên mục">

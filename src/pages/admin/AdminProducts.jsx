@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { getProducts, createProduct, updateProduct, deleteProduct, setProductFeatured } from '../../api/client';
-import { Plus, Pencil, Trash2, X } from 'lucide-react';
+import { Plus, Pencil, Trash2, X, Lock } from 'lucide-react';
 import ImageUpload from '../../components/admin/ImageUpload';
 import GalleryUpload from '../../components/admin/GalleryUpload';
 import { landingCategories, getLandingCategoryName, isLandingCategory } from '../../data/landingCategories';
@@ -53,13 +53,37 @@ const ROLLING_COST_TEMPLATE = `<table>
 </table>
 <p><em>* Lưu ý: Giá lăn bánh thực tế có thể thay đổi tùy thuộc vào địa phương đăng ký và chính sách ưu đãi tại từng thời điểm.</em></p>`;
 
+function slugify(name) {
+    return (name || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
+// Chuyển đổi số tiền thành chữ tiếng Việt (VD: 3.739.000.000 -> 3 tỷ 739 triệu đồng)
+function formatVNDWords(num) {
+    if (!num || isNaN(num) || num <= 0) return '';
+    const ty = Math.floor(num / 1000000000);
+    const trieu = Math.floor((num % 1000000000) / 1000000);
+    const nghin = Math.floor((num % 1000000) / 1000);
+
+    const parts = [];
+    if (ty > 0) parts.push(`${ty.toLocaleString('vi-VN')} tỷ`);
+    if (trieu > 0) parts.push(`${trieu} triệu`);
+    if (nghin > 0) parts.push(`${nghin} nghìn`);
+    return parts.length > 0 ? `${parts.join(' ')} đồng` : '';
+}
+
 // Accepts what an editor actually types — "2960000000", "2.960.000.000",
 // "2,96 tỷ" — and only reformats when it is unambiguously a number. Anything
 // else (notably "Liên hệ") is passed through untouched.
 function formatPrice(raw) {
     const value = String(raw ?? '').trim();
     if (!value) return '';
-    const digits = value.replace(/[.,\s]/g, '');
+    const digits = value.replace(/[.,\sđ₫]/g, '');
     if (!/^\d+$/.test(digits)) return value;
     return `${Number(digits).toLocaleString('vi-VN')} đ`;
 }
@@ -87,6 +111,24 @@ const AdminProducts = () => {
     const [creating, setCreating] = useState(false);
     const [search, setSearch] = useState('');
     const [visibility, setVisibility] = useState('all');
+    const [categoryFilter, setCategoryFilter] = useState('all');
+
+    const categoriesWithCounts = useMemo(() => {
+        return landingCategories.map((c) => {
+            const count = products.filter((p) => {
+                if (c.slug === 'xe-dien') {
+                    return (
+                        p.category === 'xe-dien' ||
+                        p.category === 'ev' ||
+                        /\b(ev|dien|điện)\b/i.test(`${p.name || ''} ${p.slug || ''}`) ||
+                        /-ev\b/i.test(p.slug || '')
+                    );
+                }
+                return p.category === c.slug;
+            }).length;
+            return { ...c, count };
+        });
+    }, [products]);
 
     const load = async () => {
         setLoading(true);
@@ -146,7 +188,7 @@ const AdminProducts = () => {
     if (error) return <p className="text-red-600 dark:text-red-400">{error}</p>;
 
     const visibleCount = products.filter((p) => p.featured).length;
-    const shown = filterItems(products, { search, visibility });
+    const shown = filterItems(products, { search, visibility, category: categoryFilter });
 
     return (
         <div>
@@ -154,7 +196,7 @@ const AdminProducts = () => {
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">Sản phẩm ({products.length})</h2>
                 <button
                     onClick={() => setCreating(true)}
-                    className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                    className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer"
                 >
                     <Plus size={16} /> Thêm sản phẩm
                 </button>
@@ -169,6 +211,9 @@ const AdminProducts = () => {
                 onSearch={setSearch}
                 visibility={visibility}
                 onVisibility={setVisibility}
+                category={categoryFilter}
+                onCategoryChange={setCategoryFilter}
+                categories={categoriesWithCounts}
                 counts={{ visible: visibleCount, hidden: products.length - visibleCount }}
                 searchPlaceholder="Tìm theo tên sản phẩm..."
             />
@@ -202,10 +247,10 @@ const AdminProducts = () => {
                                     <VisibilityToggle visible={!!p.featured} onToggle={() => handleToggleFeatured(p)} />
                                 </td>
                                 <td className="px-4 py-3 text-right">
-                                    <button onClick={() => setEditing(p)} className="text-blue-600 hover:text-blue-800 dark:text-blue-400 mr-3">
+                                    <button onClick={() => setEditing(p)} className="text-blue-600 hover:text-blue-800 dark:text-blue-400 mr-3 cursor-pointer">
                                         <Pencil size={16} />
                                     </button>
-                                    <button onClick={() => handleDelete(p)} className="text-red-600 hover:text-red-800 dark:text-red-400">
+                                    <button onClick={() => handleDelete(p)} className="text-red-600 hover:text-red-800 dark:text-red-400 cursor-pointer">
                                         <Trash2 size={16} />
                                     </button>
                                 </td>
@@ -234,9 +279,23 @@ const AdminProducts = () => {
 };
 
 const ProductForm = ({ initial, onCancel, onSave }) => {
+    // Format giá ban đầu theo dạng số có dấu chấm phân cách hàng nghìn
+    const getInitialPrice = (raw) => {
+        if (!raw) return 'Liên hệ';
+        const str = String(raw).trim();
+        if (str.toLowerCase().includes('liên')) return 'Liên hệ';
+        const digits = str.replace(/\D/g, '');
+        if (digits) {
+            return Number(digits).toLocaleString('vi-VN');
+        }
+        return str;
+    };
+
     const [form, setForm] = useState({
         ...emptyProduct,
         ...initial,
+        price: getInitialPrice(initial.price),
+        slug: initial.slug || (initial.name ? slugify(initial.name) : ''),
         description: initial.descriptionHtml || initial.description || '',
         descriptionHtml: initial.descriptionHtml || initial.description || '',
         rollingCostHtml: initial.rollingCostHtml || initial.rollingCost || '',
@@ -247,6 +306,36 @@ const ProductForm = ({ initial, onCancel, onSave }) => {
     const [saving, setSaving] = useState(false);
 
     const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+    // Khi gõ tên xe: Nếu tạo mới, tự động sinh slug theo tên
+    const handleNameChange = (e) => {
+        const val = e.target.value;
+        setForm((prev) => ({
+            ...prev,
+            name: val,
+            slug: !initial.id ? slugify(val) : prev.slug,
+        }));
+    };
+
+    // Khi gõ giá: Tự động format định dạng số có dấu chấm phân cách hàng nghìn
+    const handlePriceChange = (e) => {
+        const val = e.target.value;
+        if (!val) {
+            setForm((prev) => ({ ...prev, price: '' }));
+            return;
+        }
+        if (val.toLowerCase().includes('liên')) {
+            setForm((prev) => ({ ...prev, price: 'Liên hệ' }));
+            return;
+        }
+        const digits = val.replace(/\D/g, '');
+        if (!digits) {
+            setForm((prev) => ({ ...prev, price: '' }));
+            return;
+        }
+        const num = Number(digits);
+        setForm((prev) => ({ ...prev, price: num.toLocaleString('vi-VN') }));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -262,16 +351,14 @@ const ProductForm = ({ initial, onCancel, onSave }) => {
         const features = form.featuresText.split('\n').map((l) => l.trim()).filter(Boolean);
         const gallery = form.galleryText.split('\n').map((l) => l.trim()).filter(Boolean);
 
+        const priceDisplay = formatPrice(form.price);
+
         await onSave({
             name: form.name,
-            slug: form.slug,
+            slug: form.slug || slugify(form.name),
             category: form.category,
             price: form.price,
-            // The catalogue carries both a raw price and a formatted one, and
-            // the list and detail pages read the formatted field. Deriving it
-            // here is what stops an edited price from displaying as the old
-            // one everywhere outside this form.
-            priceDisplay: formatPrice(form.price),
+            priceDisplay,
             image: form.image || gallery[0] || '',
             description: form.description,
             descriptionHtml: form.descriptionHtml || form.description,
@@ -292,18 +379,32 @@ const ProductForm = ({ initial, onCancel, onSave }) => {
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white">
                         {initial.id ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm mới'}
                     </h3>
-                    <button onClick={onCancel} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                    <button onClick={onCancel} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer">
                         <X size={20} />
                     </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
                     <Field label="Tên sản phẩm *">
-                        <input name="name" required value={form.name} onChange={handleChange} className={inputClass} />
+                        <input name="name" required value={form.name} onChange={handleNameChange} className={inputClass} />
                     </Field>
-                    <Field label="Slug (để trống để tự sinh)">
-                        <input name="slug" value={form.slug} onChange={handleChange} className={inputClass} />
+
+                    <Field label="Slug (Đường dẫn cố định - Không cho sửa để tránh lỗi)">
+                        <div className="relative">
+                            <input
+                                name="slug"
+                                readOnly
+                                value={form.slug}
+                                className={`${inputClass} bg-gray-100 dark:bg-gray-700/60 text-gray-500 dark:text-gray-400 cursor-not-allowed pl-8 font-mono text-xs`}
+                                placeholder="Tự động sinh theo tên sản phẩm"
+                            />
+                            <Lock size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                        </div>
+                        <p className="text-[11px] text-gray-400 mt-1">
+                            * Slug cố định theo đường dẫn URL, không cho sửa thủ công để bảo vệ liên kết chia sẻ và SEO.
+                        </p>
                     </Field>
+
                     <div className="grid grid-cols-2 gap-4">
                         <Field label="Danh mục *">
                             <select name="category" required value={form.category} onChange={handleChange} className={inputClass}>
@@ -311,10 +412,6 @@ const ProductForm = ({ initial, onCancel, onSave }) => {
                                 {landingCategories.map((c) => (
                                     <option key={c.slug} value={c.slug}>{c.name}</option>
                                 ))}
-                                {/* A product still on an old slug would otherwise show a blank
-                                    select, and saving would silently re-tag it to whatever the
-                                    editor happened to pick. Surfacing the real value makes the
-                                    change deliberate. */}
                                 {form.category && !isLandingCategory(form.category) && (
                                     <option value={form.category}>
                                         {`⚠ Chưa phân loại (${form.category})`}
@@ -322,8 +419,50 @@ const ProductForm = ({ initial, onCancel, onSave }) => {
                                 )}
                             </select>
                         </Field>
-                        <Field label="Giá (chỉ nhập số)">
-                            <input name="price" value={form.price} onChange={handleChange} className={inputClass} />
+
+                        <Field label="Giá bán (Định dạng số)">
+                            <div className="relative">
+                                <input
+                                    name="price"
+                                    value={form.price}
+                                    onChange={handlePriceChange}
+                                    placeholder="Nhập số tiền (VD: 3739000000)"
+                                    className={`${inputClass} pr-12 font-medium`}
+                                />
+                                {form.price && form.price !== 'Liên hệ' && (
+                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">
+                                        VNĐ
+                                    </span>
+                                )}
+                            </div>
+                            <div className="flex items-center justify-between mt-1.5 text-xs">
+                                <div className="text-red-600 dark:text-red-400 font-semibold truncate pr-2">
+                                    {form.price === 'Liên hệ' ? (
+                                        'Giá hiển thị: Liên hệ'
+                                    ) : form.price ? (
+                                        (() => {
+                                            const digits = String(form.price).replace(/\D/g, '');
+                                            const num = Number(digits);
+                                            const words = formatVNDWords(num);
+                                            return words ? `Bằng chữ: ${words}` : '';
+                                        })()
+                                    ) : (
+                                        <span className="text-gray-400 font-normal">Chưa nhập giá</span>
+                                    )}
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setForm((prev) => ({
+                                            ...prev,
+                                            price: prev.price === 'Liên hệ' ? '' : 'Liên hệ',
+                                        }))
+                                    }
+                                    className="text-[11px] text-blue-600 dark:text-blue-400 hover:underline shrink-0 cursor-pointer font-medium"
+                                >
+                                    {form.price === 'Liên hệ' ? 'Nhập số tiền' : 'Để giá "Liên hệ"'}
+                                </button>
+                            </div>
                         </Field>
                     </div>
 
