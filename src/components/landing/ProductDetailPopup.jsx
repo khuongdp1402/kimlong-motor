@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
-import { X, Phone, ChevronLeft, ChevronRight, CheckCircle2, FileText, Sparkles } from 'lucide-react';
+import { X, Phone, ChevronLeft, ChevronRight, CheckCircle2, FileText, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
 import { businessInfo } from '../../data/hongthuong-data';
 import { getLandingCategoryName } from '../../data/landingCategories';
 import { useScrollLock } from '../../hooks/useScrollLock';
@@ -16,7 +16,7 @@ import 'swiper/css';
  * - Hỗ trợ vuốt chạm (Touch Swipe) mượt mà trên mobile/tablet và kéo chuột trên desktop
  * - Xem toàn bộ thư viện ảnh (gallery) với thumbnails và nút Prev/Next
  * - Hiển thị đầy đủ thông số kỹ thuật (highlights & toàn bộ specs)
- * - Hiển thị mô tả chi tiết sản phẩm
+ * - Mô tả & đánh giá chi tiết được trình bày phân đoạn chuyên nghiệp (h2, p, strong) thay vì dính chùm text
  * - Tích hợp CTA Báo giá (mở QuickQuotePopup), Hotline và Zalo
  */
 const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
@@ -24,6 +24,7 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
 
     const [activeImageIndex, setActiveImageIndex] = useState(0);
     const [swiperRef, setSwiperRef] = useState(null);
+    const [isDescExpanded, setIsDescExpanded] = useState(false);
 
     // Gom danh sách toàn bộ ảnh từ product.gallery và fallback về product.image
     const gallery = useMemo(() => {
@@ -37,9 +38,34 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
         return unique.length > 0 ? unique : ['/images/banners/slider-1.jpg'];
     }, [product]);
 
-    // Reset về slide đầu tiên và bật autoplay mỗi khi mở popup xe mới
+    // Chuẩn hóa nội dung mô tả chi tiết: dùng HTML phân đoạn có cấu trúc, loại bỏ ảnh hỏng & link rác
+    const sanitizedHtml = useMemo(() => {
+        if (product?.descriptionHtml) {
+            return product.descriptionHtml
+                .replace(/<img[^>]*>/gi, '') // Bỏ thẻ ảnh hỏng trong nội dung (ảnh đã có gallery ở trên)
+                .replace(/<a[^>]*utm_source=chatgpt[^>]*>.*?<\/a>/gi, '') // Bỏ link rác kéo từ nguồn scrape
+                .replace(/<p>\s*Hotline[^\<]*<\/p>/gi, '') // Bỏ dòng hotline trùng lặp
+                .replace(/<p>\s*<a[^>]*>Xem chi tiết[^<]*<\/a>\s*<\/p>/gi, '') // Bỏ link chi tiết thừa
+                .replace(/<p>\s*(?:&nbsp;|\s)*<\/p>/gi, '') // Bỏ các đoạn văn trống
+                .trim();
+        }
+        if (product?.description) {
+            const text = product.description.trim();
+            if (text.includes('\n')) {
+                return text
+                    .split(/\n+/)
+                    .map((p) => `<p>${p.trim()}</p>`)
+                    .join('');
+            }
+            return `<p>${text}</p>`;
+        }
+        return '';
+    }, [product?.descriptionHtml, product?.description]);
+
+    // Reset về slide đầu tiên, thu gọn mô tả và bật autoplay mỗi khi mở popup xe mới
     useEffect(() => {
         setActiveImageIndex(0);
+        setIsDescExpanded(false);
         if (swiperRef && !swiperRef.destroyed) {
             swiperRef.slideToLoop ? swiperRef.slideToLoop(0, 0) : swiperRef.slideTo(0, 0);
             if (gallery.length > 1 && swiperRef.autoplay) {
@@ -330,15 +356,59 @@ const ProductDetailPopup = ({ product, onClose, onRequestQuote }) => {
                         </div>
                     )}
 
-                    {/* Bottom Section: Full Description */}
-                    {product.description && (
+                    {/* Bottom Section: Full Description & Detailed Review */}
+                    {sanitizedHtml && (
                         <div className="border-t border-slate-200 pt-6">
-                            <h3 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2 uppercase tracking-wide mb-3">
-                                <span className="w-1.5 h-4.5 bg-red-600 rounded-sm"></span>
-                                Mô Tả & Thông Tin Chi Tiết
-                            </h3>
-                            <div className="bg-slate-50 rounded-xl p-4 sm:p-5 border border-slate-200/80 text-sm text-slate-700 leading-relaxed whitespace-pre-line">
-                                {product.description}
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2 uppercase tracking-wide">
+                                    <span className="w-1.5 h-4.5 bg-red-600 rounded-sm"></span>
+                                    Mô Tả & Thông Tin Chi Tiết
+                                </h3>
+                                <span className="text-xs text-slate-400 font-medium hidden sm:inline">
+                                    Đánh giá tổng quan & thông số vận hành
+                                </span>
+                            </div>
+
+                            <div className="bg-slate-50/70 rounded-2xl p-5 sm:p-7 border border-slate-200/90 relative">
+                                <div
+                                    className={`prose prose-slate max-w-none 
+                                        prose-headings:text-slate-900 prose-headings:font-bold prose-headings:tracking-tight
+                                        prose-h2:text-base sm:prose-h2:text-lg prose-h2:mt-6 prose-h2:mb-3 prose-h2:border-l-4 prose-h2:border-red-600 prose-h2:pl-3 prose-h2:py-0.5 prose-h2:text-slate-900
+                                        prose-h3:text-sm sm:prose-h3:text-base prose-h3:mt-5 prose-h3:mb-2 prose-h3:font-bold prose-h3:text-slate-800
+                                        prose-p:text-slate-700 prose-p:text-sm sm:prose-p:text-[15px] prose-p:leading-relaxed prose-p:mb-4
+                                        prose-strong:text-slate-900 prose-strong:font-bold
+                                        prose-ul:list-disc prose-ul:pl-5 prose-ul:space-y-1.5 prose-ul:my-3 prose-ul:text-sm
+                                        prose-li:text-slate-700
+                                        transition-all duration-300
+                                        ${!isDescExpanded ? 'max-h-[380px] overflow-hidden' : ''}
+                                    `}
+                                    dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
+                                />
+
+                                {/* Gradient overlay & Toggle Button when collapsed */}
+                                {!isDescExpanded ? (
+                                    <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-slate-50 via-slate-50/95 to-transparent flex items-end justify-center pb-4 rounded-b-2xl pointer-events-none">
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsDescExpanded(true)}
+                                            className="pointer-events-auto px-5 py-2.5 rounded-full bg-white hover:bg-red-50 text-red-600 hover:text-red-700 border border-red-200 text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-1.5 cursor-pointer"
+                                        >
+                                            <span>Xem toàn bộ bài viết chi tiết</span>
+                                            <ChevronDown size={16} />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="mt-6 pt-4 border-t border-slate-200/80 flex justify-center">
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsDescExpanded(false)}
+                                            className="px-5 py-2 rounded-full bg-white hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-300 text-xs sm:text-sm font-semibold shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+                                        >
+                                            <span>Thu gọn bớt nội dung</span>
+                                            <ChevronUp size={16} />
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}
